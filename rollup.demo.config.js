@@ -4,13 +4,14 @@ import nodeResolve from 'rollup-plugin-node-resolve'
 import uglify from 'rollup-plugin-uglify'
 import replace from 'rollup-plugin-replace'
 
+// Bundle using an entry point as if it was a real app using the choropleth
 export default {
-    entry: 'src/choropleth.js',
-    dest: 'build/choropleth-dist.js',
+    entry: 'demo/entry.js',
+    dest: 'demo/demo.js',
     format: 'umd',
     plugins: [
         babel({
-            exclude: 'node-modules/**'
+            exclude: 'node_modules/**'
         }),
         nodeResolve({
             jsnext: true
@@ -19,7 +20,7 @@ export default {
             include: 'node_modules/**',
         }),
         replace({
-            'process.env.NODE_ENV': JSON.stringify('production')
+            'process.env.NODE_ENV': JSON.stringify('development')
         }),
     ],
     sourceMap: true

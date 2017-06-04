@@ -2,9 +2,10 @@
   "name": "react-choropleth",
   "version": "1.0.0",
   "description": "Simple choropleth, translating user geoJson/projection into svg, attached to data",
-  "main": "index.js",
+  "main": "build/dist.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "rollup --config rollup.demo.config.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-syntax-decorators": "^6.13.0",
     "babel-preset-stage-0": "^6.24.1",
+    "rollup": "^0.42.0",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
