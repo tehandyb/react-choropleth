@@ -21,5 +21,20 @@
   "bugs": {
     "url": "https://github.com/tehandyb/react-choropleth/issues"
   },
-  "homepage": "https://github.com/tehandyb/react-choropleth#readme"
+  "homepage": "https://github.com/tehandyb/react-choropleth#readme",
+  "dependencies": {
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-syntax-decorators": "^6.13.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-replace": "^1.1.1",
+    "rollup-plugin-uglify": "^2.0.1"
+  }
 }
