@@ -1,0 +1,25 @@
+{
+  "name": "react-choropleth",
+  "version": "1.0.0",
+  "description": "Simple choropleth, translating user geoJson/projection into svg, attached to data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tehandyb/react-choropleth.git"
+  },
+  "keywords": [
+    "choropleth",
+    "intensity",
+    "map",
+    "geojson"
+  ],
+  "author": "Andrew Blowe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tehandyb/react-choropleth/issues"
+  },
+  "homepage": "https://github.com/tehandyb/react-choropleth#readme"
+}
