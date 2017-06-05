@@ -28,6 +28,7 @@
     "d3-geo": "^1.6.4",
     "d3-scale": "^1.0.6",
     "prop-types": "^15.5.10",
+    "react-tooltip": "^3.3.0",
     "simple-statistics": "^4.1.0"
   },
   "devDependencies": {

@@ -38,6 +38,9 @@ export default {
     }),
     commonjs({
       include: ['node_modules/**', 'src/**', 'demo/**'],
+      namedExports: {
+        'node_modules/react/react.js': ['Component']
+      }
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('development')
