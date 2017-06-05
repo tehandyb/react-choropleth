@@ -2,9 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import './defaultStyles.css'
 
-function shapes(features, pathGenerator) {
+function dataValueAccessor(featureId, data) {
+  const datum = data.find(d => d.featureId === featureId)
+  if(datum === undefined) return undefined
+  return datum.value
+}
+
+function shapes(features, pathGenerator, colorGenerator, data, dataValueAccessor) {
   return features.map(feature => (
-    <path key={feature.id} d={pathGenerator(feature)} />
+    <path key={feature.id} d={pathGenerator(feature)} fill={colorGenerator(dataValueAccessor(feature.id, data), data)} />
   ))
 }
 
@@ -20,12 +26,12 @@ function transform(geoJson, width, height, pathGenerator) {
   return { scale, translate }
 }
 
-export default function Choropleth ({ width, height, data, geoJson, pathGenerator }) {
+export default function Choropleth ({ width, height, data, geoJson, pathGenerator, colorGenerator, dataValueAccessor }) {
   const { translate, scale } = transform(geoJson, width, height, pathGenerator)
   return (
     <svg className="react-choropleth" width={width} height={height}>
       <g transform={`translate(${translate})scale(${scale})`}>
-        {shapes(geoJson.features, pathGenerator)}
+        {shapes(geoJson.features, pathGenerator, colorGenerator, data, dataValueAccessor)}
       </g>
     </svg>
   )
@@ -42,5 +48,10 @@ Choropleth.propTypes = {
     features: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string
     }))
-  })
+  }),
+  dataValueAccessor: PropTypes.func
+}
+
+Choropleth.defaultProps = {
+  dataValueAccessor: dataValueAccessor
 }

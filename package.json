@@ -40,6 +40,7 @@
     "cssnano": "^3.10.0",
     "d3-geo": "^1.6.4",
     "d3-request": "^1.0.5",
+    "d3-scale": "^1.0.6",
     "postcss-cssnext": "^2.11.0",
     "postcss-nested": "^2.0.2",
     "postcss-simple-vars": "^4.0.0",
