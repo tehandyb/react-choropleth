@@ -3,6 +3,12 @@ import commonjs from 'rollup-plugin-commonjs'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import uglify from 'rollup-plugin-uglify'
 import replace from 'rollup-plugin-replace'
+import postcss from 'rollup-plugin-postcss'
+
+// PostCSS plugins
+import simplevars from 'postcss-simple-vars'
+import nested from 'postcss-nested'
+import cssnext from 'postcss-cssnext'
 
 export default {
   entry: 'src/choropleth.js',
@@ -10,6 +16,14 @@ export default {
   format: 'umd',
   moduleName: 'ReactChoropleth',
   plugins: [
+    postcss({
+      plugins: [
+        simplevars(),
+        nested(),
+        cssnext({ warnForDuplicates: false })
+      ],
+      extensions: ['.css']
+    }),
     babel({
       exclude: 'node-modules/**'
     }),

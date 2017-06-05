@@ -1,0 +1,8 @@
+svg.react-choropleth {
+  g {
+    path {
+      fill: blue;
+      stroke: grey;
+    }
+  }
+}

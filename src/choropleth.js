@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import './defaultStyles.css'
 
 function shapes(features, pathGenerator) {
   return features.map(feature => (
@@ -7,8 +8,8 @@ function shapes(features, pathGenerator) {
   ))
 }
 
-function transform(features, width, height, pathGenerator) {
-  const bounds = pathGenerator.bounds(features)
+function transform(geoJson, width, height, pathGenerator) {
+  const bounds = pathGenerator.bounds(geoJson)
   const dx = bounds[1][0] - bounds[0][0]
   const dy = bounds[1][1] - bounds[0][1]
   const x = (bounds[0][0] + bounds[1][0]) / 2
@@ -20,9 +21,9 @@ function transform(features, width, height, pathGenerator) {
 }
 
 export default function Choropleth ({ width, height, data, geoJson, pathGenerator }) {
-  const { translate, scale } = transform(geoJson.features, width, height, pathGenerator)
+  const { translate, scale } = transform(geoJson, width, height, pathGenerator)
   return (
-    <svg width={width} height={height}>
+    <svg className="react-choropleth" width={width} height={height}>
       <g transform={`translate(${translate})scale(${scale})`}>
         {shapes(geoJson.features, pathGenerator)}
       </g>
