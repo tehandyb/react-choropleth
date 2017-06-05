@@ -4,6 +4,7 @@ import nodeResolve from 'rollup-plugin-node-resolve'
 import uglify from 'rollup-plugin-uglify'
 import replace from 'rollup-plugin-replace'
 import serve from 'rollup-plugin-serve'
+import livereload from 'rollup-plugin-livereload'
 
 // Bundle using an entry point as if it was a real app using the choropleth
 export default {
@@ -11,7 +12,10 @@ export default {
   dest: 'demo/demo.js',
   format: 'umd',
   plugins: [
-    // serve('demo'),
+    serve('demo'),
+    livereload({
+      watch: 'demo'
+    }),
     babel({
       exclude: 'node_modules/**'
     }),
@@ -19,7 +23,7 @@ export default {
       jsnext: true
     }),
     commonjs({
-      include: ['node_modules/**', 'src/**'],
+      include: ['node_modules/**', 'src/**', 'demo/**'],
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('development')
