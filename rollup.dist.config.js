@@ -8,6 +8,7 @@ export default {
   entry: 'src/choropleth.js',
   dest: 'build/choropleth-dist.js',
   format: 'umd',
+  moduleName: 'ReactChoropleth',
   plugins: [
     babel({
       exclude: 'node-modules/**'

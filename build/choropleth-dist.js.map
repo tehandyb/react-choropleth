@@ -1,0 +1,1 @@
+{"version":3,"file":"choropleth-dist.js","sources":["../src/choropleth.js"],"sourcesContent":["import React from 'react'\r\n\r\nexport default function() {\r\n  return <div>choropleth from src </div>\r\n}"],"names":[],"mappings":";;;;;;;;AAEA,iBAAe,YAAW;SACjB;;;;GAAP;;;;;"}
