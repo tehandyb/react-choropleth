@@ -25,8 +25,7 @@
   },
   "homepage": "https://github.com/tehandyb/react-choropleth#readme",
   "dependencies": {
-    "prop-types": "^15.5.10",
-    "react-dom": "^15.5.4"
+    "prop-types": "^15.5.10"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -44,6 +43,8 @@
     "postcss-cssnext": "^2.11.0",
     "postcss-nested": "^2.0.2",
     "postcss-simple-vars": "^4.0.0",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
     "rollup": "^0.42.0",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",
