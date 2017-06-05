@@ -11,28 +11,17 @@ const pathGenerator = geoPath(projection)
 const countryValues = [
   { featureId: 'AFG', value: 20 },
   { featureId: 'PAK', value: 40 },
-  { featureId: 'IRQ', value: 100 },
-  { featureId: 'ALB', value: 400 },
-  { featureId: 'MNG', value: 300 },
-  { featureId: 'COL', value: 600 },
-  { featureId: 'ARG', value: 1000 }
+  { featureId: 'IRQ', value: 80 },
+  { featureId: 'ALB', value: 200 },
+  { featureId: 'MNG', value: 100 },
+  { featureId: 'COL', value: 60 },
+  { featureId: 'ARG', value: 150 }
 ]
-function colorGenerator(value, data) {
-  const colors = [
-    '#012E6E',
-    '#1F5392',
-    '#0166B6',
-    '#A5C5EB',
-    '#641C30',
-    '#93606F'
-  ]
-  const noDataColor = '#bbb'
-  if(value === undefined) return noDataColor
-  const values = data.map(d => d.value)
-  const scale = scaleLinear().domain([Math.min(...values), Math.max(...values)]).range(colors)
-  return scale(value)
-}
 
+const colors = [
+  '#C6DBEF',
+  '#08306B'
+]
 json('./countries.topo.json', (error, CountriesJson) => {
   const geoJson = TopoJson.feature(CountriesJson, CountriesJson.objects.countries)
   ReactDOM.render(
@@ -40,8 +29,8 @@ json('./countries.topo.json', (error, CountriesJson) => {
       width={500} 
       height={500} 
       geoJson={geoJson}
-      pathGenerator={pathGenerator} 
-      colorGenerator={colorGenerator}
+      colors={colors}
+      noDataColor="#bbb"
       data={countryValues}
     />,
     document.getElementById('entry')

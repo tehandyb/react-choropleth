@@ -25,7 +25,9 @@
   },
   "homepage": "https://github.com/tehandyb/react-choropleth#readme",
   "dependencies": {
-    "prop-types": "^15.5.10"
+    "prop-types": "^15.5.10",
+    "d3-geo": "^1.6.4",
+    "d3-scale": "^1.0.6"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -37,9 +39,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "caniuse-db": "^1.0.30000677",
     "cssnano": "^3.10.0",
-    "d3-geo": "^1.6.4",
     "d3-request": "^1.0.5",
-    "d3-scale": "^1.0.6",
     "postcss-cssnext": "^2.11.0",
     "postcss-nested": "^2.0.2",
     "postcss-simple-vars": "^4.0.0",

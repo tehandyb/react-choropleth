@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import * as d3Scale from 'd3-scale'
+import * as d3Geo from 'd3-geo'
 import './defaultStyles.css'
 
 function dataValueAccessor(featureId, data) {
@@ -8,9 +10,9 @@ function dataValueAccessor(featureId, data) {
   return datum.value
 }
 
-function shapes(features, pathGenerator, colorGenerator, data, dataValueAccessor) {
+function shapes(features, pathGenerator, colorScale, data, dataValueAccessor) {
   return features.map(feature => (
-    <path key={feature.id} d={pathGenerator(feature)} fill={colorGenerator(dataValueAccessor(feature.id, data), data)} />
+    <path key={feature.id} d={pathGenerator(feature)} fill={colorScale(dataValueAccessor(feature.id, data), data)} />
   ))
 }
 
@@ -26,12 +28,26 @@ function transform(geoJson, width, height, pathGenerator) {
   return { scale, translate }
 }
 
-export default function Choropleth ({ width, height, data, geoJson, pathGenerator, colorGenerator, dataValueAccessor }) {
+function colorScaleGenerator(colors, noDataColor) {
+  const scale = d3Scale.scaleLinear().range(colors)
+
+  return function(value, data) {
+    if(value === undefined) return noDataColor
+    const values = data.map(d => d.value)
+    scale.domain([Math.min(...values), Math.max(...values)])
+    return scale(value)
+  }
+}
+
+export default function Choropleth ({ width, height, data, geoJson, colors, noDataColor, dataValueAccessor }) {
+  const projection = d3Geo.geoMercator()
+  const pathGenerator = d3Geo.geoPath(projection)
+  const colorScale = colorScaleGenerator(colors, noDataColor)
   const { translate, scale } = transform(geoJson, width, height, pathGenerator)
   return (
     <svg className="react-choropleth" width={width} height={height}>
       <g transform={`translate(${translate})scale(${scale})`}>
-        {shapes(geoJson.features, pathGenerator, colorGenerator, data, dataValueAccessor)}
+        {shapes(geoJson.features, pathGenerator, colorScale, data, dataValueAccessor)}
       </g>
     </svg>
   )

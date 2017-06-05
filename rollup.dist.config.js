@@ -39,5 +39,5 @@ export default {
   ],
   sourceMap: true,
   // Don't bloat our bundle with React, the parent will provide it
-  external: ['react']
+  external: ['react', 'prop-types', 'd3-geo', 'd3-scale']
 }
