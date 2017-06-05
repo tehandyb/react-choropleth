@@ -18,10 +18,7 @@ const countryValues = [
   { featureId: 'ARG', value: 150 }
 ]
 
-const colors = [
-  '#C6DBEF',
-  '#08306B'
-]
+const colors =  ["#a9c8f4", "#7fa1d2", "#5479b0", "#2a518e", "#002A6C"]
 json('./countries.topo.json', (error, CountriesJson) => {
   const geoJson = TopoJson.feature(CountriesJson, CountriesJson.objects.countries)
   ReactDOM.render(

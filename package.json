@@ -25,9 +25,10 @@
   },
   "homepage": "https://github.com/tehandyb/react-choropleth#readme",
   "dependencies": {
-    "prop-types": "^15.5.10",
     "d3-geo": "^1.6.4",
-    "d3-scale": "^1.0.6"
+    "d3-scale": "^1.0.6",
+    "prop-types": "^15.5.10",
+    "simple-statistics": "^4.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

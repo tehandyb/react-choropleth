@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import * as d3Scale from 'd3-scale'
 import * as d3Geo from 'd3-geo'
+import ss from 'simple-statistics'
 import './defaultStyles.css'
 
 function dataValueAccessor(featureId, data) {
@@ -28,21 +29,25 @@ function transform(geoJson, width, height, pathGenerator) {
   return { scale, translate }
 }
 
-function colorScaleGenerator(colors, noDataColor) {
-  const scale = d3Scale.scaleLinear().range(colors)
-
-  return function(value, data) {
-    if(value === undefined) return noDataColor
-    const values = data.map(d => d.value)
+function colorScaleGenerator(colors, noDataColor, colorScaleType, data) {
+  const scale = d3Scale[colorScaleType]().range(colors)
+  const values = data.map(d => d.value)
+  if (colorScaleType === 'scaleQuantize') {
     scale.domain([Math.min(...values), Math.max(...values)])
+  } else if (colorScaleType === 'scaleThreshold') {
+    scale.domain(ss.ckmeans(values, colors.length - 1).map((cluster) => cluster[0]))
+  }
+
+  return function(value) {
+    if(value === undefined) return noDataColor
     return scale(value)
   }
 }
 
-export default function Choropleth ({ width, height, data, geoJson, colors, noDataColor, dataValueAccessor }) {
-  const projection = d3Geo.geoMercator()
+export default function Choropleth ({ width, height, data, geoJson, colors, noDataColor, dataValueAccessor, projectionName, colorScaleType }) {
+  const projection = d3Geo[projectionName]()
   const pathGenerator = d3Geo.geoPath(projection)
-  const colorScale = colorScaleGenerator(colors, noDataColor)
+  const colorScale = colorScaleGenerator(colors, noDataColor, colorScaleType, data)
   const { translate, scale } = transform(geoJson, width, height, pathGenerator)
   return (
     <svg className="react-choropleth" width={width} height={height}>
@@ -65,9 +70,14 @@ Choropleth.propTypes = {
       id: PropTypes.string
     }))
   }),
-  dataValueAccessor: PropTypes.func
+  dataValueAccessor: PropTypes.func,
+  projectionName: PropTypes.string,
+  // Only supporting the scales that are good for intensity maps(scaleQuantize for a basic distribution and scaleThreshold for a clustered distribution)
+  colorScaleType: PropTypes.oneOf(['scaleQuantize', 'scaleThreshold'])
 }
 
 Choropleth.defaultProps = {
-  dataValueAccessor: dataValueAccessor
+  dataValueAccessor: dataValueAccessor,
+  projectionName: 'geoMercator', // Can be any d3Geo projections
+  colorScaleType: 'scaleQuantize'
 }

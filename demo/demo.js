@@ -18114,6 +18114,147 @@ var slice$1 = array$1.slice;
 
 var implicit = {name: "implicit"};
 
+function ordinal(range) {
+  var index = map$1(),
+      domain = [],
+      unknown = implicit;
+
+  range = range == null ? [] : slice$1.call(range);
+
+  function scale(d) {
+    var key = d + "", i = index.get(key);
+    if (!i) {
+      if (unknown !== implicit) return unknown;
+      index.set(key, i = domain.push(d));
+    }
+    return range[(i - 1) % range.length];
+  }
+
+  scale.domain = function(_) {
+    if (!arguments.length) return domain.slice();
+    domain = [], index = map$1();
+    var i = -1, n = _.length, d, key;
+    while (++i < n) if (!index.has(key = (d = _[i]) + "")) index.set(key, domain.push(d));
+    return scale;
+  };
+
+  scale.range = function(_) {
+    return arguments.length ? (range = slice$1.call(_), scale) : range.slice();
+  };
+
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  };
+
+  scale.copy = function() {
+    return ordinal()
+        .domain(domain)
+        .range(range)
+        .unknown(unknown);
+  };
+
+  return scale;
+}
+
+function band() {
+  var scale = ordinal().unknown(undefined),
+      domain = scale.domain,
+      ordinalRange = scale.range,
+      range$$1 = [0, 1],
+      step,
+      bandwidth,
+      round = false,
+      paddingInner = 0,
+      paddingOuter = 0,
+      align = 0.5;
+
+  delete scale.unknown;
+
+  function rescale() {
+    var n = domain().length,
+        reverse = range$$1[1] < range$$1[0],
+        start = range$$1[reverse - 0],
+        stop = range$$1[1 - reverse];
+    step = (stop - start) / Math.max(1, n - paddingInner + paddingOuter * 2);
+    if (round) step = Math.floor(step);
+    start += (stop - start - step * (n - paddingInner)) * align;
+    bandwidth = step * (1 - paddingInner);
+    if (round) start = Math.round(start), bandwidth = Math.round(bandwidth);
+    var values = range(n).map(function(i) { return start + step * i; });
+    return ordinalRange(reverse ? values.reverse() : values);
+  }
+
+  scale.domain = function(_) {
+    return arguments.length ? (domain(_), rescale()) : domain();
+  };
+
+  scale.range = function(_) {
+    return arguments.length ? (range$$1 = [+_[0], +_[1]], rescale()) : range$$1.slice();
+  };
+
+  scale.rangeRound = function(_) {
+    return range$$1 = [+_[0], +_[1]], round = true, rescale();
+  };
+
+  scale.bandwidth = function() {
+    return bandwidth;
+  };
+
+  scale.step = function() {
+    return step;
+  };
+
+  scale.round = function(_) {
+    return arguments.length ? (round = !!_, rescale()) : round;
+  };
+
+  scale.padding = function(_) {
+    return arguments.length ? (paddingInner = paddingOuter = Math.max(0, Math.min(1, _)), rescale()) : paddingInner;
+  };
+
+  scale.paddingInner = function(_) {
+    return arguments.length ? (paddingInner = Math.max(0, Math.min(1, _)), rescale()) : paddingInner;
+  };
+
+  scale.paddingOuter = function(_) {
+    return arguments.length ? (paddingOuter = Math.max(0, Math.min(1, _)), rescale()) : paddingOuter;
+  };
+
+  scale.align = function(_) {
+    return arguments.length ? (align = Math.max(0, Math.min(1, _)), rescale()) : align;
+  };
+
+  scale.copy = function() {
+    return band()
+        .domain(domain())
+        .range(range$$1)
+        .round(round)
+        .paddingInner(paddingInner)
+        .paddingOuter(paddingOuter)
+        .align(align);
+  };
+
+  return rescale();
+}
+
+function pointish(scale) {
+  var copy = scale.copy;
+
+  scale.padding = scale.paddingOuter;
+  delete scale.paddingInner;
+  delete scale.paddingOuter;
+
+  scale.copy = function() {
+    return pointish(copy());
+  };
+
+  return scale;
+}
+
+function point() {
+  return pointish(band().paddingInner(1));
+}
+
 var define = function(constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype;
   prototype.constructor = constructor;
@@ -19368,6 +19509,45 @@ function linear() {
   return linearish(scale);
 }
 
+function identity$2() {
+  var domain = [0, 1];
+
+  function scale(x) {
+    return +x;
+  }
+
+  scale.invert = scale;
+
+  scale.domain = scale.range = function(_) {
+    return arguments.length ? (domain = map$3.call(_, number$1), scale) : domain.slice();
+  };
+
+  scale.copy = function() {
+    return identity$2().domain(domain);
+  };
+
+  return linearish(scale);
+}
+
+var nice = function(domain, interval) {
+  domain = domain.slice();
+
+  var i0 = 0,
+      i1 = domain.length - 1,
+      x0 = domain[i0],
+      x1 = domain[i1],
+      t;
+
+  if (x1 < x0) {
+    t = i0, i0 = i1, i1 = t;
+    t = x0, x0 = x1, x1 = t;
+  }
+
+  domain[i0] = interval.floor(x0);
+  domain[i1] = interval.ceil(x1);
+  return domain;
+};
+
 function deinterpolate(a, b) {
   return (b = Math.log(b / a))
       ? function(x) { return Math.log(x / a) / b; }
@@ -19395,6 +19575,258 @@ function logp(base) {
       : base === 10 && Math.log10
       || base === 2 && Math.log2
       || (base = Math.log(base), function(x) { return Math.log(x) / base; });
+}
+
+function reflect(f) {
+  return function(x) {
+    return -f(-x);
+  };
+}
+
+function log() {
+  var scale = continuous(deinterpolate, reinterpolate$1).domain([1, 10]),
+      domain = scale.domain,
+      base = 10,
+      logs = logp(10),
+      pows = powp(10);
+
+  function rescale() {
+    logs = logp(base), pows = powp(base);
+    if (domain()[0] < 0) logs = reflect(logs), pows = reflect(pows);
+    return scale;
+  }
+
+  scale.base = function(_) {
+    return arguments.length ? (base = +_, rescale()) : base;
+  };
+
+  scale.domain = function(_) {
+    return arguments.length ? (domain(_), rescale()) : domain();
+  };
+
+  scale.ticks = function(count) {
+    var d = domain(),
+        u = d[0],
+        v = d[d.length - 1],
+        r;
+
+    if (r = v < u) i = u, u = v, v = i;
+
+    var i = logs(u),
+        j = logs(v),
+        p,
+        k,
+        t,
+        n = count == null ? 10 : +count,
+        z = [];
+
+    if (!(base % 1) && j - i < n) {
+      i = Math.round(i) - 1, j = Math.round(j) + 1;
+      if (u > 0) for (; i < j; ++i) {
+        for (k = 1, p = pows(i); k < base; ++k) {
+          t = p * k;
+          if (t < u) continue;
+          if (t > v) break;
+          z.push(t);
+        }
+      } else for (; i < j; ++i) {
+        for (k = base - 1, p = pows(i); k >= 1; --k) {
+          t = p * k;
+          if (t < u) continue;
+          if (t > v) break;
+          z.push(t);
+        }
+      }
+    } else {
+      z = ticks(i, j, Math.min(j - i, n)).map(pows);
+    }
+
+    return r ? z.reverse() : z;
+  };
+
+  scale.tickFormat = function(count, specifier) {
+    if (specifier == null) specifier = base === 10 ? ".0e" : ",";
+    if (typeof specifier !== "function") specifier = format(specifier);
+    if (count === Infinity) return specifier;
+    if (count == null) count = 10;
+    var k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
+    return function(d) {
+      var i = d / pows(Math.round(logs(d)));
+      if (i * base < base - 0.5) i *= base;
+      return i <= k ? specifier(d) : "";
+    };
+  };
+
+  scale.nice = function() {
+    return domain(nice(domain(), {
+      floor: function(x) { return pows(Math.floor(logs(x))); },
+      ceil: function(x) { return pows(Math.ceil(logs(x))); }
+    }));
+  };
+
+  scale.copy = function() {
+    return copy(scale, log().base(base));
+  };
+
+  return scale;
+}
+
+function raise(x, exponent) {
+  return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
+}
+
+function pow() {
+  var exponent = 1,
+      scale = continuous(deinterpolate, reinterpolate),
+      domain = scale.domain;
+
+  function deinterpolate(a, b) {
+    return (b = raise(b, exponent) - (a = raise(a, exponent)))
+        ? function(x) { return (raise(x, exponent) - a) / b; }
+        : constant$2(b);
+  }
+
+  function reinterpolate(a, b) {
+    b = raise(b, exponent) - (a = raise(a, exponent));
+    return function(t) { return raise(a + b * t, 1 / exponent); };
+  }
+
+  scale.exponent = function(_) {
+    return arguments.length ? (exponent = +_, domain(domain())) : exponent;
+  };
+
+  scale.copy = function() {
+    return copy(scale, pow().exponent(exponent));
+  };
+
+  return linearish(scale);
+}
+
+function sqrt() {
+  return pow().exponent(0.5);
+}
+
+function quantile() {
+  var domain = [],
+      range$$1 = [],
+      thresholds = [];
+
+  function rescale() {
+    var i = 0, n = Math.max(1, range$$1.length);
+    thresholds = new Array(n - 1);
+    while (++i < n) thresholds[i - 1] = threshold(domain, i / n);
+    return scale;
+  }
+
+  function scale(x) {
+    if (!isNaN(x = +x)) return range$$1[bisectRight(thresholds, x)];
+  }
+
+  scale.invertExtent = function(y) {
+    var i = range$$1.indexOf(y);
+    return i < 0 ? [NaN, NaN] : [
+      i > 0 ? thresholds[i - 1] : domain[0],
+      i < thresholds.length ? thresholds[i] : domain[domain.length - 1]
+    ];
+  };
+
+  scale.domain = function(_) {
+    if (!arguments.length) return domain.slice();
+    domain = [];
+    for (var i = 0, n = _.length, d; i < n; ++i) if (d = _[i], d != null && !isNaN(d = +d)) domain.push(d);
+    domain.sort(ascending);
+    return rescale();
+  };
+
+  scale.range = function(_) {
+    return arguments.length ? (range$$1 = slice$1.call(_), rescale()) : range$$1.slice();
+  };
+
+  scale.quantiles = function() {
+    return thresholds.slice();
+  };
+
+  scale.copy = function() {
+    return quantile()
+        .domain(domain)
+        .range(range$$1);
+  };
+
+  return scale;
+}
+
+function quantize$1() {
+  var x0 = 0,
+      x1 = 1,
+      n = 1,
+      domain = [0.5],
+      range$$1 = [0, 1];
+
+  function scale(x) {
+    if (x <= x) return range$$1[bisectRight(domain, x, 0, n)];
+  }
+
+  function rescale() {
+    var i = -1;
+    domain = new Array(n);
+    while (++i < n) domain[i] = ((i + 1) * x1 - (i - n) * x0) / (n + 1);
+    return scale;
+  }
+
+  scale.domain = function(_) {
+    return arguments.length ? (x0 = +_[0], x1 = +_[1], rescale()) : [x0, x1];
+  };
+
+  scale.range = function(_) {
+    return arguments.length ? (n = (range$$1 = slice$1.call(_)).length - 1, rescale()) : range$$1.slice();
+  };
+
+  scale.invertExtent = function(y) {
+    var i = range$$1.indexOf(y);
+    return i < 0 ? [NaN, NaN]
+        : i < 1 ? [x0, domain[0]]
+        : i >= n ? [domain[n - 1], x1]
+        : [domain[i - 1], domain[i]];
+  };
+
+  scale.copy = function() {
+    return quantize$1()
+        .domain([x0, x1])
+        .range(range$$1);
+  };
+
+  return linearish(scale);
+}
+
+function threshold$1() {
+  var domain = [0.5],
+      range$$1 = [0, 1],
+      n = 1;
+
+  function scale(x) {
+    if (x <= x) return range$$1[bisectRight(domain, x, 0, n)];
+  }
+
+  scale.domain = function(_) {
+    return arguments.length ? (domain = slice$1.call(_), n = Math.min(domain.length, range$$1.length - 1), scale) : domain.slice();
+  };
+
+  scale.range = function(_) {
+    return arguments.length ? (range$$1 = slice$1.call(_), n = Math.min(domain.length, range$$1.length - 1), scale) : range$$1.slice();
+  };
+
+  scale.invertExtent = function(y) {
+    var i = range$$1.indexOf(y);
+    return [domain[i - 1], domain[i]];
+  };
+
+  scale.copy = function() {
+    return threshold$1()
+        .domain(domain)
+        .range(range$$1);
+  };
+
+  return scale;
 }
 
 var t0$1 = new Date;
@@ -20236,27 +20668,244 @@ var parseIso = +new Date("2000-01-01T00:00:00.000Z")
     ? parseIsoNative
     : utcParse(isoSpecifier);
 
+var durationSecond = 1000;
+var durationMinute = durationSecond * 60;
+var durationHour = durationMinute * 60;
+var durationDay = durationHour * 24;
+var durationWeek = durationDay * 7;
+var durationMonth = durationDay * 30;
+var durationYear = durationDay * 365;
+
+function date$1(t) {
+  return new Date(t);
+}
+
+function number$2(t) {
+  return t instanceof Date ? +t : +new Date(+t);
+}
+
+function calendar(year$$1, month$$1, week, day$$1, hour$$1, minute$$1, second$$1, millisecond$$1, format) {
+  var scale = continuous(deinterpolateLinear, reinterpolate),
+      invert = scale.invert,
+      domain = scale.domain;
+
+  var formatMillisecond = format(".%L"),
+      formatSecond = format(":%S"),
+      formatMinute = format("%I:%M"),
+      formatHour = format("%I %p"),
+      formatDay = format("%a %d"),
+      formatWeek = format("%b %d"),
+      formatMonth = format("%B"),
+      formatYear = format("%Y");
+
+  var tickIntervals = [
+    [second$$1,  1,      durationSecond],
+    [second$$1,  5,  5 * durationSecond],
+    [second$$1, 15, 15 * durationSecond],
+    [second$$1, 30, 30 * durationSecond],
+    [minute$$1,  1,      durationMinute],
+    [minute$$1,  5,  5 * durationMinute],
+    [minute$$1, 15, 15 * durationMinute],
+    [minute$$1, 30, 30 * durationMinute],
+    [  hour$$1,  1,      durationHour  ],
+    [  hour$$1,  3,  3 * durationHour  ],
+    [  hour$$1,  6,  6 * durationHour  ],
+    [  hour$$1, 12, 12 * durationHour  ],
+    [   day$$1,  1,      durationDay   ],
+    [   day$$1,  2,  2 * durationDay   ],
+    [  week,  1,      durationWeek  ],
+    [ month$$1,  1,      durationMonth ],
+    [ month$$1,  3,  3 * durationMonth ],
+    [  year$$1,  1,      durationYear  ]
+  ];
+
+  function tickFormat(date$$1) {
+    return (second$$1(date$$1) < date$$1 ? formatMillisecond
+        : minute$$1(date$$1) < date$$1 ? formatSecond
+        : hour$$1(date$$1) < date$$1 ? formatMinute
+        : day$$1(date$$1) < date$$1 ? formatHour
+        : month$$1(date$$1) < date$$1 ? (week(date$$1) < date$$1 ? formatDay : formatWeek)
+        : year$$1(date$$1) < date$$1 ? formatMonth
+        : formatYear)(date$$1);
+  }
+
+  function tickInterval(interval$$1, start, stop, step) {
+    if (interval$$1 == null) interval$$1 = 10;
+
+    // If a desired tick count is specified, pick a reasonable tick interval
+    // based on the extent of the domain and a rough estimate of tick size.
+    // Otherwise, assume interval is already a time interval and use it.
+    if (typeof interval$$1 === "number") {
+      var target = Math.abs(stop - start) / interval$$1,
+          i = bisector(function(i) { return i[2]; }).right(tickIntervals, target);
+      if (i === tickIntervals.length) {
+        step = tickStep(start / durationYear, stop / durationYear, interval$$1);
+        interval$$1 = year$$1;
+      } else if (i) {
+        i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i];
+        step = i[1];
+        interval$$1 = i[0];
+      } else {
+        step = tickStep(start, stop, interval$$1);
+        interval$$1 = millisecond$$1;
+      }
+    }
+
+    return step == null ? interval$$1 : interval$$1.every(step);
+  }
+
+  scale.invert = function(y) {
+    return new Date(invert(y));
+  };
+
+  scale.domain = function(_) {
+    return arguments.length ? domain(map$3.call(_, number$2)) : domain().map(date$1);
+  };
+
+  scale.ticks = function(interval$$1, step) {
+    var d = domain(),
+        t0 = d[0],
+        t1 = d[d.length - 1],
+        r = t1 < t0,
+        t;
+    if (r) t = t0, t0 = t1, t1 = t;
+    t = tickInterval(interval$$1, t0, t1, step);
+    t = t ? t.range(t0, t1 + 1) : []; // inclusive stop
+    return r ? t.reverse() : t;
+  };
+
+  scale.tickFormat = function(count, specifier) {
+    return specifier == null ? tickFormat : format(specifier);
+  };
+
+  scale.nice = function(interval$$1, step) {
+    var d = domain();
+    return (interval$$1 = tickInterval(interval$$1, d[0], d[d.length - 1], step))
+        ? domain(nice(d, interval$$1))
+        : scale;
+  };
+
+  scale.copy = function() {
+    return copy(scale, calendar(year$$1, month$$1, week, day$$1, hour$$1, minute$$1, second$$1, millisecond$$1, format));
+  };
+
+  return scale;
+}
+
+var time = function() {
+  return calendar(year, month, sunday, day, hour, minute, second, millisecond, timeFormat).domain([new Date(2000, 0, 1), new Date(2000, 0, 2)]);
+};
+
+var utcTime = function() {
+  return calendar(utcYear, utcMonth, utcSunday, utcDay, utcHour, utcMinute, second, millisecond, utcFormat).domain([Date.UTC(2000, 0, 1), Date.UTC(2000, 0, 2)]);
+};
+
 var colors$1 = function(s) {
   return s.match(/.{6}/g).map(function(x) {
     return "#" + x;
   });
 };
 
-colors$1("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
+var category10 = colors$1("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
 
-colors$1("393b795254a36b6ecf9c9ede6379398ca252b5cf6bcedb9c8c6d31bd9e39e7ba52e7cb94843c39ad494ad6616be7969c7b4173a55194ce6dbdde9ed6");
+var category20b = colors$1("393b795254a36b6ecf9c9ede6379398ca252b5cf6bcedb9c8c6d31bd9e39e7ba52e7cb94843c39ad494ad6616be7969c7b4173a55194ce6dbdde9ed6");
 
-colors$1("3182bd6baed69ecae1c6dbefe6550dfd8d3cfdae6bfdd0a231a35474c476a1d99bc7e9c0756bb19e9ac8bcbddcdadaeb636363969696bdbdbdd9d9d9");
+var category20c = colors$1("3182bd6baed69ecae1c6dbefe6550dfd8d3cfdae6bfdd0a231a35474c476a1d99bc7e9c0756bb19e9ac8bcbddcdadaeb636363969696bdbdbdd9d9d9");
 
-colors$1("1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5");
+var category20 = colors$1("1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5");
 
-cubehelixLong(cubehelix(300, 0.5, 0.0), cubehelix(-240, 0.5, 1.0));
+var cubehelix$3 = cubehelixLong(cubehelix(300, 0.5, 0.0), cubehelix(-240, 0.5, 1.0));
 
 var warm = cubehelixLong(cubehelix(-100, 0.75, 0.35), cubehelix(80, 1.50, 0.8));
 
 var cool = cubehelixLong(cubehelix(260, 0.75, 0.35), cubehelix(80, 1.50, 0.8));
 
 var rainbow = cubehelix();
+
+var rainbow$1 = function(t) {
+  if (t < 0 || t > 1) t -= Math.floor(t);
+  var ts = Math.abs(t - 0.5);
+  rainbow.h = 360 * t - 100;
+  rainbow.s = 1.5 - 1.5 * ts;
+  rainbow.l = 0.8 - 0.9 * ts;
+  return rainbow + "";
+};
+
+function ramp(range) {
+  var n = range.length;
+  return function(t) {
+    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
+  };
+}
+
+var viridis = ramp(colors$1("44015444025645045745055946075a46085c460a5d460b5e470d60470e6147106347116447136548146748166848176948186a481a6c481b6d481c6e481d6f481f70482071482173482374482475482576482677482878482979472a7a472c7a472d7b472e7c472f7d46307e46327e46337f463480453581453781453882443983443a83443b84433d84433e85423f854240864241864142874144874045884046883f47883f48893e49893e4a893e4c8a3d4d8a3d4e8a3c4f8a3c508b3b518b3b528b3a538b3a548c39558c39568c38588c38598c375a8c375b8d365c8d365d8d355e8d355f8d34608d34618d33628d33638d32648e32658e31668e31678e31688e30698e306a8e2f6b8e2f6c8e2e6d8e2e6e8e2e6f8e2d708e2d718e2c718e2c728e2c738e2b748e2b758e2a768e2a778e2a788e29798e297a8e297b8e287c8e287d8e277e8e277f8e27808e26818e26828e26828e25838e25848e25858e24868e24878e23888e23898e238a8d228b8d228c8d228d8d218e8d218f8d21908d21918c20928c20928c20938c1f948c1f958b1f968b1f978b1f988b1f998a1f9a8a1e9b8a1e9c891e9d891f9e891f9f881fa0881fa1881fa1871fa28720a38620a48621a58521a68522a78522a88423a98324aa8325ab8225ac8226ad8127ad8128ae8029af7f2ab07f2cb17e2db27d2eb37c2fb47c31b57b32b67a34b67935b77937b87838b9773aba763bbb753dbc743fbc7340bd7242be7144bf7046c06f48c16e4ac16d4cc26c4ec36b50c46a52c56954c56856c66758c7655ac8645cc8635ec96260ca6063cb5f65cb5e67cc5c69cd5b6ccd5a6ece5870cf5773d05675d05477d1537ad1517cd2507fd34e81d34d84d44b86d54989d5488bd6468ed64590d74393d74195d84098d83e9bd93c9dd93ba0da39a2da37a5db36a8db34aadc32addc30b0dd2fb2dd2db5de2bb8de29bade28bddf26c0df25c2df23c5e021c8e020cae11fcde11dd0e11cd2e21bd5e21ad8e219dae319dde318dfe318e2e418e5e419e7e419eae51aece51befe51cf1e51df4e61ef6e620f8e621fbe723fde725"));
+
+var magma = ramp(colors$1("00000401000501010601010802010902020b02020d03030f03031204041405041606051806051a07061c08071e0907200a08220b09240c09260d0a290e0b2b100b2d110c2f120d31130d34140e36150e38160f3b180f3d19103f1a10421c10441d11471e114920114b21114e22115024125325125527125829115a2a115c2c115f2d11612f116331116533106734106936106b38106c390f6e3b0f703d0f713f0f72400f74420f75440f764510774710784910784a10794c117a4e117b4f127b51127c52137c54137d56147d57157e59157e5a167e5c167f5d177f5f187f601880621980641a80651a80671b80681c816a1c816b1d816d1d816e1e81701f81721f817320817521817621817822817922827b23827c23827e24828025828125818326818426818627818827818928818b29818c29818e2a81902a81912b81932b80942c80962c80982d80992d809b2e7f9c2e7f9e2f7fa02f7fa1307ea3307ea5317ea6317da8327daa337dab337cad347cae347bb0357bb2357bb3367ab5367ab73779b83779ba3878bc3978bd3977bf3a77c03a76c23b75c43c75c53c74c73d73c83e73ca3e72cc3f71cd4071cf4070d0416fd2426fd3436ed5446dd6456cd8456cd9466bdb476adc4869de4968df4a68e04c67e24d66e34e65e44f64e55064e75263e85362e95462ea5661eb5760ec5860ed5a5fee5b5eef5d5ef05f5ef1605df2625df2645cf3655cf4675cf4695cf56b5cf66c5cf66e5cf7705cf7725cf8745cf8765cf9785df9795df97b5dfa7d5efa7f5efa815ffb835ffb8560fb8761fc8961fc8a62fc8c63fc8e64fc9065fd9266fd9467fd9668fd9869fd9a6afd9b6bfe9d6cfe9f6dfea16efea36ffea571fea772fea973feaa74feac76feae77feb078feb27afeb47bfeb67cfeb77efeb97ffebb81febd82febf84fec185fec287fec488fec68afec88cfeca8dfecc8ffecd90fecf92fed194fed395fed597fed799fed89afdda9cfddc9efddea0fde0a1fde2a3fde3a5fde5a7fde7a9fde9aafdebacfcecaefceeb0fcf0b2fcf2b4fcf4b6fcf6b8fcf7b9fcf9bbfcfbbdfcfdbf"));
+
+var inferno = ramp(colors$1("00000401000501010601010802010a02020c02020e03021004031204031405041706041907051b08051d09061f0a07220b07240c08260d08290e092b10092d110a30120a32140b34150b37160b39180c3c190c3e1b0c411c0c431e0c451f0c48210c4a230c4c240c4f260c51280b53290b552b0b572d0b592f0a5b310a5c320a5e340a5f3609613809623909633b09643d09653e0966400a67420a68440a68450a69470b6a490b6a4a0c6b4c0c6b4d0d6c4f0d6c510e6c520e6d540f6d550f6d57106e59106e5a116e5c126e5d126e5f136e61136e62146e64156e65156e67166e69166e6a176e6c186e6d186e6f196e71196e721a6e741a6e751b6e771c6d781c6d7a1d6d7c1d6d7d1e6d7f1e6c801f6c82206c84206b85216b87216b88226a8a226a8c23698d23698f24699025689225689326679526679727669827669a28659b29649d29649f2a63a02a63a22b62a32c61a52c60a62d60a82e5fa92e5eab2f5ead305dae305cb0315bb1325ab3325ab43359b63458b73557b93556ba3655bc3754bd3853bf3952c03a51c13a50c33b4fc43c4ec63d4dc73e4cc83f4bca404acb4149cc4248ce4347cf4446d04545d24644d34743d44842d54a41d74b3fd84c3ed94d3dda4e3cdb503bdd513ade5238df5337e05536e15635e25734e35933e45a31e55c30e65d2fe75e2ee8602de9612bea632aeb6429eb6628ec6726ed6925ee6a24ef6c23ef6e21f06f20f1711ff1731df2741cf3761bf37819f47918f57b17f57d15f67e14f68013f78212f78410f8850ff8870ef8890cf98b0bf98c0af98e09fa9008fa9207fa9407fb9606fb9706fb9906fb9b06fb9d07fc9f07fca108fca309fca50afca60cfca80dfcaa0ffcac11fcae12fcb014fcb216fcb418fbb61afbb81dfbba1ffbbc21fbbe23fac026fac228fac42afac62df9c72ff9c932f9cb35f8cd37f8cf3af7d13df7d340f6d543f6d746f5d949f5db4cf4dd4ff4df53f4e156f3e35af3e55df2e661f2e865f2ea69f1ec6df1ed71f1ef75f1f179f2f27df2f482f3f586f3f68af4f88ef5f992f6fa96f8fb9af9fc9dfafda1fcffa4"));
+
+var plasma = ramp(colors$1("0d088710078813078916078a19068c1b068d1d068e20068f2206902406912605912805922a05932c05942e05952f059631059733059735049837049938049a3a049a3c049b3e049c3f049c41049d43039e44039e46039f48039f4903a04b03a14c02a14e02a25002a25102a35302a35502a45601a45801a45901a55b01a55c01a65e01a66001a66100a76300a76400a76600a76700a86900a86a00a86c00a86e00a86f00a87100a87201a87401a87501a87701a87801a87a02a87b02a87d03a87e03a88004a88104a78305a78405a78606a68707a68808a68a09a58b0aa58d0ba58e0ca48f0da4910ea3920fa39410a29511a19613a19814a099159f9a169f9c179e9d189d9e199da01a9ca11b9ba21d9aa31e9aa51f99a62098a72197a82296aa2395ab2494ac2694ad2793ae2892b02991b12a90b22b8fb32c8eb42e8db52f8cb6308bb7318ab83289ba3388bb3488bc3587bd3786be3885bf3984c03a83c13b82c23c81c33d80c43e7fc5407ec6417dc7427cc8437bc9447aca457acb4679cc4778cc4977cd4a76ce4b75cf4c74d04d73d14e72d24f71d35171d45270d5536fd5546ed6556dd7566cd8576bd9586ada5a6ada5b69db5c68dc5d67dd5e66de5f65de6164df6263e06363e16462e26561e26660e3685fe4695ee56a5de56b5de66c5ce76e5be76f5ae87059e97158e97257ea7457eb7556eb7655ec7754ed7953ed7a52ee7b51ef7c51ef7e50f07f4ff0804ef1814df1834cf2844bf3854bf3874af48849f48948f58b47f58c46f68d45f68f44f79044f79143f79342f89441f89540f9973ff9983ef99a3efa9b3dfa9c3cfa9e3bfb9f3afba139fba238fca338fca537fca636fca835fca934fdab33fdac33fdae32fdaf31fdb130fdb22ffdb42ffdb52efeb72dfeb82cfeba2cfebb2bfebd2afebe2afec029fdc229fdc328fdc527fdc627fdc827fdca26fdcb26fccd25fcce25fcd025fcd225fbd324fbd524fbd724fad824fada24f9dc24f9dd25f8df25f8e125f7e225f7e425f6e626f6e826f5e926f5eb27f4ed27f3ee27f3f027f2f227f1f426f1f525f0f724f0f921"));
+
+function sequential(interpolator) {
+  var x0 = 0,
+      x1 = 1,
+      clamp = false;
+
+  function scale(x) {
+    var t = (x - x0) / (x1 - x0);
+    return interpolator(clamp ? Math.max(0, Math.min(1, t)) : t);
+  }
+
+  scale.domain = function(_) {
+    return arguments.length ? (x0 = +_[0], x1 = +_[1], scale) : [x0, x1];
+  };
+
+  scale.clamp = function(_) {
+    return arguments.length ? (clamp = !!_, scale) : clamp;
+  };
+
+  scale.interpolator = function(_) {
+    return arguments.length ? (interpolator = _, scale) : interpolator;
+  };
+
+  scale.copy = function() {
+    return sequential(interpolator).domain([x0, x1]).clamp(clamp);
+  };
+
+  return linearish(scale);
+}
+
+
+
+var d3Scale = Object.freeze({
+	scaleBand: band,
+	scalePoint: point,
+	scaleIdentity: identity$2,
+	scaleLinear: linear,
+	scaleLog: log,
+	scaleOrdinal: ordinal,
+	scaleImplicit: implicit,
+	scalePow: pow,
+	scaleSqrt: sqrt,
+	scaleQuantile: quantile,
+	scaleQuantize: quantize$1,
+	scaleThreshold: threshold$1,
+	scaleTime: time,
+	scaleUtc: utcTime,
+	schemeCategory10: category10,
+	schemeCategory20b: category20b,
+	schemeCategory20c: category20c,
+	schemeCategory20: category20,
+	interpolateCubehelixDefault: cubehelix$3,
+	interpolateRainbow: rainbow$1,
+	interpolateWarm: warm,
+	interpolateCool: cool,
+	interpolateViridis: viridis,
+	interpolateMagma: magma,
+	interpolateInferno: inferno,
+	interpolatePlasma: plasma,
+	scaleSequential: sequential
+});
 
 var noop = {value: function() {}};
 
@@ -20724,7 +21373,7 @@ function add(adder, a, b) {
 }
 
 var epsilon = 1e-6;
-
+var epsilon2$1 = 1e-12;
 var pi = Math.PI;
 var halfPi = pi / 2;
 var quarterPi = pi / 4;
@@ -20737,13 +21386,13 @@ var abs = Math.abs;
 var atan = Math.atan;
 var atan2 = Math.atan2;
 var cos = Math.cos;
-
+var ceil = Math.ceil;
 var exp = Math.exp;
 
 var log$1 = Math.log;
-
+var pow$1 = Math.pow;
 var sin = Math.sin;
-
+var sign = Math.sign || function(x) { return x > 0 ? 1 : x < 0 ? -1 : 0; };
 var sqrt$1 = Math.sqrt;
 var tan = Math.tan;
 
@@ -20753,6 +21402,10 @@ function acos(x) {
 
 function asin(x) {
   return x > 1 ? halfPi : x < -1 ? -halfPi : Math.asin(x);
+}
+
+function haversin(x) {
+  return (x = sin(x / 2)) * x;
 }
 
 function noop$1() {}
@@ -20836,6 +21489,67 @@ var lambda0;
 var cosPhi0;
 var sinPhi0;
 
+var areaStream = {
+  point: noop$1,
+  lineStart: noop$1,
+  lineEnd: noop$1,
+  polygonStart: function() {
+    areaRingSum.reset();
+    areaStream.lineStart = areaRingStart;
+    areaStream.lineEnd = areaRingEnd;
+  },
+  polygonEnd: function() {
+    var areaRing = +areaRingSum;
+    areaSum.add(areaRing < 0 ? tau + areaRing : areaRing);
+    this.lineStart = this.lineEnd = this.point = noop$1;
+  },
+  sphere: function() {
+    areaSum.add(tau);
+  }
+};
+
+function areaRingStart() {
+  areaStream.point = areaPointFirst;
+}
+
+function areaRingEnd() {
+  areaPoint(lambda00, phi00);
+}
+
+function areaPointFirst(lambda, phi) {
+  areaStream.point = areaPoint;
+  lambda00 = lambda, phi00 = phi;
+  lambda *= radians, phi *= radians;
+  lambda0 = lambda, cosPhi0 = cos(phi = phi / 2 + quarterPi), sinPhi0 = sin(phi);
+}
+
+function areaPoint(lambda, phi) {
+  lambda *= radians, phi *= radians;
+  phi = phi / 2 + quarterPi; // half the angular distance from south pole
+
+  // Spherical excess E for a spherical triangle with vertices: south pole,
+  // previous point, current point.  Uses a formula derived from Cagnoli’s
+  // theorem.  See Todhunter, Spherical Trig. (1871), Sec. 103, Eq. (2).
+  var dLambda = lambda - lambda0,
+      sdLambda = dLambda >= 0 ? 1 : -1,
+      adLambda = sdLambda * dLambda,
+      cosPhi = cos(phi),
+      sinPhi = sin(phi),
+      k = sinPhi0 * sinPhi,
+      u = cosPhi0 * cosPhi + k * cos(adLambda),
+      v = k * sdLambda * sin(adLambda);
+  areaRingSum.add(atan2(v, u));
+
+  // Advance the previous points.
+  lambda0 = lambda, cosPhi0 = cosPhi, sinPhi0 = sinPhi;
+}
+
+var area = function(object) {
+  areaSum.reset();
+  geoStream(object, areaStream);
+  return areaSum * 2;
+};
+
 function spherical(cartesian) {
   return [atan2(cartesian[1], cartesian[0]), asin(cartesian[2])];
 }
@@ -20880,10 +21594,321 @@ var deltaSum = adder();
 var ranges;
 var range$1;
 
+var boundsStream = {
+  point: boundsPoint,
+  lineStart: boundsLineStart,
+  lineEnd: boundsLineEnd,
+  polygonStart: function() {
+    boundsStream.point = boundsRingPoint;
+    boundsStream.lineStart = boundsRingStart;
+    boundsStream.lineEnd = boundsRingEnd;
+    deltaSum.reset();
+    areaStream.polygonStart();
+  },
+  polygonEnd: function() {
+    areaStream.polygonEnd();
+    boundsStream.point = boundsPoint;
+    boundsStream.lineStart = boundsLineStart;
+    boundsStream.lineEnd = boundsLineEnd;
+    if (areaRingSum < 0) lambda0$1 = -(lambda1 = 180), phi0 = -(phi1 = 90);
+    else if (deltaSum > epsilon) phi1 = 90;
+    else if (deltaSum < -epsilon) phi0 = -90;
+    range$1[0] = lambda0$1, range$1[1] = lambda1;
+  }
+};
+
+function boundsPoint(lambda, phi) {
+  ranges.push(range$1 = [lambda0$1 = lambda, lambda1 = lambda]);
+  if (phi < phi0) phi0 = phi;
+  if (phi > phi1) phi1 = phi;
+}
+
+function linePoint(lambda, phi) {
+  var p = cartesian([lambda * radians, phi * radians]);
+  if (p0) {
+    var normal = cartesianCross(p0, p),
+        equatorial = [normal[1], -normal[0], 0],
+        inflection = cartesianCross(equatorial, normal);
+    cartesianNormalizeInPlace(inflection);
+    inflection = spherical(inflection);
+    var delta = lambda - lambda2,
+        sign$$1 = delta > 0 ? 1 : -1,
+        lambdai = inflection[0] * degrees$1 * sign$$1,
+        phii,
+        antimeridian = abs(delta) > 180;
+    if (antimeridian ^ (sign$$1 * lambda2 < lambdai && lambdai < sign$$1 * lambda)) {
+      phii = inflection[1] * degrees$1;
+      if (phii > phi1) phi1 = phii;
+    } else if (lambdai = (lambdai + 360) % 360 - 180, antimeridian ^ (sign$$1 * lambda2 < lambdai && lambdai < sign$$1 * lambda)) {
+      phii = -inflection[1] * degrees$1;
+      if (phii < phi0) phi0 = phii;
+    } else {
+      if (phi < phi0) phi0 = phi;
+      if (phi > phi1) phi1 = phi;
+    }
+    if (antimeridian) {
+      if (lambda < lambda2) {
+        if (angle(lambda0$1, lambda) > angle(lambda0$1, lambda1)) lambda1 = lambda;
+      } else {
+        if (angle(lambda, lambda1) > angle(lambda0$1, lambda1)) lambda0$1 = lambda;
+      }
+    } else {
+      if (lambda1 >= lambda0$1) {
+        if (lambda < lambda0$1) lambda0$1 = lambda;
+        if (lambda > lambda1) lambda1 = lambda;
+      } else {
+        if (lambda > lambda2) {
+          if (angle(lambda0$1, lambda) > angle(lambda0$1, lambda1)) lambda1 = lambda;
+        } else {
+          if (angle(lambda, lambda1) > angle(lambda0$1, lambda1)) lambda0$1 = lambda;
+        }
+      }
+    }
+  } else {
+    ranges.push(range$1 = [lambda0$1 = lambda, lambda1 = lambda]);
+  }
+  if (phi < phi0) phi0 = phi;
+  if (phi > phi1) phi1 = phi;
+  p0 = p, lambda2 = lambda;
+}
+
+function boundsLineStart() {
+  boundsStream.point = linePoint;
+}
+
+function boundsLineEnd() {
+  range$1[0] = lambda0$1, range$1[1] = lambda1;
+  boundsStream.point = boundsPoint;
+  p0 = null;
+}
+
+function boundsRingPoint(lambda, phi) {
+  if (p0) {
+    var delta = lambda - lambda2;
+    deltaSum.add(abs(delta) > 180 ? delta + (delta > 0 ? 360 : -360) : delta);
+  } else {
+    lambda00$1 = lambda, phi00$1 = phi;
+  }
+  areaStream.point(lambda, phi);
+  linePoint(lambda, phi);
+}
+
+function boundsRingStart() {
+  areaStream.lineStart();
+}
+
+function boundsRingEnd() {
+  boundsRingPoint(lambda00$1, phi00$1);
+  areaStream.lineEnd();
+  if (abs(deltaSum) > epsilon) lambda0$1 = -(lambda1 = 180);
+  range$1[0] = lambda0$1, range$1[1] = lambda1;
+  p0 = null;
+}
+
+// Finds the left-right distance between two longitudes.
+// This is almost the same as (lambda1 - lambda0 + 360°) % 360°, except that we want
+// the distance between ±180° to be 360°.
+function angle(lambda0, lambda1) {
+  return (lambda1 -= lambda0) < 0 ? lambda1 + 360 : lambda1;
+}
+
+function rangeCompare(a, b) {
+  return a[0] - b[0];
+}
+
+function rangeContains(range, x) {
+  return range[0] <= range[1] ? range[0] <= x && x <= range[1] : x < range[0] || range[1] < x;
+}
+
+var bounds = function(feature) {
+  var i, n, a, b, merged, deltaMax, delta;
+
+  phi1 = lambda1 = -(lambda0$1 = phi0 = Infinity);
+  ranges = [];
+  geoStream(feature, boundsStream);
+
+  // First, sort ranges by their minimum longitudes.
+  if (n = ranges.length) {
+    ranges.sort(rangeCompare);
+
+    // Then, merge any ranges that overlap.
+    for (i = 1, a = ranges[0], merged = [a]; i < n; ++i) {
+      b = ranges[i];
+      if (rangeContains(a, b[0]) || rangeContains(a, b[1])) {
+        if (angle(a[0], b[1]) > angle(a[0], a[1])) a[1] = b[1];
+        if (angle(b[0], a[1]) > angle(a[0], a[1])) a[0] = b[0];
+      } else {
+        merged.push(a = b);
+      }
+    }
+
+    // Finally, find the largest gap between the merged ranges.
+    // The final bounding box will be the inverse of this gap.
+    for (deltaMax = -Infinity, n = merged.length - 1, i = 0, a = merged[n]; i <= n; a = b, ++i) {
+      b = merged[i];
+      if ((delta = angle(a[1], b[0])) > deltaMax) deltaMax = delta, lambda0$1 = b[0], lambda1 = a[1];
+    }
+  }
+
+  ranges = range$1 = null;
+
+  return lambda0$1 === Infinity || phi0 === Infinity
+      ? [[NaN, NaN], [NaN, NaN]]
+      : [[lambda0$1, phi0], [lambda1, phi1]];
+};
+
 var W0;
+var W1;
 var X0;
 var Y0;
-var Z0; // previous point
+var Z0;
+var X1;
+var Y1;
+var Z1;
+var X2;
+var Y2;
+var Z2;
+var lambda00$2;
+var phi00$2;
+var x0;
+var y0;
+var z0; // previous point
+
+var centroidStream = {
+  sphere: noop$1,
+  point: centroidPoint,
+  lineStart: centroidLineStart,
+  lineEnd: centroidLineEnd,
+  polygonStart: function() {
+    centroidStream.lineStart = centroidRingStart;
+    centroidStream.lineEnd = centroidRingEnd;
+  },
+  polygonEnd: function() {
+    centroidStream.lineStart = centroidLineStart;
+    centroidStream.lineEnd = centroidLineEnd;
+  }
+};
+
+// Arithmetic mean of Cartesian vectors.
+function centroidPoint(lambda, phi) {
+  lambda *= radians, phi *= radians;
+  var cosPhi = cos(phi);
+  centroidPointCartesian(cosPhi * cos(lambda), cosPhi * sin(lambda), sin(phi));
+}
+
+function centroidPointCartesian(x, y, z) {
+  ++W0;
+  X0 += (x - X0) / W0;
+  Y0 += (y - Y0) / W0;
+  Z0 += (z - Z0) / W0;
+}
+
+function centroidLineStart() {
+  centroidStream.point = centroidLinePointFirst;
+}
+
+function centroidLinePointFirst(lambda, phi) {
+  lambda *= radians, phi *= radians;
+  var cosPhi = cos(phi);
+  x0 = cosPhi * cos(lambda);
+  y0 = cosPhi * sin(lambda);
+  z0 = sin(phi);
+  centroidStream.point = centroidLinePoint;
+  centroidPointCartesian(x0, y0, z0);
+}
+
+function centroidLinePoint(lambda, phi) {
+  lambda *= radians, phi *= radians;
+  var cosPhi = cos(phi),
+      x = cosPhi * cos(lambda),
+      y = cosPhi * sin(lambda),
+      z = sin(phi),
+      w = atan2(sqrt$1((w = y0 * z - z0 * y) * w + (w = z0 * x - x0 * z) * w + (w = x0 * y - y0 * x) * w), x0 * x + y0 * y + z0 * z);
+  W1 += w;
+  X1 += w * (x0 + (x0 = x));
+  Y1 += w * (y0 + (y0 = y));
+  Z1 += w * (z0 + (z0 = z));
+  centroidPointCartesian(x0, y0, z0);
+}
+
+function centroidLineEnd() {
+  centroidStream.point = centroidPoint;
+}
+
+// See J. E. Brock, The Inertia Tensor for a Spherical Triangle,
+// J. Applied Mechanics 42, 239 (1975).
+function centroidRingStart() {
+  centroidStream.point = centroidRingPointFirst;
+}
+
+function centroidRingEnd() {
+  centroidRingPoint(lambda00$2, phi00$2);
+  centroidStream.point = centroidPoint;
+}
+
+function centroidRingPointFirst(lambda, phi) {
+  lambda00$2 = lambda, phi00$2 = phi;
+  lambda *= radians, phi *= radians;
+  centroidStream.point = centroidRingPoint;
+  var cosPhi = cos(phi);
+  x0 = cosPhi * cos(lambda);
+  y0 = cosPhi * sin(lambda);
+  z0 = sin(phi);
+  centroidPointCartesian(x0, y0, z0);
+}
+
+function centroidRingPoint(lambda, phi) {
+  lambda *= radians, phi *= radians;
+  var cosPhi = cos(phi),
+      x = cosPhi * cos(lambda),
+      y = cosPhi * sin(lambda),
+      z = sin(phi),
+      cx = y0 * z - z0 * y,
+      cy = z0 * x - x0 * z,
+      cz = x0 * y - y0 * x,
+      m = sqrt$1(cx * cx + cy * cy + cz * cz),
+      w = asin(m), // line weight = angle
+      v = m && -w / m; // area weight multiplier
+  X2 += v * cx;
+  Y2 += v * cy;
+  Z2 += v * cz;
+  W1 += w;
+  X1 += w * (x0 + (x0 = x));
+  Y1 += w * (y0 + (y0 = y));
+  Z1 += w * (z0 + (z0 = z));
+  centroidPointCartesian(x0, y0, z0);
+}
+
+var centroid = function(object) {
+  W0 = W1 =
+  X0 = Y0 = Z0 =
+  X1 = Y1 = Z1 =
+  X2 = Y2 = Z2 = 0;
+  geoStream(object, centroidStream);
+
+  var x = X2,
+      y = Y2,
+      z = Z2,
+      m = x * x + y * y + z * z;
+
+  // If the area-weighted ccentroid is undefined, fall back to length-weighted ccentroid.
+  if (m < epsilon2$1) {
+    x = X1, y = Y1, z = Z1;
+    // If the feature has zero length, fall back to arithmetic mean of point vectors.
+    if (W1 < epsilon) x = X0, y = Y0, z = Z0;
+    m = x * x + y * y + z * z;
+    // If the feature still has an undefined ccentroid, then return.
+    if (m < epsilon2$1) return [NaN, NaN];
+  }
+
+  return [atan2(y, x) * degrees$1, asin(z / sqrt$1(m)) * degrees$1];
+};
+
+var constant$3 = function(x) {
+  return function() {
+    return x;
+  };
+};
 
 var compose = function(a, b) {
 
@@ -20998,6 +22023,46 @@ function circleRadius(cosRadius, point) {
   var radius = acos(-point[1]);
   return ((-point[2] < 0 ? -radius : radius) + tau - epsilon) % tau;
 }
+
+var circle = function() {
+  var center = constant$3([0, 0]),
+      radius = constant$3(90),
+      precision = constant$3(6),
+      ring,
+      rotate,
+      stream = {point: point};
+
+  function point(x, y) {
+    ring.push(x = rotate(x, y));
+    x[0] *= degrees$1, x[1] *= degrees$1;
+  }
+
+  function circle() {
+    var c = center.apply(this, arguments),
+        r = radius.apply(this, arguments) * radians,
+        p = precision.apply(this, arguments) * radians;
+    ring = [];
+    rotate = rotateRadians(-c[0] * radians, -c[1] * radians, 0).invert;
+    circleStream(stream, r, p, 1);
+    c = {type: "Polygon", coordinates: [ring]};
+    ring = rotate = null;
+    return c;
+  }
+
+  circle.center = function(_) {
+    return arguments.length ? (center = typeof _ === "function" ? _ : constant$3([+_[0], +_[1]]), circle) : center;
+  };
+
+  circle.radius = function(_) {
+    return arguments.length ? (radius = typeof _ === "function" ? _ : constant$3(+_), circle) : radius;
+  };
+
+  circle.precision = function(_) {
+    return arguments.length ? (precision = typeof _ === "function" ? _ : constant$3(+_), circle) : precision;
+  };
+
+  return circle;
+};
 
 var clipBuffer = function() {
   var lines = [],
@@ -21350,6 +22415,25 @@ function clipExtent(x0, y0, x1, y1) {
   };
 }
 
+var extent$1 = function() {
+  var x0 = 0,
+      y0 = 0,
+      x1 = 960,
+      y1 = 500,
+      cache,
+      cacheStream,
+      clip;
+
+  return clip = {
+    stream: function(stream) {
+      return cache && cacheStream === stream ? cache : cache = clipExtent(x0, y0, x1, y1)(cacheStream = stream);
+    },
+    extent: function(_) {
+      return arguments.length ? (x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1], cache = cacheStream = null, clip) : [[x0, y0], [x1, y1]];
+    }
+  };
+};
+
 var sum$1 = adder();
 
 var polygonContains = function(polygon, point) {
@@ -21473,6 +22557,17 @@ var distance = function(a, b) {
   return length$1(object$1);
 };
 
+var containsObjectType = {
+  Feature: function(object, point) {
+    return containsGeometry(object.geometry, point);
+  },
+  FeatureCollection: function(object, point) {
+    var features = object.features, i = -1, n = features.length;
+    while (++i < n) if (containsGeometry(features[i].geometry, point)) return true;
+    return false;
+  }
+};
+
 var containsGeometryType = {
   Sphere: function() {
     return true;
@@ -21536,6 +22631,150 @@ function ringRadians(ring) {
 function pointRadians(point) {
   return [point[0] * radians, point[1] * radians];
 }
+
+var contains = function(object, point) {
+  return (object && containsObjectType.hasOwnProperty(object.type)
+      ? containsObjectType[object.type]
+      : containsGeometry)(object, point);
+};
+
+function graticuleX(y0, y1, dy) {
+  var y = range(y0, y1 - epsilon, dy).concat(y1);
+  return function(x) { return y.map(function(y) { return [x, y]; }); };
+}
+
+function graticuleY(x0, x1, dx) {
+  var x = range(x0, x1 - epsilon, dx).concat(x1);
+  return function(y) { return x.map(function(x) { return [x, y]; }); };
+}
+
+function graticule() {
+  var x1, x0, X1, X0,
+      y1, y0, Y1, Y0,
+      dx = 10, dy = dx, DX = 90, DY = 360,
+      x, y, X, Y,
+      precision = 2.5;
+
+  function graticule() {
+    return {type: "MultiLineString", coordinates: lines()};
+  }
+
+  function lines() {
+    return range(ceil(X0 / DX) * DX, X1, DX).map(X)
+        .concat(range(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
+        .concat(range(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs(x % DX) > epsilon; }).map(x))
+        .concat(range(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs(y % DY) > epsilon; }).map(y));
+  }
+
+  graticule.lines = function() {
+    return lines().map(function(coordinates) { return {type: "LineString", coordinates: coordinates}; });
+  };
+
+  graticule.outline = function() {
+    return {
+      type: "Polygon",
+      coordinates: [
+        X(X0).concat(
+        Y(Y1).slice(1),
+        X(X1).reverse().slice(1),
+        Y(Y0).reverse().slice(1))
+      ]
+    };
+  };
+
+  graticule.extent = function(_) {
+    if (!arguments.length) return graticule.extentMinor();
+    return graticule.extentMajor(_).extentMinor(_);
+  };
+
+  graticule.extentMajor = function(_) {
+    if (!arguments.length) return [[X0, Y0], [X1, Y1]];
+    X0 = +_[0][0], X1 = +_[1][0];
+    Y0 = +_[0][1], Y1 = +_[1][1];
+    if (X0 > X1) _ = X0, X0 = X1, X1 = _;
+    if (Y0 > Y1) _ = Y0, Y0 = Y1, Y1 = _;
+    return graticule.precision(precision);
+  };
+
+  graticule.extentMinor = function(_) {
+    if (!arguments.length) return [[x0, y0], [x1, y1]];
+    x0 = +_[0][0], x1 = +_[1][0];
+    y0 = +_[0][1], y1 = +_[1][1];
+    if (x0 > x1) _ = x0, x0 = x1, x1 = _;
+    if (y0 > y1) _ = y0, y0 = y1, y1 = _;
+    return graticule.precision(precision);
+  };
+
+  graticule.step = function(_) {
+    if (!arguments.length) return graticule.stepMinor();
+    return graticule.stepMajor(_).stepMinor(_);
+  };
+
+  graticule.stepMajor = function(_) {
+    if (!arguments.length) return [DX, DY];
+    DX = +_[0], DY = +_[1];
+    return graticule;
+  };
+
+  graticule.stepMinor = function(_) {
+    if (!arguments.length) return [dx, dy];
+    dx = +_[0], dy = +_[1];
+    return graticule;
+  };
+
+  graticule.precision = function(_) {
+    if (!arguments.length) return precision;
+    precision = +_;
+    x = graticuleX(y0, y1, 90);
+    y = graticuleY(x0, x1, precision);
+    X = graticuleX(Y0, Y1, 90);
+    Y = graticuleY(X0, X1, precision);
+    return graticule;
+  };
+
+  return graticule
+      .extentMajor([[-180, -90 + epsilon], [180, 90 - epsilon]])
+      .extentMinor([[-180, -80 - epsilon], [180, 80 + epsilon]]);
+}
+
+function graticule10() {
+  return graticule()();
+}
+
+var interpolate = function(a, b) {
+  var x0 = a[0] * radians,
+      y0 = a[1] * radians,
+      x1 = b[0] * radians,
+      y1 = b[1] * radians,
+      cy0 = cos(y0),
+      sy0 = sin(y0),
+      cy1 = cos(y1),
+      sy1 = sin(y1),
+      kx0 = cy0 * cos(x0),
+      ky0 = cy0 * sin(x0),
+      kx1 = cy1 * cos(x1),
+      ky1 = cy1 * sin(x1),
+      d = 2 * asin(sqrt$1(haversin(y1 - y0) + cy0 * cy1 * haversin(x1 - x0))),
+      k = sin(d);
+
+  var interpolate = d ? function(t) {
+    var B = sin(t *= d) / k,
+        A = sin(d - t) / k,
+        x = A * kx0 + B * kx1,
+        y = A * ky0 + B * ky1,
+        z = A * sy0 + B * sy1;
+    return [
+      atan2(y, x) * degrees$1,
+      atan2(z, sqrt$1(x * x + y * y)) * degrees$1
+    ];
+  } : function() {
+    return [x0 * degrees$1, y0 * degrees$1];
+  };
+
+  interpolate.distance = d;
+
+  return interpolate;
+};
 
 var identity$5 = function(x) {
   return x;
@@ -22298,6 +23537,12 @@ var clipCircle = function(radius, delta) {
   return clip(visible, clipLine, interpolate, smallRadius ? [0, -radius] : [-pi, radius - pi]);
 };
 
+var transform = function(methods) {
+  return {
+    stream: transformer(methods)
+  };
+};
+
 function transformer(methods) {
   return function(stream) {
     var s = new TransformStream;
@@ -22543,6 +23788,166 @@ function projectionMutator(projectAt) {
   };
 }
 
+function conicProjection(projectAt) {
+  var phi0 = 0,
+      phi1 = pi / 3,
+      m = projectionMutator(projectAt),
+      p = m(phi0, phi1);
+
+  p.parallels = function(_) {
+    return arguments.length ? m(phi0 = _[0] * radians, phi1 = _[1] * radians) : [phi0 * degrees$1, phi1 * degrees$1];
+  };
+
+  return p;
+}
+
+function cylindricalEqualAreaRaw(phi0) {
+  var cosPhi0 = cos(phi0);
+
+  function forward(lambda, phi) {
+    return [lambda * cosPhi0, sin(phi) / cosPhi0];
+  }
+
+  forward.invert = function(x, y) {
+    return [x / cosPhi0, asin(y * cosPhi0)];
+  };
+
+  return forward;
+}
+
+function conicEqualAreaRaw(y0, y1) {
+  var sy0 = sin(y0), n = (sy0 + sin(y1)) / 2;
+
+  // Are the parallels symmetrical around the Equator?
+  if (abs(n) < epsilon) return cylindricalEqualAreaRaw(y0);
+
+  var c = 1 + sy0 * (2 * n - sy0), r0 = sqrt$1(c) / n;
+
+  function project(x, y) {
+    var r = sqrt$1(c - 2 * n * sin(y)) / n;
+    return [r * sin(x *= n), r0 - r * cos(x)];
+  }
+
+  project.invert = function(x, y) {
+    var r0y = r0 - y;
+    return [atan2(x, abs(r0y)) / n * sign(r0y), asin((c - (x * x + r0y * r0y) * n * n) / (2 * n))];
+  };
+
+  return project;
+}
+
+var conicEqualArea = function() {
+  return conicProjection(conicEqualAreaRaw)
+      .scale(155.424)
+      .center([0, 33.6442]);
+};
+
+var albers = function() {
+  return conicEqualArea()
+      .parallels([29.5, 45.5])
+      .scale(1070)
+      .translate([480, 250])
+      .rotate([96, 0])
+      .center([-0.6, 38.7]);
+};
+
+function multiplex(streams) {
+  var n = streams.length;
+  return {
+    point: function(x, y) { var i = -1; while (++i < n) streams[i].point(x, y); },
+    sphere: function() { var i = -1; while (++i < n) streams[i].sphere(); },
+    lineStart: function() { var i = -1; while (++i < n) streams[i].lineStart(); },
+    lineEnd: function() { var i = -1; while (++i < n) streams[i].lineEnd(); },
+    polygonStart: function() { var i = -1; while (++i < n) streams[i].polygonStart(); },
+    polygonEnd: function() { var i = -1; while (++i < n) streams[i].polygonEnd(); }
+  };
+}
+
+// A composite projection for the United States, configured by default for
+// 960×500. The projection also works quite well at 960×600 if you change the
+// scale to 1285 and adjust the translate accordingly. The set of standard
+// parallels for each region comes from USGS, which is published here:
+// http://egsc.usgs.gov/isb/pubs/MapProjections/projections.html#albers
+var albersUsa = function() {
+  var cache,
+      cacheStream,
+      lower48 = albers(), lower48Point,
+      alaska = conicEqualArea().rotate([154, 0]).center([-2, 58.5]).parallels([55, 65]), alaskaPoint, // EPSG:3338
+      hawaii = conicEqualArea().rotate([157, 0]).center([-3, 19.9]).parallels([8, 18]), hawaiiPoint, // ESRI:102007
+      point, pointStream = {point: function(x, y) { point = [x, y]; }};
+
+  function albersUsa(coordinates) {
+    var x = coordinates[0], y = coordinates[1];
+    return point = null,
+        (lower48Point.point(x, y), point)
+        || (alaskaPoint.point(x, y), point)
+        || (hawaiiPoint.point(x, y), point);
+  }
+
+  albersUsa.invert = function(coordinates) {
+    var k = lower48.scale(),
+        t = lower48.translate(),
+        x = (coordinates[0] - t[0]) / k,
+        y = (coordinates[1] - t[1]) / k;
+    return (y >= 0.120 && y < 0.234 && x >= -0.425 && x < -0.214 ? alaska
+        : y >= 0.166 && y < 0.234 && x >= -0.214 && x < -0.115 ? hawaii
+        : lower48).invert(coordinates);
+  };
+
+  albersUsa.stream = function(stream) {
+    return cache && cacheStream === stream ? cache : cache = multiplex([lower48.stream(cacheStream = stream), alaska.stream(stream), hawaii.stream(stream)]);
+  };
+
+  albersUsa.precision = function(_) {
+    if (!arguments.length) return lower48.precision();
+    lower48.precision(_), alaska.precision(_), hawaii.precision(_);
+    return reset();
+  };
+
+  albersUsa.scale = function(_) {
+    if (!arguments.length) return lower48.scale();
+    lower48.scale(_), alaska.scale(_ * 0.35), hawaii.scale(_);
+    return albersUsa.translate(lower48.translate());
+  };
+
+  albersUsa.translate = function(_) {
+    if (!arguments.length) return lower48.translate();
+    var k = lower48.scale(), x = +_[0], y = +_[1];
+
+    lower48Point = lower48
+        .translate(_)
+        .clipExtent([[x - 0.455 * k, y - 0.238 * k], [x + 0.455 * k, y + 0.238 * k]])
+        .stream(pointStream);
+
+    alaskaPoint = alaska
+        .translate([x - 0.307 * k, y + 0.201 * k])
+        .clipExtent([[x - 0.425 * k + epsilon, y + 0.120 * k + epsilon], [x - 0.214 * k - epsilon, y + 0.234 * k - epsilon]])
+        .stream(pointStream);
+
+    hawaiiPoint = hawaii
+        .translate([x - 0.205 * k, y + 0.212 * k])
+        .clipExtent([[x - 0.214 * k + epsilon, y + 0.166 * k + epsilon], [x - 0.115 * k - epsilon, y + 0.234 * k - epsilon]])
+        .stream(pointStream);
+
+    return reset();
+  };
+
+  albersUsa.fitExtent = function(extent, object) {
+    return fitExtent(albersUsa, extent, object);
+  };
+
+  albersUsa.fitSize = function(size, object) {
+    return fitSize(albersUsa, size, object);
+  };
+
+  function reset() {
+    cache = cacheStream = null;
+    return albersUsa;
+  }
+
+  return albersUsa.scale(1070);
+};
+
 function azimuthalRaw(scale) {
   return function(x, y) {
     var cx = cos(x),
@@ -22576,6 +23981,12 @@ azimuthalEqualAreaRaw.invert = azimuthalInvert(function(z) {
   return 2 * asin(z / 2);
 });
 
+var azimuthalEqualArea = function() {
+  return projection$1(azimuthalEqualAreaRaw)
+      .scale(124.75)
+      .clipAngle(180 - 1e-3);
+};
+
 var azimuthalEquidistantRaw = azimuthalRaw(function(c) {
   return (c = acos(c)) && c / sin(c);
 });
@@ -22583,6 +23994,12 @@ var azimuthalEquidistantRaw = azimuthalRaw(function(c) {
 azimuthalEquidistantRaw.invert = azimuthalInvert(function(z) {
   return z;
 });
+
+var azimuthalEquidistant = function() {
+  return projection$1(azimuthalEquidistantRaw)
+      .scale(79.4188)
+      .clipAngle(180 - 1e-3);
+};
 
 function mercatorRaw(lambda, phi) {
   return [lambda, log$1(tan((halfPi + phi) / 2))];
@@ -22633,6 +24050,235 @@ function mercatorProjection(project) {
   return reclip();
 }
 
+function tany(y) {
+  return tan((halfPi + y) / 2);
+}
+
+function conicConformalRaw(y0, y1) {
+  var cy0 = cos(y0),
+      n = y0 === y1 ? sin(y0) : log$1(cy0 / cos(y1)) / log$1(tany(y1) / tany(y0)),
+      f = cy0 * pow$1(tany(y0), n) / n;
+
+  if (!n) return mercatorRaw;
+
+  function project(x, y) {
+    if (f > 0) { if (y < -halfPi + epsilon) y = -halfPi + epsilon; }
+    else { if (y > halfPi - epsilon) y = halfPi - epsilon; }
+    var r = f / pow$1(tany(y), n);
+    return [r * sin(n * x), f - r * cos(n * x)];
+  }
+
+  project.invert = function(x, y) {
+    var fy = f - y, r = sign(n) * sqrt$1(x * x + fy * fy);
+    return [atan2(x, abs(fy)) / n * sign(fy), 2 * atan(pow$1(f / r, 1 / n)) - halfPi];
+  };
+
+  return project;
+}
+
+var conicConformal = function() {
+  return conicProjection(conicConformalRaw)
+      .scale(109.5)
+      .parallels([30, 30]);
+};
+
+function equirectangularRaw(lambda, phi) {
+  return [lambda, phi];
+}
+
+equirectangularRaw.invert = equirectangularRaw;
+
+var equirectangular = function() {
+  return projection$1(equirectangularRaw)
+      .scale(152.63);
+};
+
+function conicEquidistantRaw(y0, y1) {
+  var cy0 = cos(y0),
+      n = y0 === y1 ? sin(y0) : (cy0 - cos(y1)) / (y1 - y0),
+      g = cy0 / n + y0;
+
+  if (abs(n) < epsilon) return equirectangularRaw;
+
+  function project(x, y) {
+    var gy = g - y, nx = n * x;
+    return [gy * sin(nx), g - gy * cos(nx)];
+  }
+
+  project.invert = function(x, y) {
+    var gy = g - y;
+    return [atan2(x, abs(gy)) / n * sign(gy), g - sign(n) * sqrt$1(x * x + gy * gy)];
+  };
+
+  return project;
+}
+
+var conicEquidistant = function() {
+  return conicProjection(conicEquidistantRaw)
+      .scale(131.154)
+      .center([0, 13.9389]);
+};
+
+function gnomonicRaw(x, y) {
+  var cy = cos(y), k = cos(x) * cy;
+  return [cy * sin(x) / k, sin(y) / k];
+}
+
+gnomonicRaw.invert = azimuthalInvert(atan);
+
+var gnomonic = function() {
+  return projection$1(gnomonicRaw)
+      .scale(144.049)
+      .clipAngle(60);
+};
+
+function scaleTranslate(kx, ky, tx, ty) {
+  return kx === 1 && ky === 1 && tx === 0 && ty === 0 ? identity$5 : transformer({
+    point: function(x, y) {
+      this.stream.point(x * kx + tx, y * ky + ty);
+    }
+  });
+}
+
+var identity$6 = function() {
+  var k = 1, tx = 0, ty = 0, sx = 1, sy = 1, transform$$1 = identity$5, // scale, translate and reflect
+      x0 = null, y0, x1, y1, clip = identity$5, // clip extent
+      cache,
+      cacheStream,
+      projection;
+
+  function reset() {
+    cache = cacheStream = null;
+    return projection;
+  }
+
+  return projection = {
+    stream: function(stream) {
+      return cache && cacheStream === stream ? cache : cache = transform$$1(clip(cacheStream = stream));
+    },
+    clipExtent: function(_) {
+      return arguments.length ? (clip = _ == null ? (x0 = y0 = x1 = y1 = null, identity$5) : clipExtent(x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1]), reset()) : x0 == null ? null : [[x0, y0], [x1, y1]];
+    },
+    scale: function(_) {
+      return arguments.length ? (transform$$1 = scaleTranslate((k = +_) * sx, k * sy, tx, ty), reset()) : k;
+    },
+    translate: function(_) {
+      return arguments.length ? (transform$$1 = scaleTranslate(k * sx, k * sy, tx = +_[0], ty = +_[1]), reset()) : [tx, ty];
+    },
+    reflectX: function(_) {
+      return arguments.length ? (transform$$1 = scaleTranslate(k * (sx = _ ? -1 : 1), k * sy, tx, ty), reset()) : sx < 0;
+    },
+    reflectY: function(_) {
+      return arguments.length ? (transform$$1 = scaleTranslate(k * sx, k * (sy = _ ? -1 : 1), tx, ty), reset()) : sy < 0;
+    },
+    fitExtent: function(extent, object) {
+      return fitExtent(projection, extent, object);
+    },
+    fitSize: function(size, object) {
+      return fitSize(projection, size, object);
+    }
+  };
+};
+
+function orthographicRaw(x, y) {
+  return [cos(y) * sin(x), sin(y)];
+}
+
+orthographicRaw.invert = azimuthalInvert(asin);
+
+var orthographic = function() {
+  return projection$1(orthographicRaw)
+      .scale(249.5)
+      .clipAngle(90 + epsilon);
+};
+
+function stereographicRaw(x, y) {
+  var cy = cos(y), k = 1 + cos(x) * cy;
+  return [cy * sin(x) / k, sin(y) / k];
+}
+
+stereographicRaw.invert = azimuthalInvert(function(z) {
+  return 2 * atan(z);
+});
+
+var stereographic = function() {
+  return projection$1(stereographicRaw)
+      .scale(250)
+      .clipAngle(142);
+};
+
+function transverseMercatorRaw(lambda, phi) {
+  return [log$1(tan((halfPi + phi) / 2)), -lambda];
+}
+
+transverseMercatorRaw.invert = function(x, y) {
+  return [-y, 2 * atan(exp(x)) - halfPi];
+};
+
+var transverseMercator = function() {
+  var m = mercatorProjection(transverseMercatorRaw),
+      center = m.center,
+      rotate = m.rotate;
+
+  m.center = function(_) {
+    return arguments.length ? center([-_[1], _[0]]) : (_ = center(), [_[1], -_[0]]);
+  };
+
+  m.rotate = function(_) {
+    return arguments.length ? rotate([_[0], _[1], _.length > 2 ? _[2] + 90 : 90]) : (_ = rotate(), [_[0], _[1], _[2] - 90]);
+  };
+
+  return rotate([0, 0, 90])
+      .scale(159.155);
+};
+
+
+
+var d3Geo = Object.freeze({
+	geoArea: area,
+	geoBounds: bounds,
+	geoCentroid: centroid,
+	geoCircle: circle,
+	geoClipExtent: extent$1,
+	geoContains: contains,
+	geoDistance: distance,
+	geoGraticule: graticule,
+	geoGraticule10: graticule10,
+	geoInterpolate: interpolate,
+	geoLength: length$1,
+	geoPath: geoPath,
+	geoAlbers: albers,
+	geoAlbersUsa: albersUsa,
+	geoAzimuthalEqualArea: azimuthalEqualArea,
+	geoAzimuthalEqualAreaRaw: azimuthalEqualAreaRaw,
+	geoAzimuthalEquidistant: azimuthalEquidistant,
+	geoAzimuthalEquidistantRaw: azimuthalEquidistantRaw,
+	geoConicConformal: conicConformal,
+	geoConicConformalRaw: conicConformalRaw,
+	geoConicEqualArea: conicEqualArea,
+	geoConicEqualAreaRaw: conicEqualAreaRaw,
+	geoConicEquidistant: conicEquidistant,
+	geoConicEquidistantRaw: conicEquidistantRaw,
+	geoEquirectangular: equirectangular,
+	geoEquirectangularRaw: equirectangularRaw,
+	geoGnomonic: gnomonic,
+	geoGnomonicRaw: gnomonicRaw,
+	geoIdentity: identity$6,
+	geoProjection: projection$1,
+	geoProjectionMutator: projectionMutator,
+	geoMercator: geoMercator,
+	geoMercatorRaw: mercatorRaw,
+	geoOrthographic: orthographic,
+	geoOrthographicRaw: orthographicRaw,
+	geoStereographic: stereographic,
+	geoStereographicRaw: stereographicRaw,
+	geoTransverseMercator: transverseMercator,
+	geoTransverseMercatorRaw: transverseMercatorRaw,
+	geoRotation: rotation,
+	geoStream: geoStream,
+	geoTransform: transform
+});
+
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
@@ -22664,6 +24310,2496 @@ var index$3 = createCommonjsModule(function (module) {
   var throwOnDirectAccess = true;
   module.exports = factoryWithTypeCheckers(isValidElement, throwOnDirectAccess);
 }
+});
+
+function linearRegression(data/*: Array<Array<number>> */)/*: { m: number, b: number } */ {
+
+    var m, b;
+
+    // Store data length in a local variable to reduce
+    // repeated object property lookups
+    var dataLength = data.length;
+
+    //if there's only one point, arbitrarily choose a slope of 0
+    //and a y-intercept of whatever the y of the initial point is
+    if (dataLength === 1) {
+        m = 0;
+        b = data[0][1];
+    } else {
+        // Initialize our sums and scope the `m` and `b`
+        // variables that define the line.
+        var sumX = 0, sumY = 0,
+            sumXX = 0, sumXY = 0;
+
+        // Use local variables to grab point values
+        // with minimal object property lookups
+        var point, x, y;
+
+        // Gather the sum of all x values, the sum of all
+        // y values, and the sum of x^2 and (x*y) for each
+        // value.
+        //
+        // In math notation, these would be SS_x, SS_y, SS_xx, and SS_xy
+        for (var i = 0; i < dataLength; i++) {
+            point = data[i];
+            x = point[0];
+            y = point[1];
+
+            sumX += x;
+            sumY += y;
+
+            sumXX += x * x;
+            sumXY += x * y;
+        }
+
+        // `m` is the slope of the regression line
+        m = ((dataLength * sumXY) - (sumX * sumY)) /
+            ((dataLength * sumXX) - (sumX * sumX));
+
+        // `b` is the y-intercept of the line.
+        b = (sumY / dataLength) - ((m * sumX) / dataLength);
+    }
+
+    // Return both values as an object.
+    return {
+        m: m,
+        b: b
+    };
+}
+
+
+var linear_regression = linearRegression;
+
+function linearRegressionLine(mb/*: { b: number, m: number }*/)/*: Function */ {
+    // Return a function that computes a `y` value for each
+    // x value it is given, based on the values of `b` and `a`
+    // that we just computed.
+    return function(x) {
+        return mb.b + (mb.m * x);
+    };
+}
+
+var linear_regression_line = linearRegressionLine;
+
+function sum$2(x/*: Array<number> */)/*: number */ {
+
+    // If the array is empty, we needn't bother computing its sum
+    if (x.length === 0) {
+        return 0;
+    }
+
+    // Initializing the sum as the first number in the array
+    var sum = x[0];
+
+    // Keeping track of the floating-point error correction
+    var correction = 0;
+
+    var transition;
+
+    for (var i = 1; i < x.length; i++) {
+        transition = sum + x[i];
+
+        // Here we need to update the correction in a different fashion
+        // if the new absolute value is greater than the absolute sum
+        if (Math.abs(sum) >= Math.abs(x[i])) {
+            correction += ((sum - transition) + x[i]);
+        }
+        else {
+            correction += ((x[i] - transition) + sum);
+        }
+
+        sum = transition;
+    }
+
+    // Returning the corrected sum
+    return sum + correction;
+}
+
+var sum_1 = sum$2;
+
+function mean$1(x /*: Array<number> */)/*:number*/ {
+    // The mean of no numbers is null
+    if (x.length === 0) {
+        throw new Error('mean requires at least one data point');
+    }
+
+    return sum_1(x) / x.length;
+}
+
+var mean_1 = mean$1;
+
+function sumNthPowerDeviations(x/*: Array<number> */, n/*: number */)/*:number*/ {
+    var meanValue = mean_1(x),
+        sum = 0,
+        tempValue,
+        i;
+
+    // This is an optimization: when n is 2 (we're computing a number squared),
+    // multiplying the number by itself is significantly faster than using
+    // the Math.pow method.
+    if (n === 2) {
+        for (i = 0; i < x.length; i++) {
+            tempValue = x[i] - meanValue;
+            sum += tempValue * tempValue;
+        }
+    } else {
+        for (i = 0; i < x.length; i++) {
+            sum += Math.pow(x[i] - meanValue, n);
+        }
+    }
+
+    return sum;
+}
+
+var sum_nth_power_deviations = sumNthPowerDeviations;
+
+function variance$1(x/*: Array<number> */)/*:number*/ {
+    // The variance of no numbers is null
+    if (x.length === 0) {
+        throw new Error('variance requires at least one data point');
+    }
+
+    // Find the mean of squared deviations between the
+    // mean value and each value.
+    return sum_nth_power_deviations(x, 2) / x.length;
+}
+
+var variance_1 = variance$1;
+
+function standardDeviation(x /*: Array<number> */)/*:number*/ {
+    if (x.length === 1) {
+        return 0;
+    }
+    var v = variance_1(x);
+    return Math.sqrt(v);
+}
+
+var standard_deviation = standardDeviation;
+
+function rSquared(x /*: Array<Array<number>> */, func /*: Function */) /*: number */ {
+    if (x.length < 2) { return 1; }
+
+    // Compute the average y value for the actual
+    // data set in order to compute the
+    // _total sum of squares_
+    var sum = 0, average;
+    for (var i = 0; i < x.length; i++) {
+        sum += x[i][1];
+    }
+    average = sum / x.length;
+
+    // Compute the total sum of squares - the
+    // squared difference between each point
+    // and the average of all points.
+    var sumOfSquares = 0;
+    for (var j = 0; j < x.length; j++) {
+        sumOfSquares += Math.pow(average - x[j][1], 2);
+    }
+
+    // Finally estimate the error: the squared
+    // difference between the estimate and the actual data
+    // value at each point.
+    var err = 0;
+    for (var k = 0; k < x.length; k++) {
+        err += Math.pow(x[k][1] - func(x[k][0]), 2);
+    }
+
+    // As the error grows larger, its ratio to the
+    // sum of squares increases and the r squared
+    // value grows lower.
+    return 1 - err / sumOfSquares;
+}
+
+var r_squared = rSquared;
+
+function numericSort(x /*: Array<number> */) /*: Array<number> */ {
+    return x
+        // ensure the array is not changed in-place
+        .slice()
+        // comparator function that treats input as numeric
+        .sort(function(a, b) {
+            return a - b;
+        });
+}
+
+var numeric_sort = numericSort;
+
+function modeSorted(sorted /*: Array<number> */)/*:number*/ {
+
+    // Handle edge cases:
+    // The mode of an empty list is undefined
+    if (sorted.length === 0) {
+        throw new Error('mode requires at least one data point');
+    } else if (sorted.length === 1) {
+        return sorted[0];
+    }
+
+    // This assumes it is dealing with an array of size > 1, since size
+    // 0 and 1 are handled immediately. Hence it starts at index 1 in the
+    // array.
+    var last = sorted[0],
+        // store the mode as we find new modes
+        value = NaN,
+        // store how many times we've seen the mode
+        maxSeen = 0,
+        // how many times the current candidate for the mode
+        // has been seen
+        seenThis = 1;
+
+    // end at sorted.length + 1 to fix the case in which the mode is
+    // the highest number that occurs in the sequence. the last iteration
+    // compares sorted[i], which is undefined, to the highest number
+    // in the series
+    for (var i = 1; i < sorted.length + 1; i++) {
+        // we're seeing a new number pass by
+        if (sorted[i] !== last) {
+            // the last number is the new mode since we saw it more
+            // often than the old one
+            if (seenThis > maxSeen) {
+                maxSeen = seenThis;
+                value = last;
+            }
+            seenThis = 1;
+            last = sorted[i];
+        // if this isn't a new number, it's one more occurrence of
+        // the potential mode
+        } else { seenThis++; }
+    }
+    return value;
+}
+
+var mode_sorted = modeSorted;
+
+function mode(x /*: Array<number> */)/*:number*/ {
+    // Sorting the array lets us iterate through it below and be sure
+    // that every time we see a new number it's new and we'll never
+    // see the same number twice
+    return mode_sorted(numeric_sort(x));
+}
+
+var mode_1 = mode;
+
+function modeFast/*::<T>*/(x /*: Array<T> */)/*: ?T */ {
+
+    // This index will reflect the incidence of different values, indexing
+    // them like
+    // { value: count }
+    var index = new Map();
+
+    // A running `mode` and the number of times it has been encountered.
+    var mode;
+    var modeCount = 0;
+
+    for (var i = 0; i < x.length; i++) {
+        var newCount = index.get(x[i]);
+        if (newCount === undefined) {
+            newCount = 1;
+        } else {
+            newCount++;
+        }
+        if (newCount > modeCount) {
+            mode = x[i];
+            modeCount = newCount;
+        }
+        index.set(x[i], newCount);
+    }
+
+    if (modeCount === 0) {
+        throw new Error('mode requires at last one data point');
+    }
+
+    return mode;
+}
+
+var mode_fast = modeFast;
+
+function min$1(x /*: Array<number> */)/*:number*/ {
+
+    if (x.length === 0) {
+        throw new Error('min requires at least one data point');
+    }
+
+    var value = x[0];
+    for (var i = 1; i < x.length; i++) {
+        // On the first iteration of this loop, min is
+        // undefined and is thus made the minimum element in the array
+        if (x[i] < value) {
+            value = x[i];
+        }
+    }
+    return value;
+}
+
+var min_1 = min$1;
+
+function max$1(x /*: Array<number> */) /*:number*/ {
+
+    if (x.length === 0) {
+        throw new Error('max requires at least one data point');
+    }
+
+    var value = x[0];
+    for (var i = 1; i < x.length; i++) {
+        // On the first iteration of this loop, max is
+        // undefined and is thus made the maximum element in the array
+        if (x[i] > value) {
+            value = x[i];
+        }
+    }
+    return value;
+}
+
+var max_1 = max$1;
+
+function minSorted(x /*: Array<number> */)/*:number*/ {
+    return x[0];
+}
+
+var min_sorted = minSorted;
+
+function maxSorted(x /*: Array<number> */)/*:number*/ {
+    return x[x.length - 1];
+}
+
+var max_sorted = maxSorted;
+
+function sumSimple(x/*: Array<number> */)/*: number */ {
+    var value = 0;
+    for (var i = 0; i < x.length; i++) {
+        value += x[i];
+    }
+    return value;
+}
+
+var sum_simple = sumSimple;
+
+function product(x/*: Array<number> */)/*: number */ {
+    var value = 1;
+    for (var i = 0; i < x.length; i++) {
+        value *= x[i];
+    }
+    return value;
+}
+
+var product_1 = product;
+
+function quantileSorted(x /*: Array<number> */, p /*: number */)/*:number*/ {
+    var idx = x.length * p;
+    if (x.length === 0) {
+        throw new Error('quantile requires at least one data point.');
+    } else if (p < 0 || p > 1) {
+        throw new Error('quantiles must be between 0 and 1');
+    } else if (p === 1) {
+        // If p is 1, directly return the last element
+        return x[x.length - 1];
+    } else if (p === 0) {
+        // If p is 0, directly return the first element
+        return x[0];
+    } else if (idx % 1 !== 0) {
+        // If p is not integer, return the next element in array
+        return x[Math.ceil(idx) - 1];
+    } else if (x.length % 2 === 0) {
+        // If the list has even-length, we'll take the average of this number
+        // and the next value, if there is one
+        return (x[idx - 1] + x[idx]) / 2;
+    } else {
+        // Finally, in the simple case of an integer value
+        // with an odd-length list, return the x value at the index.
+        return x[idx];
+    }
+}
+
+var quantile_sorted = quantileSorted;
+
+var quickselect_1 = quickselect;
+
+/**
+ * Rearrange items in `arr` so that all items in `[left, k]` range are the smallest.
+ * The `k`-th element will have the `(k - left + 1)`-th smallest value in `[left, right]`.
+ *
+ * Implements Floyd-Rivest selection algorithm https://en.wikipedia.org/wiki/Floyd-Rivest_algorithm
+ *
+ * @private
+ * @param {Array<number>} arr input array
+ * @param {number} k pivot index
+ * @param {number} left left index
+ * @param {number} right right index
+ * @returns {undefined}
+ * @example
+ * var arr = [65, 28, 59, 33, 21, 56, 22, 95, 50, 12, 90, 53, 28, 77, 39];
+ * quickselect(arr, 8);
+ * // = [39, 28, 28, 33, 21, 12, 22, 50, 53, 56, 59, 65, 90, 77, 95]
+ */
+function quickselect(arr /*: Array<number> */, k /*: number */, left /*: number */, right /*: number */) {
+    left = left || 0;
+    right = right || (arr.length - 1);
+
+    while (right > left) {
+        // 600 and 0.5 are arbitrary constants chosen in the original paper to minimize execution time
+        if (right - left > 600) {
+            var n = right - left + 1;
+            var m = k - left + 1;
+            var z = Math.log(n);
+            var s = 0.5 * Math.exp(2 * z / 3);
+            var sd = 0.5 * Math.sqrt(z * s * (n - s) / n);
+            if (m - n / 2 < 0) sd *= -1;
+            var newLeft = Math.max(left, Math.floor(k - m * s / n + sd));
+            var newRight = Math.min(right, Math.floor(k + (n - m) * s / n + sd));
+            quickselect(arr, k, newLeft, newRight);
+        }
+
+        var t = arr[k];
+        var i = left;
+        var j = right;
+
+        swap(arr, left, k);
+        if (arr[right] > t) swap(arr, left, right);
+
+        while (i < j) {
+            swap(arr, i, j);
+            i++;
+            j--;
+            while (arr[i] < t) i++;
+            while (arr[j] > t) j--;
+        }
+
+        if (arr[left] === t) swap(arr, left, j);
+        else {
+            j++;
+            swap(arr, j, right);
+        }
+
+        if (j <= k) left = j + 1;
+        if (k <= j) right = j - 1;
+    }
+}
+
+function swap(arr, i, j) {
+    var tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+}
+
+function quantile$1(x /*: Array<number> */, p /*: Array<number> | number */) {
+    var copy = x.slice();
+
+    if (Array.isArray(p)) {
+        // rearrange elements so that each element corresponding to a requested
+        // quantile is on a place it would be if the array was fully sorted
+        multiQuantileSelect(copy, p);
+        // Initialize the result array
+        var results = [];
+        // For each requested quantile
+        for (var i = 0; i < p.length; i++) {
+            results[i] = quantile_sorted(copy, p[i]);
+        }
+        return results;
+    } else {
+        var idx = quantileIndex(copy.length, p);
+        quantileSelect(copy, idx, 0, copy.length - 1);
+        return quantile_sorted(copy, p);
+    }
+}
+
+function quantileSelect(arr, k, left, right) {
+    if (k % 1 === 0) {
+        quickselect_1(arr, k, left, right);
+    } else {
+        k = Math.floor(k);
+        quickselect_1(arr, k, left, right);
+        quickselect_1(arr, k + 1, k + 1, right);
+    }
+}
+
+function multiQuantileSelect(arr, p) {
+    var indices = [0];
+    for (var i = 0; i < p.length; i++) {
+        indices.push(quantileIndex(arr.length, p[i]));
+    }
+    indices.push(arr.length - 1);
+    indices.sort(compare);
+
+    var stack = [0, indices.length - 1];
+
+    while (stack.length) {
+        var r = Math.ceil(stack.pop());
+        var l = Math.floor(stack.pop());
+        if (r - l <= 1) continue;
+
+        var m = Math.floor((l + r) / 2);
+        quantileSelect(arr, indices[m], indices[l], indices[r]);
+
+        stack.push(l, m, m, r);
+    }
+}
+
+function compare(a, b) {
+    return a - b;
+}
+
+function quantileIndex(len /*: number */, p /*: number */)/*:number*/ {
+    var idx = len * p;
+    if (p === 1) {
+        // If p is 1, directly return the last index
+        return len - 1;
+    } else if (p === 0) {
+        // If p is 0, directly return the first index
+        return 0;
+    } else if (idx % 1 !== 0) {
+        // If index is not integer, return the next index in array
+        return Math.ceil(idx) - 1;
+    } else if (len % 2 === 0) {
+        // If the list has even-length, we'll return the middle of two indices
+        // around quantile to indicate that we need an average value of the two
+        return idx - 0.5;
+    } else {
+        // Finally, in the simple case of an integer index
+        // with an odd-length list, return the index
+        return idx;
+    }
+}
+
+var quantile_1 = quantile$1;
+
+function interquartileRange(x/*: Array<number> */) {
+    // Interquartile range is the span between the upper quartile,
+    // at `0.75`, and lower quartile, `0.25`
+    var q1 = quantile_1(x, 0.75),
+        q2 = quantile_1(x, 0.25);
+
+    if (typeof q1 === 'number' && typeof q2 === 'number') {
+        return q1 - q2;
+    }
+}
+
+var interquartile_range = interquartileRange;
+
+function median$1(x /*: Array<number> */)/*:number*/ {
+    return +quantile_1(x, 0.5);
+}
+
+var median_1 = median$1;
+
+function medianAbsoluteDeviation(x /*: Array<number> */) {
+    // The mad of nothing is null
+    var medianValue = median_1(x),
+        medianAbsoluteDeviations = [];
+
+    // Make a list of absolute deviations from the median
+    for (var i = 0; i < x.length; i++) {
+        medianAbsoluteDeviations.push(Math.abs(x[i] - medianValue));
+    }
+
+    // Find the median value of that list
+    return median_1(medianAbsoluteDeviations);
+}
+
+var median_absolute_deviation = medianAbsoluteDeviation;
+
+function chunk(x/*:Array<any>*/, chunkSize/*:number*/)/*:?Array<Array<any>>*/ {
+
+    // a list of result chunks, as arrays in an array
+    var output = [];
+
+    // `chunkSize` must be zero or higher - otherwise the loop below,
+    // in which we call `start += chunkSize`, will loop infinitely.
+    // So, we'll detect and throw in that case to indicate
+    // invalid input.
+    if (chunkSize < 1) {
+        throw new Error('chunk size must be a positive number');
+    }
+
+    if (Math.floor(chunkSize) !== chunkSize) {
+        throw new Error('chunk size must be an integer');
+    }
+
+    // `start` is the index at which `.slice` will start selecting
+    // new array elements
+    for (var start = 0; start < x.length; start += chunkSize) {
+
+        // for each chunk, slice that part of the array and add it
+        // to the output. The `.slice` function does not change
+        // the original array.
+        output.push(x.slice(start, start + chunkSize));
+    }
+    return output;
+}
+
+var chunk_1 = chunk;
+
+function sampleWithReplacement/*::<T>*/(x/*:Array<T>*/,
+    n /*: number */,
+    randomSource/*:Function*/) {
+
+    if (x.length === 0) {
+        return [];
+    }
+
+    // a custom random number source can be provided if you want to use
+    // a fixed seed or another random number generator, like
+    // [random-js](https://www.npmjs.org/package/random-js)
+    randomSource = randomSource || Math.random;
+
+    var length = x.length;
+    var sample = [];
+
+    for (var i = 0; i < n; i++) {
+        var index = Math.floor(randomSource() * length);
+
+        sample.push(x[index]);
+    }
+
+    return sample;
+}
+
+var sample_with_replacement = sampleWithReplacement;
+
+function shuffleInPlace(x/*:Array<any>*/, randomSource/*:Function*/)/*:Array<any>*/ {
+
+    // a custom random number source can be provided if you want to use
+    // a fixed seed or another random number generator, like
+    // [random-js](https://www.npmjs.org/package/random-js)
+    randomSource = randomSource || Math.random;
+
+    // store the current length of the x to determine
+    // when no elements remain to shuffle.
+    var length = x.length;
+
+    // temporary is used to hold an item when it is being
+    // swapped between indices.
+    var temporary;
+
+    // The index to swap at each stage.
+    var index;
+
+    // While there are still items to shuffle
+    while (length > 0) {
+        // chose a random index within the subset of the array
+        // that is not yet shuffled
+        index = Math.floor(randomSource() * length--);
+
+        // store the value that we'll move temporarily
+        temporary = x[length];
+
+        // swap the value at `x[length]` with `x[index]`
+        x[length] = x[index];
+        x[index] = temporary;
+    }
+
+    return x;
+}
+
+var shuffle_in_place = shuffleInPlace;
+
+function shuffle$1/*::<T>*/(x/*:Array<T>*/, randomSource/*:Function*/) {
+    // slice the original array so that it is not modified
+    var sample = x.slice();
+
+    // and then shuffle that shallow-copied array, in place
+    return shuffle_in_place(sample.slice(), randomSource);
+}
+
+var shuffle_1 = shuffle$1;
+
+function sample/*:: <T> */(
+    x /*: Array<T> */,
+    n /*: number */,
+    randomSource /*: Function */) /*: Array<T> */ {
+    // shuffle the original array using a fisher-yates shuffle
+    var shuffled = shuffle_1(x, randomSource);
+
+    // and then return a subset of it - the first `n` elements.
+    return shuffled.slice(0, n);
+}
+
+var sample_1 = sample;
+
+function uniqueCountSorted(x/*: Array<any>*/)/*: number */ {
+    var uniqueValueCount = 0,
+        lastSeenValue;
+    for (var i = 0; i < x.length; i++) {
+        if (i === 0 || x[i] !== lastSeenValue) {
+            lastSeenValue = x[i];
+            uniqueValueCount++;
+        }
+    }
+    return uniqueValueCount;
+}
+
+var unique_count_sorted = uniqueCountSorted;
+
+function makeMatrix(columns, rows) {
+    var matrix = [];
+    for (var i = 0; i < columns; i++) {
+        var column = [];
+        for (var j = 0; j < rows; j++) {
+            column.push(0);
+        }
+        matrix.push(column);
+    }
+    return matrix;
+}
+
+/**
+ * Generates incrementally computed values based on the sums and sums of
+ * squares for the data array
+ *
+ * @private
+ * @param {number} j
+ * @param {number} i
+ * @param {Array<number>} sums
+ * @param {Array<number>} sumsOfSquares
+ * @return {number}
+ * @example
+ * ssq(0, 1, [-1, 0, 2], [1, 1, 5]);
+ */
+function ssq(j, i, sums, sumsOfSquares) {
+    var sji; // s(j, i)
+    if (j > 0) {
+        var muji = (sums[i] - sums[j - 1]) / (i - j + 1); // mu(j, i)
+        sji = sumsOfSquares[i] - sumsOfSquares[j - 1] - (i - j + 1) * muji * muji;
+    } else {
+        sji = sumsOfSquares[i] - sums[i] * sums[i] / (i + 1);
+    }
+    if (sji < 0) {
+        return 0;
+    }
+    return sji;
+}
+
+/**
+ * Function that recursively divides and conquers computations
+ * for cluster j
+ *
+ * @private
+ * @param {number} iMin Minimum index in cluster to be computed
+ * @param {number} iMax Maximum index in cluster to be computed
+ * @param {number} cluster Index of the cluster currently being computed
+ * @param {Array<Array<number>>} matrix
+ * @param {Array<Array<number>>} backtrackMatrix
+ * @param {Array<number>} sums
+ * @param {Array<number>} sumsOfSquares
+ */
+function fillMatrixColumn(iMin, iMax, cluster, matrix, backtrackMatrix, sums, sumsOfSquares) {
+    if (iMin > iMax) {
+        return;
+    }
+
+    // Start at midpoint between iMin and iMax
+    var i = Math.floor((iMin + iMax) / 2);
+
+    matrix[cluster][i] = matrix[cluster - 1][i - 1];
+    backtrackMatrix[cluster][i] = i;
+
+    var jlow = cluster; // the lower end for j
+
+    if (iMin > cluster) {
+        jlow = Math.max(jlow, backtrackMatrix[cluster][iMin - 1] || 0);
+    }
+    jlow = Math.max(jlow, backtrackMatrix[cluster - 1][i] || 0);
+
+    var jhigh = i - 1; // the upper end for j
+    if (iMax < matrix.length - 1) {
+        jhigh = Math.min(jhigh, backtrackMatrix[cluster][iMax + 1] || 0);
+    }
+
+    var sji;
+    var sjlowi;
+    var ssqjlow;
+    var ssqj;
+    for (var j = jhigh; j >= jlow; --j) {
+        sji = ssq(j, i, sums, sumsOfSquares);
+
+        if (sji + matrix[cluster - 1][jlow - 1] >= matrix[cluster][i]) {
+            break;
+        }
+
+        // Examine the lower bound of the cluster border
+        sjlowi = ssq(jlow, i, sums, sumsOfSquares);
+
+        ssqjlow = sjlowi + matrix[cluster - 1][jlow - 1];
+
+        if (ssqjlow < matrix[cluster][i]) {
+            // Shrink the lower bound
+            matrix[cluster][i] = ssqjlow;
+            backtrackMatrix[cluster][i] = jlow;
+        }
+        jlow++;
+
+        ssqj = sji + matrix[cluster - 1][j - 1];
+        if (ssqj < matrix[cluster][i]) {
+            matrix[cluster][i] = ssqj;
+            backtrackMatrix[cluster][i] = j;
+        }
+    }
+
+    fillMatrixColumn(iMin, i - 1, cluster, matrix, backtrackMatrix, sums, sumsOfSquares);
+    fillMatrixColumn(i + 1, iMax, cluster, matrix, backtrackMatrix, sums, sumsOfSquares);
+}
+
+/**
+ * Initializes the main matrices used in Ckmeans and kicks
+ * off the divide and conquer cluster computation strategy
+ *
+ * @private
+ * @param {Array<number>} data sorted array of values
+ * @param {Array<Array<number>>} matrix
+ * @param {Array<Array<number>>} backtrackMatrix
+ */
+function fillMatrices(data, matrix, backtrackMatrix) {
+    var nValues = matrix[0].length;
+
+    // Shift values by the median to improve numeric stability
+    var shift = data[Math.floor(nValues / 2)];
+
+    // Cumulative sum and cumulative sum of squares for all values in data array
+    var sums = [];
+    var sumsOfSquares = [];
+
+    // Initialize first column in matrix & backtrackMatrix
+    for (var i = 0, shiftedValue; i < nValues; ++i) {
+        shiftedValue = data[i] - shift;
+        if (i === 0) {
+            sums.push(shiftedValue);
+            sumsOfSquares.push(shiftedValue * shiftedValue);
+        } else {
+            sums.push(sums[i - 1] + shiftedValue);
+            sumsOfSquares.push(sumsOfSquares[i - 1] + shiftedValue * shiftedValue);
+        }
+
+        // Initialize for cluster = 0
+        matrix[0][i] = ssq(0, i, sums, sumsOfSquares);
+        backtrackMatrix[0][i] = 0;
+    }
+
+    // Initialize the rest of the columns
+    var iMin;
+    for (var cluster = 1; cluster < matrix.length; ++cluster) {
+        if (cluster < matrix.length - 1) {
+            iMin = cluster;
+        } else {
+            // No need to compute matrix[K-1][0] ... matrix[K-1][N-2]
+            iMin = nValues - 1;
+        }
+
+        fillMatrixColumn(iMin, nValues - 1, cluster, matrix, backtrackMatrix, sums, sumsOfSquares);
+    }
+}
+
+/**
+ * Ckmeans clustering is an improvement on heuristic-based clustering
+ * approaches like Jenks. The algorithm was developed in
+ * [Haizhou Wang and Mingzhou Song](http://journal.r-project.org/archive/2011-2/RJournal_2011-2_Wang+Song.pdf)
+ * as a [dynamic programming](https://en.wikipedia.org/wiki/Dynamic_programming) approach
+ * to the problem of clustering numeric data into groups with the least
+ * within-group sum-of-squared-deviations.
+ *
+ * Minimizing the difference within groups - what Wang & Song refer to as
+ * `withinss`, or within sum-of-squares, means that groups are optimally
+ * homogenous within and the data is split into representative groups.
+ * This is very useful for visualization, where you may want to represent
+ * a continuous variable in discrete color or style groups. This function
+ * can provide groups that emphasize differences between data.
+ *
+ * Being a dynamic approach, this algorithm is based on two matrices that
+ * store incrementally-computed values for squared deviations and backtracking
+ * indexes.
+ *
+ * This implementation is based on Ckmeans 3.4.6, which introduced a new divide
+ * and conquer approach that improved runtime from O(kn^2) to O(kn log(n)).
+ *
+ * Unlike the [original implementation](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html),
+ * this implementation does not include any code to automatically determine
+ * the optimal number of clusters: this information needs to be explicitly
+ * provided.
+ *
+ * ### References
+ * _Ckmeans.1d.dp: Optimal k-means Clustering in One Dimension by Dynamic
+ * Programming_ Haizhou Wang and Mingzhou Song ISSN 2073-4859
+ *
+ * from The R Journal Vol. 3/2, December 2011
+ * @param {Array<number>} x input data, as an array of number values
+ * @param {number} nClusters number of desired classes. This cannot be
+ * greater than the number of values in the data array.
+ * @returns {Array<Array<number>>} clustered input
+ * @throws {Error} if the number of requested clusters is higher than the size of the data
+ * @example
+ * ckmeans([-1, 2, -1, 2, 4, 5, 6, -1, 2, -1], 3);
+ * // The input, clustered into groups of similar numbers.
+ * //= [[-1, -1, -1, -1], [2, 2, 2], [4, 5, 6]]);
+ */
+function ckmeans(x/*: Array<number> */, nClusters/*: number */)/*: Array<Array<number>> */ {
+
+    if (nClusters > x.length) {
+        throw new Error('cannot generate more classes than there are data values');
+    }
+
+    var sorted = numeric_sort(x),
+        // we'll use this as the maximum number of clusters
+        uniqueCount = unique_count_sorted(sorted);
+
+    // if all of the input values are identical, there's one cluster
+    // with all of the input in it.
+    if (uniqueCount === 1) {
+        return [sorted];
+    }
+
+    // named 'S' originally
+    var matrix = makeMatrix(nClusters, sorted.length),
+        // named 'J' originally
+        backtrackMatrix = makeMatrix(nClusters, sorted.length);
+
+    // This is a dynamic programming way to solve the problem of minimizing
+    // within-cluster sum of squares. It's similar to linear regression
+    // in this way, and this calculation incrementally computes the
+    // sum of squares that are later read.
+    fillMatrices(sorted, matrix, backtrackMatrix);
+
+    // The real work of Ckmeans clustering happens in the matrix generation:
+    // the generated matrices encode all possible clustering combinations, and
+    // once they're generated we can solve for the best clustering groups
+    // very quickly.
+    var clusters = [],
+        clusterRight = backtrackMatrix[0].length - 1;
+
+    // Backtrack the clusters from the dynamic programming matrix. This
+    // starts at the bottom-right corner of the matrix (if the top-left is 0, 0),
+    // and moves the cluster target with the loop.
+    for (var cluster = backtrackMatrix.length - 1; cluster >= 0; cluster--) {
+
+        var clusterLeft = backtrackMatrix[cluster][clusterRight];
+
+        // fill the cluster from the sorted input by taking a slice of the
+        // array. the backtrack matrix makes this easy - it stores the
+        // indexes where the cluster should start and end.
+        clusters[cluster] = sorted.slice(clusterLeft, clusterRight + 1);
+
+        if (cluster > 0) {
+            clusterRight = clusterLeft - 1;
+        }
+    }
+
+    return clusters;
+}
+
+var ckmeans_1 = ckmeans;
+
+function equalIntervalBreaks(x/*: Array<number> */, nClasses/*:number*/)/*: Array<number> */ {
+
+    if (x.length < 2) {
+        return x;
+    }
+
+    var theMin = min_1(x),
+        theMax = max_1(x); 
+
+    // the first break will always be the minimum value
+    // in the xset
+    var breaks = [theMin];
+
+    // The size of each break is the full range of the x
+    // divided by the number of classes requested
+    var breakSize = (theMax - theMin) / nClasses;
+
+    // In the case of nClasses = 1, this loop won't run
+    // and the returned breaks will be [min, max]
+    for (var i = 1; i < nClasses; i++) {
+        breaks.push(breaks[0] + breakSize * i);
+    }
+
+    // the last break will always be the
+    // maximum.
+    breaks.push(theMax);
+
+    return breaks;
+}
+
+var equal_interval_breaks = equalIntervalBreaks;
+
+function sampleCovariance(x /*:Array<number>*/, y /*:Array<number>*/)/*:number*/ {
+
+    // The two datasets must have the same length which must be more than 1
+    if (x.length !== y.length) {
+        throw new Error('sampleCovariance requires samples with equal lengths');
+    }
+
+    if (x.length < 2) {
+        throw new Error('sampleCovariance requires at least two data points in each sample');
+    }
+
+    // determine the mean of each dataset so that we can judge each
+    // value of the dataset fairly as the difference from the mean. this
+    // way, if one dataset is [1, 2, 3] and [2, 3, 4], their covariance
+    // does not suffer because of the difference in absolute values
+    var xmean = mean_1(x),
+        ymean = mean_1(y),
+        sum = 0;
+
+    // for each pair of values, the covariance increases when their
+    // difference from the mean is associated - if both are well above
+    // or if both are well below
+    // the mean, the covariance increases significantly.
+    for (var i = 0; i < x.length; i++) {
+        sum += (x[i] - xmean) * (y[i] - ymean);
+    }
+
+    // this is Bessels' Correction: an adjustment made to sample statistics
+    // that allows for the reduced degree of freedom entailed in calculating
+    // values from samples rather than complete populations.
+    var besselsCorrection = x.length - 1;
+
+    // the covariance is weighted by the length of the datasets.
+    return sum / besselsCorrection;
+}
+
+var sample_covariance = sampleCovariance;
+
+function sampleVariance(x /*: Array<number> */)/*:number*/ {
+    // The variance of no numbers is null
+    if (x.length < 2) {
+        throw new Error('sampleVariance requires at least two data points');
+    }
+
+    var sumSquaredDeviationsValue = sum_nth_power_deviations(x, 2);
+
+    // this is Bessels' Correction: an adjustment made to sample statistics
+    // that allows for the reduced degree of freedom entailed in calculating
+    // values from samples rather than complete populations.
+    var besselsCorrection = x.length - 1;
+
+    // Find the mean value of that list
+    return sumSquaredDeviationsValue / besselsCorrection;
+}
+
+var sample_variance = sampleVariance;
+
+function sampleStandardDeviation(x/*:Array<number>*/)/*:number*/ {
+    // The standard deviation of no numbers is null
+    var sampleVarianceX = sample_variance(x);
+    return Math.sqrt(sampleVarianceX);
+}
+
+var sample_standard_deviation = sampleStandardDeviation;
+
+function sampleCorrelation(x/*: Array<number> */, y/*: Array<number> */)/*:number*/ {
+    var cov = sample_covariance(x, y),
+        xstd = sample_standard_deviation(x),
+        ystd = sample_standard_deviation(y);
+
+    return cov / xstd / ystd;
+}
+
+var sample_correlation = sampleCorrelation;
+
+function sampleSkewness(x /*: Array<number> */)/*:number*/ {
+
+    if (x.length < 3) {
+        throw new Error('sampleSkewness requires at least three data points');
+    }
+
+    var meanValue = mean_1(x);
+    var tempValue;
+    var sumSquaredDeviations = 0;
+    var sumCubedDeviations = 0;
+
+    for (var i = 0; i < x.length; i++) {
+        tempValue = x[i] - meanValue;
+        sumSquaredDeviations += tempValue * tempValue;
+        sumCubedDeviations += tempValue * tempValue * tempValue;
+    }
+
+    // this is Bessels' Correction: an adjustment made to sample statistics
+    // that allows for the reduced degree of freedom entailed in calculating
+    // values from samples rather than complete populations.
+    var besselsCorrection = x.length - 1;
+
+    // Find the mean value of that list
+    var theSampleStandardDeviation = Math.sqrt(sumSquaredDeviations / besselsCorrection);
+
+    var n = x.length,
+        cubedS = Math.pow(theSampleStandardDeviation, 3);
+
+    return n * sumCubedDeviations / ((n - 1) * (n - 2) * cubedS);
+}
+
+var sample_skewness = sampleSkewness;
+
+function sampleKurtosis(x /*: Array<number> */)/*:number*/ {
+
+    var n = x.length;
+
+    if (n < 4) {
+        throw new Error('sampleKurtosis requires at least four data points');
+    }
+
+    var meanValue = mean_1(x);
+    var tempValue;
+    var secondCentralMoment = 0;
+    var fourthCentralMoment = 0;
+
+    for (var i = 0; i < n; i++) {
+        tempValue = x[i] - meanValue;
+        secondCentralMoment += tempValue * tempValue;
+        fourthCentralMoment += tempValue * tempValue * tempValue * tempValue;
+    }
+
+    return (n - 1) / ((n - 2) * (n - 3)) * 
+        (n * (n + 1) * fourthCentralMoment / (secondCentralMoment * secondCentralMoment) - 3 * (n - 1));
+}
+
+var sample_kurtosis = sampleKurtosis;
+
+/* @flow */
+
+function permutationsHeap/*:: <T> */(elements /*: Array<T> */)/*: Array<Array<T>> */ {
+    var indexes = new Array(elements.length);
+    var permutations = [elements.slice()];
+
+    for (var i = 0; i < elements.length; i++) {
+        indexes[i] = 0;
+    }
+
+    for (i = 0; i < elements.length;) {
+        if (indexes[i] < i) {
+
+            // At odd indexes, swap from indexes[i] instead
+            // of from the beginning of the array
+            var swapFrom = 0;
+            if (i % 2 !== 0) {
+                swapFrom = indexes[i];
+            }
+
+            // swap between swapFrom and i, using
+            // a temporary variable as storage.
+            var temp = elements[swapFrom];
+            elements[swapFrom] = elements[i];
+            elements[i] = temp;
+
+            permutations.push(elements.slice());
+            indexes[i]++;
+            i = 0;
+
+        } else {
+            indexes[i] = 0;
+            i++;
+        }
+    }
+
+    return permutations;
+}
+
+var permutations_heap = permutationsHeap;
+
+/* @flow */
+function combinations(x /*: Array<any> */, k/*: number */) {
+    var i;
+    var subI;
+    var combinationList = [];
+    var subsetCombinations;
+    var next;
+
+    for (i = 0; i < x.length; i++) {
+        if (k === 1) {
+            combinationList.push([x[i]]);
+        } else {
+            subsetCombinations = combinations(x.slice( i + 1, x.length ), k - 1);
+            for (subI = 0; subI < subsetCombinations.length; subI++) {
+                next = subsetCombinations[subI];
+                next.unshift(x[i]);
+                combinationList.push(next);
+            }
+        }
+    }
+    return combinationList;
+}
+
+var combinations_1 = combinations;
+
+/* @flow */
+function combinationsReplacement(
+    x /*: Array<any> */,
+    k /*: number */) {
+
+    var combinationList = [];
+
+    for (var i = 0; i < x.length; i++) {
+        if (k === 1) {
+            // If we're requested to find only one element, we don't need
+            // to recurse: just push `x[i]` onto the list of combinations.
+            combinationList.push([x[i]]);
+        } else {
+            // Otherwise, recursively find combinations, given `k - 1`. Note that
+            // we request `k - 1`, so if you were looking for k=3 combinations, we're
+            // requesting k=2. This -1 gets reversed in the for loop right after this
+            // code, since we concatenate `x[i]` onto the selected combinations,
+            // bringing `k` back up to your requested level.
+            // This recursion may go many levels deep, since it only stops once
+            // k=1.
+            var subsetCombinations = combinationsReplacement(
+                x.slice(i, x.length),
+                k - 1);
+
+            for (var j = 0; j < subsetCombinations.length; j++) {
+                combinationList.push([x[i]]
+                    .concat(subsetCombinations[j]));
+            }
+        }
+    }
+
+    return combinationList;
+}
+
+var combinations_replacement = combinationsReplacement;
+
+function addToMean(mean /*: number*/, n/*: number */, newValue/*: number */)/*: number */ {
+    return mean + ((newValue - mean) / (n + 1));
+}
+
+var add_to_mean = addToMean;
+
+function combineMeans(mean1 /*: number*/, n1/*: number */, mean2 /*: number*/, n2/*: number */)/*: number */ {
+    return (mean1 * n1 + mean2 * n2) / (n1 + n2);
+}
+
+var combine_means = combineMeans;
+
+function combineVariances(
+    variance1 /*: number*/,
+    mean1 /*: number*/,
+    n1/*: number */,
+    variance2 /*: number*/,
+    mean2 /*: number*/,
+    n2/*: number */)/*: number */ {
+
+    var newMean = combine_means(mean1, n1, mean2, n2);
+
+    return (
+      n1 * (variance1 + Math.pow(mean1 - newMean, 2)) +
+      n2 * (variance2 + Math.pow(mean2 - newMean, 2))
+    ) / (n1 + n2);
+}
+
+var combine_variances = combineVariances;
+
+function geometricMean(x /*: Array<number> */) {
+    // The mean of no numbers is null
+    if (x.length === 0) {
+        throw new Error('geometricMean requires at least one data point');
+    }
+
+    // the starting value.
+    var value = 1;
+
+    for (var i = 0; i < x.length; i++) {
+        // the geometric mean is only valid for positive numbers
+        if (x[i] <= 0) {
+            throw new Error('geometricMean requires only positive numbers as input');
+        }
+
+        // repeatedly multiply the value by each number
+        value *= x[i];
+    }
+
+    return Math.pow(value, 1 / x.length);
+}
+
+var geometric_mean = geometricMean;
+
+function harmonicMean(x /*: Array<number> */) {
+    // The mean of no numbers is null
+    if (x.length === 0) {
+        throw new Error('harmonicMean requires at least one data point');
+    }
+
+    var reciprocalSum = 0;
+
+    for (var i = 0; i < x.length; i++) {
+        // the harmonic mean is only valid for positive numbers
+        if (x[i] <= 0) {
+            throw new Error('harmonicMean requires only positive numbers as input');
+        }
+
+        reciprocalSum += 1 / x[i];
+    }
+
+    // divide n by the the reciprocal sum
+    return x.length / reciprocalSum;
+}
+
+var harmonic_mean = harmonicMean;
+
+function medianSorted(sorted /*: Array<number> */)/*:number*/ {
+    return quantile_sorted(sorted, 0.5);
+}
+
+var median_sorted = medianSorted;
+
+function subtractFromMean(mean /*: number*/, n/*: number */, value/*: number */)/*: number */ {
+    return ((mean * n) - value) / (n - 1);
+}
+
+var subtract_from_mean = subtractFromMean;
+
+function rootMeanSquare(x /*: Array<number> */)/*:number*/ {
+    if (x.length === 0) {
+        throw new Error('rootMeanSquare requires at least one data point');
+    }
+
+    var sumOfSquares = 0;
+    for (var i = 0; i < x.length; i++) {
+        sumOfSquares += Math.pow(x[i], 2);
+    }
+
+    return Math.sqrt(sumOfSquares / x.length);
+}
+
+var root_mean_square = rootMeanSquare;
+
+function tTest(x/*: Array<number> */, expectedValue/*: number */)/*:number*/ {
+    // The mean of the sample
+    var sampleMean = mean_1(x);
+
+    // The standard deviation of the sample
+    var sd = standard_deviation(x);
+
+    // Square root the length of the sample
+    var rootN = Math.sqrt(x.length);
+
+    // returning the t value
+    return (sampleMean - expectedValue) / (sd / rootN);
+}
+
+var t_test = tTest;
+
+function tTestTwoSample(
+    sampleX/*: Array<number> */,
+    sampleY/*: Array<number> */,
+    difference/*: number */) {
+    var n = sampleX.length,
+        m = sampleY.length;
+
+    // If either sample doesn't actually have any values, we can't
+    // compute this at all, so we return `null`.
+    if (!n || !m) { return null; }
+
+    // default difference (mu) is zero
+    if (!difference) {
+        difference = 0;
+    }
+
+    var meanX = mean_1(sampleX),
+        meanY = mean_1(sampleY),
+        sampleVarianceX = sample_variance(sampleX),
+        sampleVarianceY = sample_variance(sampleY);
+
+    if (typeof meanX === 'number' &&
+        typeof meanY === 'number' &&
+        typeof sampleVarianceX === 'number' &&
+        typeof sampleVarianceY === 'number') {
+        var weightedVariance = ((n - 1) * sampleVarianceX +
+            (m - 1) * sampleVarianceY) / (n + m - 2);
+
+        return (meanX - meanY - difference) /
+            Math.sqrt(weightedVariance * (1 / n + 1 / m));
+    }
+}
+
+var t_test_two_sample = tTestTwoSample;
+
+function BayesianClassifier() {
+    // The number of items that are currently
+    // classified in the model
+    this.totalCount = 0;
+    // Every item classified in the model
+    this.data = {};
+}
+
+/**
+ * Train the classifier with a new item, which has a single
+ * dimension of Javascript literal keys and values.
+ *
+ * @param {Object} item an object with singly-deep properties
+ * @param {string} category the category this item belongs to
+ * @return {undefined} adds the item to the classifier
+ */
+BayesianClassifier.prototype.train = function(item, category) {
+    // If the data object doesn't have any values
+    // for this category, create a new object for it.
+    if (!this.data[category]) {
+        this.data[category] = {};
+    }
+
+    // Iterate through each key in the item.
+    for (var k in item) {
+        var v = item[k];
+        // Initialize the nested object `data[category][k][item[k]]`
+        // with an object of keys that equal 0.
+        if (this.data[category][k] === undefined) {
+            this.data[category][k] = {};
+        }
+        if (this.data[category][k][v] === undefined) {
+            this.data[category][k][v] = 0;
+        }
+
+        // And increment the key for this key/value combination.
+        this.data[category][k][v]++;
+    }
+
+    // Increment the number of items classified
+    this.totalCount++;
+};
+
+/**
+ * Generate a score of how well this item matches all
+ * possible categories based on its attributes
+ *
+ * @param {Object} item an item in the same format as with train
+ * @returns {Object} of probabilities that this item belongs to a
+ * given category.
+ */
+BayesianClassifier.prototype.score = function(item) {
+    // Initialize an empty array of odds per category.
+    var odds = {}, category;
+    // Iterate through each key in the item,
+    // then iterate through each category that has been used
+    // in previous calls to `.train()`
+    for (var k in item) {
+        var v = item[k];
+        for (category in this.data) {
+            // Create an empty object for storing key - value combinations
+            // for this category.
+            odds[category] = {};
+
+            // If this item doesn't even have a property, it counts for nothing,
+            // but if it does have the property that we're looking for from
+            // the item to categorize, it counts based on how popular it is
+            // versus the whole population.
+            if (this.data[category][k]) {
+                odds[category][k + '_' + v] = (this.data[category][k][v] || 0) / this.totalCount;
+            } else {
+                odds[category][k + '_' + v] = 0;
+            }
+        }
+    }
+
+    // Set up a new object that will contain sums of these odds by category
+    var oddsSums = {};
+
+    for (category in odds) {
+        // Tally all of the odds for each category-combination pair -
+        // the non-existence of a category does not add anything to the
+        // score.
+        oddsSums[category] = 0;
+        for (var combination in odds[category]) {
+            oddsSums[category] += odds[category][combination];
+        }
+    }
+
+    return oddsSums;
+};
+
+var bayesian_classifier = BayesianClassifier;
+
+function PerceptronModel() {
+    // The weights, or coefficients of the model;
+    // weights are only populated when training with data.
+    this.weights = [];
+    // The bias term, or intercept; it is also a weight but
+    // it's stored separately for convenience as it is always
+    // multiplied by one.
+    this.bias = 0;
+}
+
+/**
+ * **Predict**: Use an array of features with the weight array and bias
+ * to predict whether an example is labeled 0 or 1.
+ *
+ * @param {Array<number>} features an array of features as numbers
+ * @returns {number} 1 if the score is over 0, otherwise 0
+ */
+PerceptronModel.prototype.predict = function(features) {
+
+    // Only predict if previously trained
+    // on the same size feature array(s).
+    if (features.length !== this.weights.length) { return null; }
+
+    // Calculate the sum of features times weights,
+    // with the bias added (implicitly times one).
+    var score = 0;
+    for (var i = 0; i < this.weights.length; i++) {
+        score += this.weights[i] * features[i];
+    }
+    score += this.bias;
+
+    // Classify as 1 if the score is over 0, otherwise 0.
+    if (score > 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+};
+
+/**
+ * **Train** the classifier with a new example, which is
+ * a numeric array of features and a 0 or 1 label.
+ *
+ * @param {Array<number>} features an array of features as numbers
+ * @param {number} label either 0 or 1
+ * @returns {PerceptronModel} this
+ */
+PerceptronModel.prototype.train = function(features, label) {
+    // Require that only labels of 0 or 1 are considered.
+    if (label !== 0 && label !== 1) { return null; }
+    // The length of the feature array determines
+    // the length of the weight array.
+    // The perceptron will continue learning as long as
+    // it keeps seeing feature arrays of the same length.
+    // When it sees a new data shape, it initializes.
+    if (features.length !== this.weights.length) {
+        this.weights = features;
+        this.bias = 1;
+    }
+    // Make a prediction based on current weights.
+    var prediction = this.predict(features);
+    // Update the weights if the prediction is wrong.
+    if (prediction !== label) {
+        var gradient = label - prediction;
+        for (var i = 0; i < this.weights.length; i++) {
+            this.weights[i] += gradient * features[i];
+        }
+        this.bias += gradient;
+    }
+    return this;
+};
+
+var perceptron = PerceptronModel;
+
+var epsilon$1 = 0.0001;
+
+var epsilon_1 = epsilon$1;
+
+function factorial(n /*: number */)/*: number */ {
+
+    // factorial is mathematically undefined for negative numbers
+    if (n < 0) {
+        throw new Error('factorial requires a non-negative value');
+    }
+
+    if (Math.floor(n) !== n) {
+        throw new Error('factorial requires an integer input');
+    }
+
+    // typically you'll expand the factorial function going down, like
+    // 5! = 5 * 4 * 3 * 2 * 1. This is going in the opposite direction,
+    // counting from 2 up to the number in question, and since anything
+    // multiplied by 1 is itself, the loop only needs to start at 2.
+    var accumulator = 1;
+    for (var i = 2; i <= n; i++) {
+        // for each number up to and including the number `n`, multiply
+        // the accumulator my that number.
+        accumulator *= i;
+    }
+    return accumulator;
+}
+
+var factorial_1 = factorial;
+
+function bernoulliDistribution(p/*: number */) /*: number[] */ {
+    // Check that `p` is a valid probability (0 ≤ p ≤ 1)
+    if (p < 0 || p > 1 ) {
+        throw new Error('bernoulliDistribution requires probability to be between 0 and 1 inclusive');
+    }
+
+    return [1 - p, p];
+}
+
+var bernoulli_distribution = bernoulliDistribution;
+
+function binomialDistribution(
+    trials/*: number */,
+    probability/*: number */)/*: ?number[] */ {
+    // Check that `p` is a valid probability (0 ≤ p ≤ 1),
+    // that `n` is an integer, strictly positive.
+    if (probability < 0 || probability > 1 ||
+        trials <= 0 || trials % 1 !== 0) {
+        return undefined;
+    }
+
+    // We initialize `x`, the random variable, and `accumulator`, an accumulator
+    // for the cumulative distribution function to 0. `distribution_functions`
+    // is the object we'll return with the `probability_of_x` and the
+    // `cumulativeProbability_of_x`, as well as the calculated mean &
+    // variance. We iterate until the `cumulativeProbability_of_x` is
+    // within `epsilon` of 1.0.
+    var x = 0,
+        cumulativeProbability = 0,
+        cells = [],
+        binomialCoefficient = 1;
+
+    // This algorithm iterates through each potential outcome,
+    // until the `cumulativeProbability` is very close to 1, at
+    // which point we've defined the vast majority of outcomes
+    do {
+        // a [probability mass function](https://en.wikipedia.org/wiki/Probability_mass_function)
+        cells[x] = binomialCoefficient *
+            Math.pow(probability, x) * Math.pow(1 - probability, trials - x);
+        cumulativeProbability += cells[x];
+        x++;
+        binomialCoefficient = binomialCoefficient * (trials - x + 1) / x;
+    // when the cumulativeProbability is nearly 1, we've calculated
+    // the useful range of this distribution
+    } while (cumulativeProbability < 1 - epsilon_1);
+
+    return cells;
+}
+
+var binomial_distribution = binomialDistribution;
+
+function poissonDistribution(lambda/*: number */) /*: ?number[] */ {
+    // Check that lambda is strictly positive
+    if (lambda <= 0) { return undefined; }
+
+    // our current place in the distribution
+    var x = 0,
+        // and we keep track of the current cumulative probability, in
+        // order to know when to stop calculating chances.
+        cumulativeProbability = 0,
+        // the calculated cells to be returned
+        cells = [],
+        factorialX = 1;
+
+    // This algorithm iterates through each potential outcome,
+    // until the `cumulativeProbability` is very close to 1, at
+    // which point we've defined the vast majority of outcomes
+    do {
+        // a [probability mass function](https://en.wikipedia.org/wiki/Probability_mass_function)
+        cells[x] = (Math.exp(-lambda) * Math.pow(lambda, x)) / factorialX;
+        cumulativeProbability += cells[x];
+        x++;
+        factorialX *= x;
+    // when the cumulativeProbability is nearly 1, we've calculated
+    // the useful range of this distribution
+    } while (cumulativeProbability < 1 - epsilon_1);
+
+    return cells;
+}
+
+var poisson_distribution = poissonDistribution;
+
+var chiSquaredDistributionTable = {
+    '1': {
+        '0.995': 0,
+        '0.99': 0,
+        '0.975': 0,
+        '0.95': 0,
+        '0.9': 0.02,
+        '0.5': 0.45,
+        '0.1': 2.71,
+        '0.05': 3.84,
+        '0.025': 5.02,
+        '0.01': 6.63,
+        '0.005': 7.88
+    },
+    '2': {
+        '0.995': 0.01,
+        '0.99': 0.02,
+        '0.975': 0.05,
+        '0.95': 0.1,
+        '0.9': 0.21,
+        '0.5': 1.39,
+        '0.1': 4.61,
+        '0.05': 5.99,
+        '0.025': 7.38,
+        '0.01': 9.21,
+        '0.005': 10.6
+    },
+    '3': {
+        '0.995': 0.07,
+        '0.99': 0.11,
+        '0.975': 0.22,
+        '0.95': 0.35,
+        '0.9': 0.58,
+        '0.5': 2.37,
+        '0.1': 6.25,
+        '0.05': 7.81,
+        '0.025': 9.35,
+        '0.01': 11.34,
+        '0.005': 12.84
+    },
+    '4': {
+        '0.995': 0.21,
+        '0.99': 0.3,
+        '0.975': 0.48,
+        '0.95': 0.71,
+        '0.9': 1.06,
+        '0.5': 3.36,
+        '0.1': 7.78,
+        '0.05': 9.49,
+        '0.025': 11.14,
+        '0.01': 13.28,
+        '0.005': 14.86
+    },
+    '5': {
+        '0.995': 0.41,
+        '0.99': 0.55,
+        '0.975': 0.83,
+        '0.95': 1.15,
+        '0.9': 1.61,
+        '0.5': 4.35,
+        '0.1': 9.24,
+        '0.05': 11.07,
+        '0.025': 12.83,
+        '0.01': 15.09,
+        '0.005': 16.75
+    },
+    '6': {
+        '0.995': 0.68,
+        '0.99': 0.87,
+        '0.975': 1.24,
+        '0.95': 1.64,
+        '0.9': 2.2,
+        '0.5': 5.35,
+        '0.1': 10.65,
+        '0.05': 12.59,
+        '0.025': 14.45,
+        '0.01': 16.81,
+        '0.005': 18.55
+    },
+    '7': {
+        '0.995': 0.99,
+        '0.99': 1.25,
+        '0.975': 1.69,
+        '0.95': 2.17,
+        '0.9': 2.83,
+        '0.5': 6.35,
+        '0.1': 12.02,
+        '0.05': 14.07,
+        '0.025': 16.01,
+        '0.01': 18.48,
+        '0.005': 20.28
+    },
+    '8': {
+        '0.995': 1.34,
+        '0.99': 1.65,
+        '0.975': 2.18,
+        '0.95': 2.73,
+        '0.9': 3.49,
+        '0.5': 7.34,
+        '0.1': 13.36,
+        '0.05': 15.51,
+        '0.025': 17.53,
+        '0.01': 20.09,
+        '0.005': 21.96
+    },
+    '9': {
+        '0.995': 1.73,
+        '0.99': 2.09,
+        '0.975': 2.7,
+        '0.95': 3.33,
+        '0.9': 4.17,
+        '0.5': 8.34,
+        '0.1': 14.68,
+        '0.05': 16.92,
+        '0.025': 19.02,
+        '0.01': 21.67,
+        '0.005': 23.59
+    },
+    '10': {
+        '0.995': 2.16,
+        '0.99': 2.56,
+        '0.975': 3.25,
+        '0.95': 3.94,
+        '0.9': 4.87,
+        '0.5': 9.34,
+        '0.1': 15.99,
+        '0.05': 18.31,
+        '0.025': 20.48,
+        '0.01': 23.21,
+        '0.005': 25.19
+    },
+    '11': {
+        '0.995': 2.6,
+        '0.99': 3.05,
+        '0.975': 3.82,
+        '0.95': 4.57,
+        '0.9': 5.58,
+        '0.5': 10.34,
+        '0.1': 17.28,
+        '0.05': 19.68,
+        '0.025': 21.92,
+        '0.01': 24.72,
+        '0.005': 26.76
+    },
+    '12': {
+        '0.995': 3.07,
+        '0.99': 3.57,
+        '0.975': 4.4,
+        '0.95': 5.23,
+        '0.9': 6.3,
+        '0.5': 11.34,
+        '0.1': 18.55,
+        '0.05': 21.03,
+        '0.025': 23.34,
+        '0.01': 26.22,
+        '0.005': 28.3
+    },
+    '13': {
+        '0.995': 3.57,
+        '0.99': 4.11,
+        '0.975': 5.01,
+        '0.95': 5.89,
+        '0.9': 7.04,
+        '0.5': 12.34,
+        '0.1': 19.81,
+        '0.05': 22.36,
+        '0.025': 24.74,
+        '0.01': 27.69,
+        '0.005': 29.82
+    },
+    '14': {
+        '0.995': 4.07,
+        '0.99': 4.66,
+        '0.975': 5.63,
+        '0.95': 6.57,
+        '0.9': 7.79,
+        '0.5': 13.34,
+        '0.1': 21.06,
+        '0.05': 23.68,
+        '0.025': 26.12,
+        '0.01': 29.14,
+        '0.005': 31.32
+    },
+    '15': {
+        '0.995': 4.6,
+        '0.99': 5.23,
+        '0.975': 6.27,
+        '0.95': 7.26,
+        '0.9': 8.55,
+        '0.5': 14.34,
+        '0.1': 22.31,
+        '0.05': 25,
+        '0.025': 27.49,
+        '0.01': 30.58,
+        '0.005': 32.8
+    },
+    '16': {
+        '0.995': 5.14,
+        '0.99': 5.81,
+        '0.975': 6.91,
+        '0.95': 7.96,
+        '0.9': 9.31,
+        '0.5': 15.34,
+        '0.1': 23.54,
+        '0.05': 26.3,
+        '0.025': 28.85,
+        '0.01': 32,
+        '0.005': 34.27
+    },
+    '17': {
+        '0.995': 5.7,
+        '0.99': 6.41,
+        '0.975': 7.56,
+        '0.95': 8.67,
+        '0.9': 10.09,
+        '0.5': 16.34,
+        '0.1': 24.77,
+        '0.05': 27.59,
+        '0.025': 30.19,
+        '0.01': 33.41,
+        '0.005': 35.72
+    },
+    '18': {
+        '0.995': 6.26,
+        '0.99': 7.01,
+        '0.975': 8.23,
+        '0.95': 9.39,
+        '0.9': 10.87,
+        '0.5': 17.34,
+        '0.1': 25.99,
+        '0.05': 28.87,
+        '0.025': 31.53,
+        '0.01': 34.81,
+        '0.005': 37.16
+    },
+    '19': {
+        '0.995': 6.84,
+        '0.99': 7.63,
+        '0.975': 8.91,
+        '0.95': 10.12,
+        '0.9': 11.65,
+        '0.5': 18.34,
+        '0.1': 27.2,
+        '0.05': 30.14,
+        '0.025': 32.85,
+        '0.01': 36.19,
+        '0.005': 38.58
+    },
+    '20': {
+        '0.995': 7.43,
+        '0.99': 8.26,
+        '0.975': 9.59,
+        '0.95': 10.85,
+        '0.9': 12.44,
+        '0.5': 19.34,
+        '0.1': 28.41,
+        '0.05': 31.41,
+        '0.025': 34.17,
+        '0.01': 37.57,
+        '0.005': 40
+    },
+    '21': {
+        '0.995': 8.03,
+        '0.99': 8.9,
+        '0.975': 10.28,
+        '0.95': 11.59,
+        '0.9': 13.24,
+        '0.5': 20.34,
+        '0.1': 29.62,
+        '0.05': 32.67,
+        '0.025': 35.48,
+        '0.01': 38.93,
+        '0.005': 41.4
+    },
+    '22': {
+        '0.995': 8.64,
+        '0.99': 9.54,
+        '0.975': 10.98,
+        '0.95': 12.34,
+        '0.9': 14.04,
+        '0.5': 21.34,
+        '0.1': 30.81,
+        '0.05': 33.92,
+        '0.025': 36.78,
+        '0.01': 40.29,
+        '0.005': 42.8
+    },
+    '23': {
+        '0.995': 9.26,
+        '0.99': 10.2,
+        '0.975': 11.69,
+        '0.95': 13.09,
+        '0.9': 14.85,
+        '0.5': 22.34,
+        '0.1': 32.01,
+        '0.05': 35.17,
+        '0.025': 38.08,
+        '0.01': 41.64,
+        '0.005': 44.18
+    },
+    '24': {
+        '0.995': 9.89,
+        '0.99': 10.86,
+        '0.975': 12.4,
+        '0.95': 13.85,
+        '0.9': 15.66,
+        '0.5': 23.34,
+        '0.1': 33.2,
+        '0.05': 36.42,
+        '0.025': 39.36,
+        '0.01': 42.98,
+        '0.005': 45.56
+    },
+    '25': {
+        '0.995': 10.52,
+        '0.99': 11.52,
+        '0.975': 13.12,
+        '0.95': 14.61,
+        '0.9': 16.47,
+        '0.5': 24.34,
+        '0.1': 34.28,
+        '0.05': 37.65,
+        '0.025': 40.65,
+        '0.01': 44.31,
+        '0.005': 46.93
+    },
+    '26': {
+        '0.995': 11.16,
+        '0.99': 12.2,
+        '0.975': 13.84,
+        '0.95': 15.38,
+        '0.9': 17.29,
+        '0.5': 25.34,
+        '0.1': 35.56,
+        '0.05': 38.89,
+        '0.025': 41.92,
+        '0.01': 45.64,
+        '0.005': 48.29
+    },
+    '27': {
+        '0.995': 11.81,
+        '0.99': 12.88,
+        '0.975': 14.57,
+        '0.95': 16.15,
+        '0.9': 18.11,
+        '0.5': 26.34,
+        '0.1': 36.74,
+        '0.05': 40.11,
+        '0.025': 43.19,
+        '0.01': 46.96,
+        '0.005': 49.65
+    },
+    '28': {
+        '0.995': 12.46,
+        '0.99': 13.57,
+        '0.975': 15.31,
+        '0.95': 16.93,
+        '0.9': 18.94,
+        '0.5': 27.34,
+        '0.1': 37.92,
+        '0.05': 41.34,
+        '0.025': 44.46,
+        '0.01': 48.28,
+        '0.005': 50.99
+    },
+    '29': {
+        '0.995': 13.12,
+        '0.99': 14.26,
+        '0.975': 16.05,
+        '0.95': 17.71,
+        '0.9': 19.77,
+        '0.5': 28.34,
+        '0.1': 39.09,
+        '0.05': 42.56,
+        '0.025': 45.72,
+        '0.01': 49.59,
+        '0.005': 52.34
+    },
+    '30': {
+        '0.995': 13.79,
+        '0.99': 14.95,
+        '0.975': 16.79,
+        '0.95': 18.49,
+        '0.9': 20.6,
+        '0.5': 29.34,
+        '0.1': 40.26,
+        '0.05': 43.77,
+        '0.025': 46.98,
+        '0.01': 50.89,
+        '0.005': 53.67
+    },
+    '40': {
+        '0.995': 20.71,
+        '0.99': 22.16,
+        '0.975': 24.43,
+        '0.95': 26.51,
+        '0.9': 29.05,
+        '0.5': 39.34,
+        '0.1': 51.81,
+        '0.05': 55.76,
+        '0.025': 59.34,
+        '0.01': 63.69,
+        '0.005': 66.77
+    },
+    '50': {
+        '0.995': 27.99,
+        '0.99': 29.71,
+        '0.975': 32.36,
+        '0.95': 34.76,
+        '0.9': 37.69,
+        '0.5': 49.33,
+        '0.1': 63.17,
+        '0.05': 67.5,
+        '0.025': 71.42,
+        '0.01': 76.15,
+        '0.005': 79.49
+    },
+    '60': {
+        '0.995': 35.53,
+        '0.99': 37.48,
+        '0.975': 40.48,
+        '0.95': 43.19,
+        '0.9': 46.46,
+        '0.5': 59.33,
+        '0.1': 74.4,
+        '0.05': 79.08,
+        '0.025': 83.3,
+        '0.01': 88.38,
+        '0.005': 91.95
+    },
+    '70': {
+        '0.995': 43.28,
+        '0.99': 45.44,
+        '0.975': 48.76,
+        '0.95': 51.74,
+        '0.9': 55.33,
+        '0.5': 69.33,
+        '0.1': 85.53,
+        '0.05': 90.53,
+        '0.025': 95.02,
+        '0.01': 100.42,
+        '0.005': 104.22
+    },
+    '80': {
+        '0.995': 51.17,
+        '0.99': 53.54,
+        '0.975': 57.15,
+        '0.95': 60.39,
+        '0.9': 64.28,
+        '0.5': 79.33,
+        '0.1': 96.58,
+        '0.05': 101.88,
+        '0.025': 106.63,
+        '0.01': 112.33,
+        '0.005': 116.32
+    },
+    '90': {
+        '0.995': 59.2,
+        '0.99': 61.75,
+        '0.975': 65.65,
+        '0.95': 69.13,
+        '0.9': 73.29,
+        '0.5': 89.33,
+        '0.1': 107.57,
+        '0.05': 113.14,
+        '0.025': 118.14,
+        '0.01': 124.12,
+        '0.005': 128.3
+    },
+    '100': {
+        '0.995': 67.33,
+        '0.99': 70.06,
+        '0.975': 74.22,
+        '0.95': 77.93,
+        '0.9': 82.36,
+        '0.5': 99.33,
+        '0.1': 118.5,
+        '0.05': 124.34,
+        '0.025': 129.56,
+        '0.01': 135.81,
+        '0.005': 140.17
+    }
+};
+
+var chi_squared_distribution_table = chiSquaredDistributionTable;
+
+function chiSquaredGoodnessOfFit(
+    data/*: Array<number> */,
+    distributionType/*: Function */,
+    significance/*: number */)/*: boolean */ {
+    // Estimate from the sample data, a weighted mean.
+    var inputMean = mean_1(data),
+        // Calculated value of the χ2 statistic.
+        chiSquared = 0,
+        // Degrees of freedom, calculated as (number of class intervals -
+        // number of hypothesized distribution parameters estimated - 1)
+        degreesOfFreedom,
+        // Number of hypothesized distribution parameters estimated, expected to be supplied in the distribution test.
+        // Lose one degree of freedom for estimating `lambda` from the sample data.
+        c = 1,
+        // The hypothesized distribution.
+        // Generate the hypothesized distribution.
+        hypothesizedDistribution = distributionType(inputMean),
+        observedFrequencies = [],
+        expectedFrequencies = [],
+        k;
+
+    // Create an array holding a histogram from the sample data, of
+    // the form `{ value: numberOfOcurrences }`
+    for (var i = 0; i < data.length; i++) {
+        if (observedFrequencies[data[i]] === undefined) {
+            observedFrequencies[data[i]] = 0;
+        }
+        observedFrequencies[data[i]]++;
+    }
+
+    // The histogram we created might be sparse - there might be gaps
+    // between values. So we iterate through the histogram, making
+    // sure that instead of undefined, gaps have 0 values.
+    for (i = 0; i < observedFrequencies.length; i++) {
+        if (observedFrequencies[i] === undefined) {
+            observedFrequencies[i] = 0;
+        }
+    }
+
+    // Create an array holding a histogram of expected data given the
+    // sample size and hypothesized distribution.
+    for (k in hypothesizedDistribution) {
+        if (k in observedFrequencies) {
+            expectedFrequencies[+k] = hypothesizedDistribution[k] * data.length;
+        }
+    }
+
+    // Working backward through the expected frequencies, collapse classes
+    // if less than three observations are expected for a class.
+    // This transformation is applied to the observed frequencies as well.
+    for (k = expectedFrequencies.length - 1; k >= 0; k--) {
+        if (expectedFrequencies[k] < 3) {
+            expectedFrequencies[k - 1] += expectedFrequencies[k];
+            expectedFrequencies.pop();
+
+            observedFrequencies[k - 1] += observedFrequencies[k];
+            observedFrequencies.pop();
+        }
+    }
+
+    // Iterate through the squared differences between observed & expected
+    // frequencies, accumulating the `chiSquared` statistic.
+    for (k = 0; k < observedFrequencies.length; k++) {
+        chiSquared += Math.pow(
+            observedFrequencies[k] - expectedFrequencies[k], 2) /
+            expectedFrequencies[k];
+    }
+
+    // Calculate degrees of freedom for this test and look it up in the
+    // `chiSquaredDistributionTable` in order to
+    // accept or reject the goodness-of-fit of the hypothesized distribution.
+    degreesOfFreedom = observedFrequencies.length - c - 1;
+    return chi_squared_distribution_table[degreesOfFreedom][significance] < chiSquared;
+}
+
+var chi_squared_goodness_of_fit = chiSquaredGoodnessOfFit;
+
+function zScore(x/*:number*/, mean/*:number*/, standardDeviation/*:number*/)/*:number*/ {
+    return (x - mean) / standardDeviation;
+}
+
+var z_score = zScore;
+
+var SQRT_2PI = Math.sqrt(2 * Math.PI);
+
+function cumulativeDistribution(z) {
+    var sum = z,
+        tmp = z;
+
+    // 15 iterations are enough for 4-digit precision
+    for (var i = 1; i < 15; i++) {
+        tmp *= z * z / (2 * i + 1);
+        sum += tmp;
+    }
+    return Math.round((0.5 + (sum / SQRT_2PI) * Math.exp(-z * z / 2)) * 1e4) / 1e4;
+}
+
+/**
+ * A standard normal table, also called the unit normal table or Z table,
+ * is a mathematical table for the values of Φ (phi), which are the values of
+ * the cumulative distribution function of the normal distribution.
+ * It is used to find the probability that a statistic is observed below,
+ * above, or between values on the standard normal distribution, and by
+ * extension, any normal distribution.
+ *
+ * The probabilities are calculated using the
+ * [Cumulative distribution function](https://en.wikipedia.org/wiki/Normal_distribution#Cumulative_distribution_function).
+ * The table used is the cumulative, and not cumulative from 0 to mean
+ * (even though the latter has 5 digits precision, instead of 4).
+ */
+var standardNormalTable/*: Array<number> */ = [];
+
+for (var z = 0; z <= 3.09; z += 0.01) {
+    standardNormalTable.push(cumulativeDistribution(z));
+}
+
+var standard_normal_table = standardNormalTable;
+
+function cumulativeStdNormalProbability(z /*:number */)/*:number */ {
+
+    // Calculate the position of this value.
+    var absZ = Math.abs(z),
+        // Each row begins with a different
+        // significant digit: 0.5, 0.6, 0.7, and so on. Each value in the table
+        // corresponds to a range of 0.01 in the input values, so the value is
+        // multiplied by 100.
+        index = Math.min(Math.round(absZ * 100), standard_normal_table.length - 1);
+
+    // The index we calculate must be in the table as a positive value,
+    // but we still pay attention to whether the input is positive
+    // or negative, and flip the output value as a last step.
+    if (z >= 0) {
+        return standard_normal_table[index];
+    } else {
+        // due to floating-point arithmetic, values in the table with
+        // 4 significant figures can nevertheless end up as repeating
+        // fractions when they're computed here.
+        return +(1 - standard_normal_table[index]).toFixed(4);
+    }
+}
+
+var cumulative_std_normal_probability = cumulativeStdNormalProbability;
+
+function errorFunction(x/*: number */)/*: number */ {
+    var t = 1 / (1 + 0.5 * Math.abs(x));
+    var tau = t * Math.exp(-Math.pow(x, 2) -
+        1.26551223 +
+        1.00002368 * t +
+        0.37409196 * Math.pow(t, 2) +
+        0.09678418 * Math.pow(t, 3) -
+        0.18628806 * Math.pow(t, 4) +
+        0.27886807 * Math.pow(t, 5) -
+        1.13520398 * Math.pow(t, 6) +
+        1.48851587 * Math.pow(t, 7) -
+        0.82215223 * Math.pow(t, 8) +
+        0.17087277 * Math.pow(t, 9));
+    if (x >= 0) {
+        return 1 - tau;
+    } else {
+        return tau - 1;
+    }
+}
+
+var error_function = errorFunction;
+
+function inverseErrorFunction(x/*: number */)/*: number */ {
+    var a = (8 * (Math.PI - 3)) / (3 * Math.PI * (4 - Math.PI));
+
+    var inv = Math.sqrt(Math.sqrt(
+        Math.pow(2 / (Math.PI * a) + Math.log(1 - x * x) / 2, 2) -
+        Math.log(1 - x * x) / a) -
+        (2 / (Math.PI * a) + Math.log(1 - x * x) / 2));
+
+    if (x >= 0) {
+        return inv;
+    } else {
+        return -inv;
+    }
+}
+
+var inverse_error_function = inverseErrorFunction;
+
+function probit(p /*: number */)/*: number */ {
+    if (p === 0) {
+        p = epsilon_1;
+    } else if (p >= 1) {
+        p = 1 - epsilon_1;
+    }
+    return Math.sqrt(2) * inverse_error_function(2 * p - 1);
+}
+
+var probit_1 = probit;
+
+function sign$1(x/*: number */)/*: number */ {
+    if (typeof x === 'number') {
+        if (x < 0) {
+            return -1;
+        } else if (x === 0) {
+            return 0
+        } else {
+            return 1;
+        }
+    } else {
+        throw new TypeError('not a number');
+    }
+}
+
+var sign_1 = sign$1;
+
+function bisect$1(
+    func/*: (x: any) => number */,
+    start/*: number */,
+    end/*: number */,
+    maxIterations/*: number */,
+    errorTolerance/*: number */)/*:number*/ {
+
+    if (typeof func !== 'function') throw new TypeError('func must be a function');
+    
+    for (var i = 0; i < maxIterations; i++) {
+        var output = (start + end) / 2;
+
+        if (func(output) === 0 || Math.abs((end - start) / 2) < errorTolerance) {
+            return output;
+        }
+
+        if (sign_1(func(output)) === sign_1(func(start))) {
+            start = output;
+        } else {
+            end = output;
+        }
+    }
+    
+    throw new Error('maximum number of iterations exceeded');
+}
+
+var bisect_1 = bisect$1;
+
+var index$4 = createCommonjsModule(function (module) {
+/* @flow */
+'use strict';
+
+// # simple-statistics
+//
+// A simple, literate statistics system.
+
+var ss = module.exports = {};
+
+// Linear Regression
+ss.linearRegression = linear_regression;
+ss.linearRegressionLine = linear_regression_line;
+ss.standardDeviation = standard_deviation;
+ss.rSquared = r_squared;
+ss.mode = mode_1;
+ss.modeFast = mode_fast;
+ss.modeSorted = mode_sorted;
+ss.min = min_1;
+ss.max = max_1;
+ss.minSorted = min_sorted;
+ss.maxSorted = max_sorted;
+ss.sum = sum_1;
+ss.sumSimple = sum_simple;
+ss.product = product_1;
+ss.quantile = quantile_1;
+ss.quantileSorted = quantile_sorted;
+ss.iqr = ss.interquartileRange = interquartile_range;
+ss.medianAbsoluteDeviation = ss.mad = median_absolute_deviation;
+ss.chunk = chunk_1;
+ss.sampleWithReplacement = sample_with_replacement;
+ss.shuffle = shuffle_1;
+ss.shuffleInPlace = shuffle_in_place;
+ss.sample = sample_1;
+ss.ckmeans = ckmeans_1;
+ss.uniqueCountSorted = unique_count_sorted;
+ss.sumNthPowerDeviations = sum_nth_power_deviations;
+ss.equalIntervalBreaks = equal_interval_breaks;
+
+// sample statistics
+ss.sampleCovariance = sample_covariance;
+ss.sampleCorrelation = sample_correlation;
+ss.sampleVariance = sample_variance;
+ss.sampleStandardDeviation = sample_standard_deviation;
+ss.sampleSkewness = sample_skewness;
+ss.sampleKurtosis = sample_kurtosis;
+
+// combinatorics
+ss.permutationsHeap = permutations_heap;
+ss.combinations = combinations_1;
+ss.combinationsReplacement = combinations_replacement;
+
+// measures of centrality
+ss.addToMean = add_to_mean;
+ss.combineMeans = combine_means;
+ss.combineVariances = combine_variances;
+ss.geometricMean = geometric_mean;
+ss.harmonicMean = harmonic_mean;
+ss.mean = ss.average = mean_1;
+ss.median = median_1;
+ss.medianSorted = median_sorted;
+ss.subtractFromMean = subtract_from_mean;
+
+ss.rootMeanSquare = ss.rms = root_mean_square;
+ss.variance = variance_1;
+ss.tTest = t_test;
+ss.tTestTwoSample = t_test_two_sample;
+// ss.jenks = require('./src/jenks');
+
+// Classifiers
+ss.bayesian = bayesian_classifier;
+ss.perceptron = perceptron;
+
+// Distribution-related methods
+ss.epsilon = epsilon_1; // We make ε available to the test suite.
+ss.factorial = factorial_1;
+ss.bernoulliDistribution = bernoulli_distribution;
+ss.binomialDistribution = binomial_distribution;
+ss.poissonDistribution = poisson_distribution;
+ss.chiSquaredGoodnessOfFit = chi_squared_goodness_of_fit;
+
+// Normal distribution
+ss.zScore = z_score;
+ss.cumulativeStdNormalProbability = cumulative_std_normal_probability;
+ss.standardNormalTable = standard_normal_table;
+ss.errorFunction = ss.erf = error_function;
+ss.inverseErrorFunction = inverse_error_function;
+ss.probit = probit_1;
+
+// Root-finding methods
+ss.bisect = bisect_1;
 });
 
 __$styleInject("svg.react-choropleth g path {\n      \n      stroke: grey;\n    }", undefined);
@@ -22704,15 +26840,21 @@ function transform$1(geoJson, width, height, pathGenerator) {
   return { scale: scale, translate: translate };
 }
 
-function colorScaleGenerator(colors, noDataColor) {
-  var scale = linear().range(colors);
-
-  return function (value, data) {
-    if (value === undefined) return noDataColor;
-    var values = data.map(function (d) {
-      return d.value;
-    });
+function colorScaleGenerator(colors, noDataColor, colorScaleType, data) {
+  var scale = d3Scale[colorScaleType]().range(colors);
+  var values = data.map(function (d) {
+    return d.value;
+  });
+  if (colorScaleType === 'scaleQuantize') {
     scale.domain([Math.min.apply(Math, toConsumableArray(values)), Math.max.apply(Math, toConsumableArray(values))]);
+  } else if (colorScaleType === 'scaleThreshold') {
+    scale.domain(index$4.ckmeans(values, colors.length - 1).map(function (cluster) {
+      return cluster[0];
+    }));
+  }
+
+  return function (value) {
+    if (value === undefined) return noDataColor;
     return scale(value);
   };
 }
@@ -22724,11 +26866,13 @@ function Choropleth(_ref) {
       geoJson = _ref.geoJson,
       colors = _ref.colors,
       noDataColor = _ref.noDataColor,
-      dataValueAccessor = _ref.dataValueAccessor;
+      dataValueAccessor = _ref.dataValueAccessor,
+      projectionName = _ref.projectionName,
+      colorScaleType = _ref.colorScaleType;
 
-  var projection = geoMercator();
+  var projection = d3Geo[projectionName]();
   var pathGenerator = geoPath(projection);
-  var colorScale = colorScaleGenerator(colors, noDataColor);
+  var colorScale = colorScaleGenerator(colors, noDataColor, colorScaleType, data);
 
   var _transform = transform$1(geoJson, width, height, pathGenerator),
       translate = _transform.translate,
@@ -22757,11 +26901,16 @@ Choropleth.propTypes = {
       id: index$3.string
     }))
   }),
-  dataValueAccessor: index$3.func
+  dataValueAccessor: index$3.func,
+  projectionName: index$3.string,
+  // Only supporting the scales that are good for intensity maps(scaleQuantize for a basic distribution and scaleThreshold for a clustered distribution)
+  colorScaleType: index$3.oneOf(['scaleQuantize', 'scaleThreshold'])
 };
 
 Choropleth.defaultProps = {
-  dataValueAccessor: dataValueAccessor
+  dataValueAccessor: dataValueAccessor,
+  projectionName: 'geoMercator', // Can be any d3Geo projections
+  colorScaleType: 'scaleQuantize'
 };
 
 var identity$7 = function(x) {
@@ -22858,7 +27007,7 @@ function object$2(topology, o) {
   return geometry(o);
 }
 
-var bisect$1 = function(a, x) {
+var bisect$2 = function(a, x) {
   var lo = 0, hi = a.length;
   while (lo < hi) {
     var mid = lo + hi >>> 1;
@@ -23154,7 +27303,7 @@ var projection$$1 = geoMercator();
 var pathGenerator = geoPath(projection$$1);
 var countryValues = [{ featureId: 'AFG', value: 20 }, { featureId: 'PAK', value: 40 }, { featureId: 'IRQ', value: 80 }, { featureId: 'ALB', value: 200 }, { featureId: 'MNG', value: 100 }, { featureId: 'COL', value: 60 }, { featureId: 'ARG', value: 150 }];
 
-var colors = ['#C6DBEF', '#08306B'];
+var colors = ["#a9c8f4", "#7fa1d2", "#5479b0", "#2a518e", "#002A6C"];
 json('./countries.topo.json', function (error, CountriesJson) {
   var geoJson = feature(CountriesJson, CountriesJson.objects.countries);
   index$2.render(react.createElement(Choropleth, {
