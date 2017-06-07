@@ -48,7 +48,7 @@ function colorScaleGenerator(colors, noDataColor, colorScaleType, data) {
     return scale(value)
   }
 }
-function  shapes(features, pathGenerator, colorScale, data, dataValueAccessor, onMouseOver) {
+function shapes(features, pathGenerator, colorScale, data, dataValueAccessor, onMouseOver) {
     return features.map(feature => {
       const pathKey = `${feature.id}-pathkey`
       return (
@@ -64,7 +64,7 @@ function  shapes(features, pathGenerator, colorScale, data, dataValueAccessor, o
     })
   }
 
-function Choropleth ({ width, height, data, geoJson, colors, noDataColor, dataValueAccessor, projectionName, colorScaleType, tooltipContent, onMouseOver }) {
+const Choropleth = ({ width, height, data, geoJson, colors, noDataColor, dataValueAccessor, projectionName, colorScaleType, tooltipContent, onMouseOver }) => {
   const projection = d3Geo[projectionName]()
   const pathGenerator = d3Geo.geoPath(projection)
   const colorScale = colorScaleGenerator(colors, noDataColor, colorScaleType, data)
@@ -104,15 +104,24 @@ Choropleth.defaultProps = {
   tooltipContent: tooltipContent
 }
 
-class ImmutableWrapper extends Component {
-  shouldComponentUpdate(nextProps) {
-    return this.props.immutableProps !== nextProps.immutableProps
-  }
-
-  render() {
-    return <div>{React.cloneElement(this.props.children, this.props.immutableProps.toJS() )}</div>
+const Immutify = (WrappedComponent) => {
+  return class extends Component {
+    shouldComponentUpdate(nextProps) {
+      return this.props.immutableProps !== nextProps.immutableProps
+    }
+   
+    render() {
+      const props = Object.assign({}, this.props)
+      const immutableProps = Object.assign({}, props.immutableProps.toJS())
+      props.immutableProps = undefined
+      const expandedProps = Object.assign(props, immutableProps)
+      return <WrappedComponent {...expandedProps} />
+    }
   }
 }
+
+// Note that the HOC is declared outside of the render method to prevent the HOC being remounted every time state changes in ChoroplethWithTooltip
+const ImmutableChoropleth = Immutify(Choropleth)
 
 export default class ChoroplethWithTooltip extends Component{
   constructor(props) {
@@ -133,9 +142,7 @@ export default class ChoroplethWithTooltip extends Component{
   render() {
     return (
       <div>
-        <ImmutableWrapper immutableProps={this.state.immutableProps}>
-          <Choropleth onMouseOver={(data) => this.setState({ tooltipData: data })}/>
-        </ImmutableWrapper>
+        <ImmutableChoropleth immutableProps={this.state.immutableProps} onMouseOver={(data) => this.setState({ tooltipData: data })} />
         <ReactTooltip id="global-tooltip">{tooltipContent(this.state.tooltipData)}</ReactTooltip>
       </div>
     )

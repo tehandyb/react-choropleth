@@ -35129,7 +35129,7 @@ function shapes(features, pathGenerator, colorScale, data, dataValueAccessor, _o
   });
 }
 
-function Choropleth(_ref) {
+var Choropleth = function Choropleth(_ref) {
   var width = _ref.width,
       height = _ref.height,
       data = _ref.data,
@@ -35159,7 +35159,7 @@ function Choropleth(_ref) {
       shapes(geoJson.features, pathGenerator, colorScale, data, dataValueAccessor, onMouseOver)
     )
   );
-}
+};
 
 Choropleth.propTypes = {
   width: index$5.number,
@@ -35187,31 +35187,36 @@ Choropleth.defaultProps = {
   tooltipContent: tooltipContent
 };
 
-var ImmutableWrapper = function (_Component) {
-  inherits(ImmutableWrapper, _Component);
+var Immutify = function Immutify(WrappedComponent) {
+  return function (_Component) {
+    inherits(_class, _Component);
 
-  function ImmutableWrapper() {
-    classCallCheck(this, ImmutableWrapper);
-    return possibleConstructorReturn(this, (ImmutableWrapper.__proto__ || Object.getPrototypeOf(ImmutableWrapper)).apply(this, arguments));
-  }
+    function _class() {
+      classCallCheck(this, _class);
+      return possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
+    }
 
-  createClass(ImmutableWrapper, [{
-    key: 'shouldComponentUpdate',
-    value: function shouldComponentUpdate(nextProps) {
-      return this.props.immutableProps !== nextProps.immutableProps;
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return react.createElement(
-        'div',
-        null,
-        react.cloneElement(this.props.children, this.props.immutableProps.toJS())
-      );
-    }
-  }]);
-  return ImmutableWrapper;
-}(react_1);
+    createClass(_class, [{
+      key: 'shouldComponentUpdate',
+      value: function shouldComponentUpdate(nextProps) {
+        return this.props.immutableProps !== nextProps.immutableProps;
+      }
+    }, {
+      key: 'render',
+      value: function render() {
+        var props = Object.assign({}, this.props);
+        var immutableProps = Object.assign({}, props.immutableProps.toJS());
+        props.immutableProps = undefined;
+        var expandedProps = Object.assign(props, immutableProps);
+        return react.createElement(WrappedComponent, expandedProps);
+      }
+    }]);
+    return _class;
+  }(react_1);
+};
+
+// Note that the HOC is declared outside of the render method to prevent the HOC being remounted every time state changes in ChoroplethWithTooltip
+var ImmutableChoropleth = Immutify(Choropleth);
 
 var ChoroplethWithTooltip = function (_Component2) {
   inherits(ChoroplethWithTooltip, _Component2);
@@ -35244,13 +35249,9 @@ var ChoroplethWithTooltip = function (_Component2) {
       return react.createElement(
         'div',
         null,
-        react.createElement(
-          ImmutableWrapper,
-          { immutableProps: this.state.immutableProps },
-          react.createElement(Choropleth, { onMouseOver: function onMouseOver(data) {
-              return _this3.setState({ tooltipData: data });
-            } })
-        ),
+        react.createElement(ImmutableChoropleth, { immutableProps: this.state.immutableProps, onMouseOver: function onMouseOver(data) {
+            return _this3.setState({ tooltipData: data });
+          } }),
         react.createElement(
           ReactTooltip,
           { id: 'global-tooltip' },
