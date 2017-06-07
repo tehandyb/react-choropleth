@@ -5,12 +5,9 @@ import * as d3Scale from 'd3-scale'
 import * as d3Geo from 'd3-geo'
 import ss from 'simple-statistics'
 import ReactTooltip from 'react-tooltip'
+import Immutify from './Immutify'
+import WithTooltips from './WithTooltips'
 import './defaultStyles.css'
-
-function tooltipContent(tooltipData) {
-  if(tooltipData === undefined) return <span>N/A</span>
-  return <span>Tooltip content {tooltipData.value}</span>
-}
 
 function dataValueAccessor(featureId, data) {
   const datum = datumAccessor(featureId, data)
@@ -64,7 +61,7 @@ function shapes(features, pathGenerator, colorScale, data, dataValueAccessor, on
     })
   }
 
-const Choropleth = ({ width, height, data, geoJson, colors, noDataColor, dataValueAccessor, projectionName, colorScaleType, tooltipContent, onMouseOver }) => {
+const ChoroplethSVG = ({ width, height, data, geoJson, colors, noDataColor, dataValueAccessor, projectionName, colorScaleType, onMouseOver }) => {
   const projection = d3Geo[projectionName]()
   const pathGenerator = d3Geo.geoPath(projection)
   const colorScale = colorScaleGenerator(colors, noDataColor, colorScaleType, data)
@@ -78,7 +75,7 @@ const Choropleth = ({ width, height, data, geoJson, colors, noDataColor, dataVal
   )
 }
 
-Choropleth.propTypes = {
+ChoroplethSVG.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
   data: PropTypes.arrayOf(PropTypes.shape({
@@ -93,61 +90,24 @@ Choropleth.propTypes = {
   dataValueAccessor: PropTypes.func,
   projectionName: PropTypes.string,
   // Only supporting the scales that are good for intensity maps(scaleQuantize for a basic distribution and scaleThreshold for a clustered distribution)
-  colorScaleType: PropTypes.oneOf(['scaleQuantize', 'scaleThreshold']),
-  tooltipContent: PropTypes.func
+  colorScaleType: PropTypes.oneOf(['scaleQuantize', 'scaleThreshold'])
 }
 
-Choropleth.defaultProps = {
+ChoroplethSVG.defaultProps = {
   dataValueAccessor: dataValueAccessor,
   projectionName: 'geoMercator', // Can be any d3Geo projections
-  colorScaleType: 'scaleQuantize',
-  tooltipContent: tooltipContent
-}
-
-const Immutify = (WrappedComponent) => {
-  return class extends Component {
-    shouldComponentUpdate(nextProps) {
-      return this.props.immutableProps !== nextProps.immutableProps
-    }
-   
-    render() {
-      const props = Object.assign({}, this.props)
-      const immutableProps = Object.assign({}, props.immutableProps.toJS())
-      props.immutableProps = undefined
-      const expandedProps = Object.assign(props, immutableProps)
-      return <WrappedComponent {...expandedProps} />
-    }
-  }
+  colorScaleType: 'scaleQuantize'
 }
 
 // Note that the HOC is declared outside of the render method to prevent the HOC being remounted every time state changes in ChoroplethWithTooltip
-const ImmutableChoropleth = Immutify(Choropleth)
-
-export default class ChoroplethWithTooltip extends Component{
-  constructor(props) {
-    super(props)
-    this.state = {
-      tooltipData: undefined,
-      immutableProps: fromJS(props)
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const nextImmutableProps = fromJS(props)
-    if(!this.state.immutableProps.equals(nextImmutableProps)) {
-      this.setState({ immutableProps: nextImmutableProps })
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        <ImmutableChoropleth immutableProps={this.state.immutableProps} onMouseOver={(data) => this.setState({ tooltipData: data })} />
-        <ReactTooltip id="global-tooltip">{tooltipContent(this.state.tooltipData)}</ReactTooltip>
-      </div>
-    )
-  }
+const ChoroplethWithTooltips = WithTooltips(ChoroplethSVG)
+const Choropleth = (props) => {
+  return <ChoroplethWithTooltips {...props} />
 }
 
-ChoroplethWithTooltip.propTypes = Choropleth.propTypes
-ChoroplethWithTooltip.defaultProps = Choropleth.defaultProps
+Choropleth.propTypes = {
+  tooltipContent: PropTypes.func
+}
+Object.assign(Choropleth.propTypes, ChoroplethSVG.propTypes)
+
+export default Choropleth
