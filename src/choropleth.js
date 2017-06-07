@@ -1,25 +1,22 @@
 import React, { Component, PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { fromJS } from 'immutable'
 import * as d3Scale from 'd3-scale'
 import * as d3Geo from 'd3-geo'
 import ss from 'simple-statistics'
-import ReactTooltip from 'react-tooltip'
-import Immutify from './Immutify'
 import WithTooltips from './WithTooltips'
 import './defaultStyles.css'
 
-function dataValueAccessor(featureId, data) {
+const datumAccessor = (featureId, data) => {
+  return data.find(d => d.featureId === featureId)
+}
+
+const dataValueAccessor = (featureId, data) => {
   const datum = datumAccessor(featureId, data)
   if(datum === undefined) return undefined
   return datum.value
 }
 
-function datumAccessor(featureId, data) {
-  return data.find(d => d.featureId === featureId)
-}
-
-function transform(geoJson, width, height, pathGenerator) {
+const transform = (geoJson, width, height, pathGenerator) => {
   const bounds = pathGenerator.bounds(geoJson)
   const dx = bounds[1][0] - bounds[0][0]
   const dy = bounds[1][1] - bounds[0][1]
@@ -31,7 +28,7 @@ function transform(geoJson, width, height, pathGenerator) {
   return { scale, translate }
 }
 
-function colorScaleGenerator(colors, noDataColor, colorScaleType, data) {
+const colorScaleGenerator = (colors, noDataColor, colorScaleType, data) => {
   const scale = d3Scale[colorScaleType]().range(colors)
   const values = data.map(d => d.value)
   if (colorScaleType === 'scaleQuantize') {
@@ -45,7 +42,8 @@ function colorScaleGenerator(colors, noDataColor, colorScaleType, data) {
     return scale(value)
   }
 }
-function shapes(features, pathGenerator, colorScale, data, dataValueAccessor, onMouseOver) {
+
+const shapes = (features, pathGenerator, colorScale, data, dataValueAccessor, onMouseOver) => {
     return features.map(feature => {
       const pathKey = `${feature.id}-pathkey`
       return (

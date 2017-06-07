@@ -32,6 +32,9 @@ export default {
     }),
     commonjs({
       include: 'node_modules/**',
+      namedExports: {
+        'node_modules/immutable/dist/immutable.js': ['fromJS']
+      }
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production')
