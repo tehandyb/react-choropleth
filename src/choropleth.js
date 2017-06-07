@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component, PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import { fromJS } from 'immutable'
 import * as d3Scale from 'd3-scale'
 import * as d3Geo from 'd3-geo'
 import ss from 'simple-statistics'
@@ -63,33 +64,18 @@ function  shapes(features, pathGenerator, colorScale, data, dataValueAccessor, o
     })
   }
 
-class Choropleth extends Component {
-  constructor(props) {
-    super(props)
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    // Don't re-render if dimensions stay the same, this will stop extra renderings that would happen when the tooltip state change causes rerender in the parent ChoroplethWithTooltip component
-    if(this.props.width === nextProps.width && this.props.height === nextProps.height) return false
-    // Re-render if the dimensions change
-    return true
-  }
-
-  render() {
-    const { width, height, data, geoJson, colors, noDataColor, dataValueAccessor, projectionName, colorScaleType, tooltipContent, onMouseOver } = this.props
-    const projection = d3Geo[projectionName]()
-    const pathGenerator = d3Geo.geoPath(projection)
-    const colorScale = colorScaleGenerator(colors, noDataColor, colorScaleType, data)
-    const { translate, scale } = transform(geoJson, width, height, pathGenerator)
-    return (
-      <svg className="react-choropleth" width={width} height={height}>
-        <g transform={`translate(${translate})scale(${scale})`}>
-          {shapes(geoJson.features, pathGenerator, colorScale, data, dataValueAccessor, onMouseOver)}
-        </g>
-      </svg>
-    )
-  }
-
+function Choropleth ({ width, height, data, geoJson, colors, noDataColor, dataValueAccessor, projectionName, colorScaleType, tooltipContent, onMouseOver }) {
+  const projection = d3Geo[projectionName]()
+  const pathGenerator = d3Geo.geoPath(projection)
+  const colorScale = colorScaleGenerator(colors, noDataColor, colorScaleType, data)
+  const { translate, scale } = transform(geoJson, width, height, pathGenerator)
+  return (
+    <svg className="react-choropleth" width={width} height={height}>
+      <g transform={`translate(${translate})scale(${scale})`}>
+        {shapes(geoJson.features, pathGenerator, colorScale, data, dataValueAccessor, onMouseOver)}
+      </g>
+    </svg>
+  )
 }
 
 Choropleth.propTypes = {
@@ -118,18 +104,38 @@ Choropleth.defaultProps = {
   tooltipContent: tooltipContent
 }
 
+class ImmutableWrapper extends Component {
+  shouldComponentUpdate(nextProps) {
+    return this.props.immutableProps !== nextProps.immutableProps
+  }
+
+  render() {
+    return <div>{React.cloneElement(this.props.children, this.props.immutableProps.toJS() )}</div>
+  }
+}
+
 export default class ChoroplethWithTooltip extends Component{
   constructor(props) {
     super(props)
     this.state = {
-      tooltipData: undefined
+      tooltipData: undefined,
+      immutableProps: fromJS(props)
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const nextImmutableProps = fromJS(props)
+    if(!this.state.immutableProps.equals(nextImmutableProps)) {
+      this.setState({ immutableProps: nextImmutableProps })
     }
   }
 
   render() {
     return (
       <div>
-        <Choropleth {...this.props} onMouseOver={(data) => this.setState({ tooltipData: data })}/>
+        <ImmutableWrapper immutableProps={this.state.immutableProps}>
+          <Choropleth onMouseOver={(data) => this.setState({ tooltipData: data })}/>
+        </ImmutableWrapper>
         <ReactTooltip id="global-tooltip">{tooltipContent(this.state.tooltipData)}</ReactTooltip>
       </div>
     )

@@ -39,7 +39,8 @@ export default {
     commonjs({
       include: ['node_modules/**', 'src/**', 'demo/**'],
       namedExports: {
-        'node_modules/react/react.js': ['Component']
+        'node_modules/react/react.js': ['Component', 'PureComponent'],
+        'node_modules/immutable/dist/immutable.js': ['fromJS']
       }
     }),
     replace({
