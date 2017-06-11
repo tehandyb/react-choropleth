@@ -97,15 +97,6 @@ ChoroplethSVG.defaultProps = {
   colorScaleType: 'scaleQuantize'
 }
 
-// Note that the HOC is declared outside of the render method to prevent the HOC being remounted every time state changes in ChoroplethWithTooltip
 const ChoroplethWithTooltips = WithTooltips(ChoroplethSVG)
-const Choropleth = (props) => {
-  return <ChoroplethWithTooltips {...props} />
-}
 
-Choropleth.propTypes = {
-  tooltipContent: PropTypes.func
-}
-Object.assign(Choropleth.propTypes, ChoroplethSVG.propTypes)
-
-export default Choropleth
+export default ChoroplethWithTooltips

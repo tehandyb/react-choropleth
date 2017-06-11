@@ -28,7 +28,6 @@ object-assign
 @license MIT
 */
 
-/* eslint-disable no-unused-vars */
 var getOwnPropertySymbols = Object.getOwnPropertySymbols;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 var propIsEnumerable = Object.prototype.propertyIsEnumerable;
@@ -133,17 +132,6 @@ var index = shouldUseNative() ? Object.assign : function (target, source) {
  *
  */
 
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
 var validateFormat = function validateFormat(format) {};
 
 {
@@ -177,13 +165,6 @@ function invariant(condition, format, a, b, c, d, e, f) {
 
 var invariant_1 = invariant;
 
-/**
- * Static poolers. Several custom versions for each potential number of
- * arguments. A completely generic pooler is easy to implement, but would
- * require accessing the `arguments` object. In each of these, `this` refers to
- * the Class itself, not an instance. If any others are needed, simply add them
- * here, or in their own files.
- */
 var oneArgumentPooler = function (copyFieldsFrom) {
   var Klass = this;
   if (Klass.instancePool.length) {
@@ -283,12 +264,6 @@ var PooledClass_1 = PooledClass;
  * 
  */
 
-/**
- * Keeps track of the current owner.
- *
- * The current owner is the component who should own any components that are
- * currently being constructed.
- */
 var ReactCurrentOwner = {
 
   /**
@@ -300,17 +275,6 @@ var ReactCurrentOwner = {
 };
 
 var ReactCurrentOwner_1 = ReactCurrentOwner;
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
 
 function makeEmptyFunction(arg) {
   return function () {
@@ -337,13 +301,6 @@ emptyFunction.thatReturnsArgument = function (arg) {
 };
 
 var emptyFunction_1 = emptyFunction;
-
-/**
- * Similar to invariant but only logs a warning if the condition is not met.
- * This can be used to log issues in development environments in critical
- * paths. Removing the logging code for production environments will keep the
- * same logic and follow the same code paths.
- */
 
 var warning = emptyFunction_1;
 
@@ -425,9 +382,6 @@ var canDefineProperty_1 = canDefineProperty$1;
  *
  * 
  */
-
-// The Symbol used to tag the ReactElement type. If there is no native Symbol
-// nor polyfill, then a plain number is used for performance.
 
 var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol['for']('react.element') || 0xeac7;
 
@@ -768,8 +722,6 @@ var ReactElement_1 = ReactElement;
  * 
  */
 
-/* global Symbol */
-
 var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
 var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
 
@@ -805,13 +757,6 @@ var getIteratorFn_1 = getIteratorFn;
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
- */
-
-/**
- * Escape and wrap key so it is safe to use as a reactid
- *
- * @param {string} key to be escaped.
- * @return {string} the escaped key.
  */
 
 function escape(key) {
@@ -1280,9 +1225,6 @@ var emptyObject = {};
 
 var emptyObject_1 = emptyObject;
 
-/**
- * Base class helpers for the updating state of a component.
- */
 function ReactComponent(props, context, updater) {
   this.props = props;
   this.context = context;
@@ -1377,9 +1319,6 @@ ReactComponent.prototype.forceUpdate = function (callback) {
 
 var ReactComponent_1 = ReactComponent;
 
-/**
- * Base class helpers for the updating state of a component.
- */
 function ReactPureComponent(props, context, updater) {
   // Duplicated from ReactComponent.
   this.props = props;
@@ -2742,11 +2681,6 @@ var ReactElementValidator$2 = {
 
 var ReactElementValidator_1 = ReactElementValidator$2;
 
-/**
- * Create a factory that creates HTML tag elements.
- *
- * @private
- */
 var createDOMFactory = ReactElement_1.createFactory;
 {
   var ReactElementValidator$1 = ReactElementValidator_1;
@@ -2913,7 +2847,7 @@ var ReactPropTypesSecret_1$2 = ReactPropTypesSecret$2;
 
 {
   var invariant$2 = invariant_1;
-  var warning$2 = warning_1;
+  var warning$1 = warning_1;
   var ReactPropTypesSecret$3 = ReactPropTypesSecret_1$2;
   var loggedTypeFailures$1 = {};
 }
@@ -2945,7 +2879,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
         } catch (ex) {
           error = ex;
         }
-        warning$2(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error);
+        warning$1(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error);
         if (error instanceof Error && !(error.message in loggedTypeFailures$1)) {
           // Only monitor this failure once because there tends to be a lot of the
           // same error.
@@ -2953,7 +2887,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 
           var stack = getStack ? getStack() : '';
 
-          warning$2(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+          warning$1(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
         }
       }
     }
@@ -3457,11 +3391,6 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
   return ReactPropTypes;
 };
 
-// React 15.5 references this module, and assumes PropTypes are still callable in production.
-// Therefore we re-export development-only version with all the PropTypes checks here.
-// However if one is migrating to the `prop-types` npm library, they will go through the
-// `index.js` entry point, and it will branch depending on the environment.
-
 var factory_1 = function(isValidElement) {
   // It is still allowed in 15.5.
   var throwOnDirectAccess = false;
@@ -3486,20 +3415,6 @@ var ReactPropTypes = factory_1(isValidElement);
 
 var ReactVersion = '15.5.4';
 
-/**
- * Returns the first child in a collection of children and verifies that there
- * is only one child in the collection.
- *
- * See https://facebook.github.io/react/docs/top-level-api.html#react.children.only
- *
- * The current implementation of this function assumes that a single child gets
- * passed without a wrapper, but the purpose of this helper function is to
- * abstract away the particular structure of children.
- *
- * @param {?object} children Child collection structure.
- * @return {ReactElement} The first and only `ReactElement` contained in the
- * structure.
- */
 function onlyChild(children) {
   !ReactElement_1.isValidElement(children) ? invariant_1(false, 'React.Children.only expected to receive a single React element child.') : void 0;
   return children;
@@ -3601,6 +3516,49 @@ var react_2 = react.PureComponent;
  * 
  */
 
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+var validateFormat$1 = function validateFormat(format) {};
+
+{
+  validateFormat$1 = function validateFormat(format) {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  };
+}
+
+function invariant$3(condition, format, a, b, c, d, e, f) {
+  validateFormat$1(format);
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+}
+
+var invariant_1$2 = invariant$3;
+
 function checkMask(value, bitmask) {
   return (value & bitmask) === bitmask;
 }
@@ -3657,7 +3615,7 @@ var DOMPropertyInjection = {
     }
 
     for (var propName in Properties) {
-      !!DOMProperty.properties.hasOwnProperty(propName) ? invariant_1(false, 'injectDOMPropertyConfig(...): You\'re trying to inject DOM property \'%s\' which has already been injected. You may be accidentally injecting the same DOM property config twice, or you may be injecting two configs that have conflicting property names.', propName) : void 0;
+      !!DOMProperty.properties.hasOwnProperty(propName) ? invariant_1$2(false, 'injectDOMPropertyConfig(...): You\'re trying to inject DOM property \'%s\' which has already been injected. You may be accidentally injecting the same DOM property config twice, or you may be injecting two configs that have conflicting property names.', propName) : void 0;
 
       var lowerCased = propName.toLowerCase();
       var propConfig = Properties[propName];
@@ -3674,7 +3632,7 @@ var DOMPropertyInjection = {
         hasPositiveNumericValue: checkMask(propConfig, Injection.HAS_POSITIVE_NUMERIC_VALUE),
         hasOverloadedBooleanValue: checkMask(propConfig, Injection.HAS_OVERLOADED_BOOLEAN_VALUE)
       };
-      !(propertyInfo.hasBooleanValue + propertyInfo.hasNumericValue + propertyInfo.hasOverloadedBooleanValue <= 1) ? invariant_1(false, 'DOMProperty: Value can be one of boolean, overloaded boolean, or numeric value, but not a combination: %s', propName) : void 0;
+      !(propertyInfo.hasBooleanValue + propertyInfo.hasNumericValue + propertyInfo.hasOverloadedBooleanValue <= 1) ? invariant_1$2(false, 'DOMProperty: Value can be one of boolean, overloaded boolean, or numeric value, but not a combination: %s', propName) : void 0;
 
       {
         DOMProperty.getPossibleStandardName[lowerCased] = propName;
@@ -3894,7 +3852,7 @@ function precacheChildNodes(inst, node) {
       }
     }
     // We reached the end of the DOM children without finding an ID match.
-    invariant_1(false, 'Unable to find element with ID %s.', childID);
+    invariant_1$2(false, 'Unable to find element with ID %s.', childID);
   }
   inst._flags |= Flags.hasCachedChildNodes;
 }
@@ -3953,7 +3911,7 @@ function getInstanceFromNode(node) {
 function getNodeFromInstance(inst) {
   // Without this first invariant, passing a non-DOM-component triggers the next
   // invariant for a missing parent, which is super confusing.
-  !(inst._hostNode !== undefined) ? invariant_1(false, 'getNodeFromInstance: Invalid argument.') : void 0;
+  !(inst._hostNode !== undefined) ? invariant_1$2(false, 'getNodeFromInstance: Invalid argument.') : void 0;
 
   if (inst._hostNode) {
     return inst._hostNode;
@@ -3963,7 +3921,7 @@ function getNodeFromInstance(inst) {
   var parents = [];
   while (!inst._hostNode) {
     parents.push(inst);
-    !inst._hostParent ? invariant_1(false, 'React DOM tree root should always have a node reference.') : void 0;
+    !inst._hostParent ? invariant_1$2(false, 'React DOM tree root should always have a node reference.') : void 0;
     inst = inst._hostParent;
   }
 
@@ -4059,9 +4017,6 @@ var ARIADOMPropertyConfig = {
 
 var ARIADOMPropertyConfig_1 = ARIADOMPropertyConfig;
 
-/**
- * Injectable ordering of event plugins.
- */
 var eventPluginOrder = null;
 
 /**
@@ -4082,15 +4037,15 @@ function recomputePluginOrdering() {
   for (var pluginName in namesToPlugins) {
     var pluginModule = namesToPlugins[pluginName];
     var pluginIndex = eventPluginOrder.indexOf(pluginName);
-    !(pluginIndex > -1) ? invariant_1(false, 'EventPluginRegistry: Cannot inject event plugins that do not exist in the plugin ordering, `%s`.', pluginName) : void 0;
+    !(pluginIndex > -1) ? invariant_1$2(false, 'EventPluginRegistry: Cannot inject event plugins that do not exist in the plugin ordering, `%s`.', pluginName) : void 0;
     if (EventPluginRegistry.plugins[pluginIndex]) {
       continue;
     }
-    !pluginModule.extractEvents ? invariant_1(false, 'EventPluginRegistry: Event plugins must implement an `extractEvents` method, but `%s` does not.', pluginName) : void 0;
+    !pluginModule.extractEvents ? invariant_1$2(false, 'EventPluginRegistry: Event plugins must implement an `extractEvents` method, but `%s` does not.', pluginName) : void 0;
     EventPluginRegistry.plugins[pluginIndex] = pluginModule;
     var publishedEvents = pluginModule.eventTypes;
     for (var eventName in publishedEvents) {
-      !publishEventForPlugin(publishedEvents[eventName], pluginModule, eventName) ? invariant_1(false, 'EventPluginRegistry: Failed to publish event `%s` for plugin `%s`.', eventName, pluginName) : void 0;
+      !publishEventForPlugin(publishedEvents[eventName], pluginModule, eventName) ? invariant_1$2(false, 'EventPluginRegistry: Failed to publish event `%s` for plugin `%s`.', eventName, pluginName) : void 0;
     }
   }
 }
@@ -4104,7 +4059,7 @@ function recomputePluginOrdering() {
  * @private
  */
 function publishEventForPlugin(dispatchConfig, pluginModule, eventName) {
-  !!EventPluginRegistry.eventNameDispatchConfigs.hasOwnProperty(eventName) ? invariant_1(false, 'EventPluginHub: More than one plugin attempted to publish the same event name, `%s`.', eventName) : void 0;
+  !!EventPluginRegistry.eventNameDispatchConfigs.hasOwnProperty(eventName) ? invariant_1$2(false, 'EventPluginHub: More than one plugin attempted to publish the same event name, `%s`.', eventName) : void 0;
   EventPluginRegistry.eventNameDispatchConfigs[eventName] = dispatchConfig;
 
   var phasedRegistrationNames = dispatchConfig.phasedRegistrationNames;
@@ -4132,7 +4087,7 @@ function publishEventForPlugin(dispatchConfig, pluginModule, eventName) {
  * @private
  */
 function publishRegistrationName(registrationName, pluginModule, eventName) {
-  !!EventPluginRegistry.registrationNameModules[registrationName] ? invariant_1(false, 'EventPluginHub: More than one plugin attempted to publish the same registration name, `%s`.', registrationName) : void 0;
+  !!EventPluginRegistry.registrationNameModules[registrationName] ? invariant_1$2(false, 'EventPluginHub: More than one plugin attempted to publish the same registration name, `%s`.', registrationName) : void 0;
   EventPluginRegistry.registrationNameModules[registrationName] = pluginModule;
   EventPluginRegistry.registrationNameDependencies[registrationName] = pluginModule.eventTypes[eventName].dependencies;
 
@@ -4192,7 +4147,7 @@ var EventPluginRegistry = {
    * @see {EventPluginHub.injection.injectEventPluginOrder}
    */
   injectEventPluginOrder: function (injectedEventPluginOrder) {
-    !!eventPluginOrder ? invariant_1(false, 'EventPluginRegistry: Cannot inject event plugin ordering more than once. You are likely trying to load more than one copy of React.') : void 0;
+    !!eventPluginOrder ? invariant_1$2(false, 'EventPluginRegistry: Cannot inject event plugin ordering more than once. You are likely trying to load more than one copy of React.') : void 0;
     // Clone the ordering so it cannot be dynamically mutated.
     eventPluginOrder = Array.prototype.slice.call(injectedEventPluginOrder);
     recomputePluginOrdering();
@@ -4216,7 +4171,7 @@ var EventPluginRegistry = {
       }
       var pluginModule = injectedNamesToPlugins[pluginName];
       if (!namesToPlugins.hasOwnProperty(pluginName) || namesToPlugins[pluginName] !== pluginModule) {
-        !!namesToPlugins[pluginName] ? invariant_1(false, 'EventPluginRegistry: Cannot inject two different event plugins using the same name, `%s`.', pluginName) : void 0;
+        !!namesToPlugins[pluginName] ? invariant_1$2(false, 'EventPluginRegistry: Cannot inject two different event plugins using the same name, `%s`.', pluginName) : void 0;
         namesToPlugins[pluginName] = pluginModule;
         isOrderingDirty = true;
       }
@@ -4371,27 +4326,91 @@ var ReactErrorUtils = {
 
 var ReactErrorUtils_1 = ReactErrorUtils;
 
-/**
- * Injected dependencies:
- */
+function makeEmptyFunction$1(arg) {
+  return function () {
+    return arg;
+  };
+}
 
 /**
- * - `ComponentTree`: [required] Module that can convert between React instances
- *   and actual node references.
+ * This function accepts and discards inputs; it has no side effects. This is
+ * primarily useful idiomatically for overridable function endpoints which
+ * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
  */
+var emptyFunction$2 = function emptyFunction() {};
+
+emptyFunction$2.thatReturns = makeEmptyFunction$1;
+emptyFunction$2.thatReturnsFalse = makeEmptyFunction$1(false);
+emptyFunction$2.thatReturnsTrue = makeEmptyFunction$1(true);
+emptyFunction$2.thatReturnsNull = makeEmptyFunction$1(null);
+emptyFunction$2.thatReturnsThis = function () {
+  return this;
+};
+emptyFunction$2.thatReturnsArgument = function (arg) {
+  return arg;
+};
+
+var emptyFunction_1$2 = emptyFunction$2;
+
+var warning$2 = emptyFunction_1$2;
+
+{
+  (function () {
+    var printWarning = function printWarning(format) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      var argIndex = 0;
+      var message = 'Warning: ' + format.replace(/%s/g, function () {
+        return args[argIndex++];
+      });
+      if (typeof console !== 'undefined') {
+        console.error(message);
+      }
+      try {
+        // --- Welcome to debugging React ---
+        // This error was thrown as a convenience so that you can use this stack
+        // to find the callsite that caused this warning to fire.
+        throw new Error(message);
+      } catch (x) {}
+    };
+
+    warning$2 = function warning(condition, format) {
+      if (format === undefined) {
+        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+      }
+
+      if (format.indexOf('Failed Composite propType: ') === 0) {
+        return; // Ignore CompositeComponent proptype check.
+      }
+
+      if (!condition) {
+        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+          args[_key2 - 2] = arguments[_key2];
+        }
+
+        printWarning.apply(undefined, [format].concat(args));
+      }
+    };
+  })();
+}
+
+var warning_1$2 = warning$2;
+
 var ComponentTree;
 var TreeTraversal;
 var injection = {
   injectComponentTree: function (Injected) {
     ComponentTree = Injected;
     {
-      warning_1(Injected && Injected.getNodeFromInstance && Injected.getInstanceFromNode, 'EventPluginUtils.injection.injectComponentTree(...): Injected ' + 'module is missing getNodeFromInstance or getInstanceFromNode.');
+      warning_1$2(Injected && Injected.getNodeFromInstance && Injected.getInstanceFromNode, 'EventPluginUtils.injection.injectComponentTree(...): Injected ' + 'module is missing getNodeFromInstance or getInstanceFromNode.');
     }
   },
   injectTreeTraversal: function (Injected) {
     TreeTraversal = Injected;
     {
-      warning_1(Injected && Injected.isAncestor && Injected.getLowestCommonAncestor, 'EventPluginUtils.injection.injectTreeTraversal(...): Injected ' + 'module is missing isAncestor or getLowestCommonAncestor.');
+      warning_1$2(Injected && Injected.isAncestor && Injected.getLowestCommonAncestor, 'EventPluginUtils.injection.injectTreeTraversal(...): Injected ' + 'module is missing isAncestor or getLowestCommonAncestor.');
     }
   }
 };
@@ -4419,7 +4438,7 @@ var validateEventDispatches;
     var instancesIsArr = Array.isArray(dispatchInstances);
     var instancesLen = instancesIsArr ? dispatchInstances.length : dispatchInstances ? 1 : 0;
 
-    warning_1(instancesIsArr === listenersIsArr && instancesLen === listenersLen, 'EventPluginUtils: Invalid `event`.');
+    warning_1$2(instancesIsArr === listenersIsArr && instancesLen === listenersLen, 'EventPluginUtils: Invalid `event`.');
   };
 }
 
@@ -4521,7 +4540,7 @@ function executeDirectDispatch(event) {
   }
   var dispatchListener = event._dispatchListeners;
   var dispatchInstance = event._dispatchInstances;
-  !!Array.isArray(dispatchListener) ? invariant_1(false, 'executeDirectDispatch(...): Invalid `event`.') : void 0;
+  !!Array.isArray(dispatchListener) ? invariant_1$2(false, 'executeDirectDispatch(...): Invalid `event`.') : void 0;
   event.currentTarget = dispatchListener ? EventPluginUtils.getNodeFromInstance(dispatchInstance) : null;
   var res = dispatchListener ? dispatchListener(event) : null;
   event.currentTarget = null;
@@ -4578,21 +4597,8 @@ var EventPluginUtils = {
 
 var EventPluginUtils_1 = EventPluginUtils;
 
-/**
- * Accumulates items that must not be null or undefined into the first one. This
- * is used to conserve memory by avoiding array allocations, and thus sacrifices
- * API cleanness. Since `current` can be null before being passed in and not
- * null after this function, make sure to assign it back to `current`:
- *
- * `a = accumulateInto(a, b);`
- *
- * This API should be sparingly used. Try `accumulate` for something cleaner.
- *
- * @return {*|array<*>} An accumulation of items.
- */
-
 function accumulateInto(current, next) {
-  !(next != null) ? invariant_1(false, 'accumulateInto(...): Accumulated items must not be null or undefined.') : void 0;
+  !(next != null) ? invariant_1$2(false, 'accumulateInto(...): Accumulated items must not be null or undefined.') : void 0;
 
   if (current == null) {
     return next;
@@ -4630,14 +4636,6 @@ var accumulateInto_1 = accumulateInto;
  * 
  */
 
-/**
- * @param {array} arr an "accumulation" of items which is either an Array or
- * a single item. Useful when paired with the `accumulate` module. This is a
- * simple utility that allows us to reason about a collection of items, but
- * handling the case when there is exactly one item (and we do not need to
- * allocate an array).
- */
-
 function forEachAccumulated(arr, cb, scope) {
   if (Array.isArray(arr)) {
     arr.forEach(cb, scope);
@@ -4648,9 +4646,6 @@ function forEachAccumulated(arr, cb, scope) {
 
 var forEachAccumulated_1 = forEachAccumulated;
 
-/**
- * Internal store for event listeners
- */
 var listenerBank = {};
 
 /**
@@ -4760,7 +4755,7 @@ var EventPluginHub = {
    * @param {function} listener The callback to store.
    */
   putListener: function (inst, registrationName, listener) {
-    !(typeof listener === 'function') ? invariant_1(false, 'Expected %s listener to be a function, instead got type %s', registrationName, typeof listener) : void 0;
+    !(typeof listener === 'function') ? invariant_1$2(false, 'Expected %s listener to be a function, instead got type %s', registrationName, typeof listener) : void 0;
 
     var key = getDictionaryKey(inst);
     var bankForRegistrationName = listenerBank[registrationName] || (listenerBank[registrationName] = {});
@@ -4884,7 +4879,7 @@ var EventPluginHub = {
     } else {
       forEachAccumulated_1(processingEventQueue, executeDispatchesAndReleaseTopLevel);
     }
-    !!eventQueue ? invariant_1(false, 'processEventQueue(): Additional events were enqueued while processing an event queue. Support for this has not yet been implemented.') : void 0;
+    !!eventQueue ? invariant_1$2(false, 'processEventQueue(): Additional events were enqueued while processing an event queue. Support for this has not yet been implemented.') : void 0;
     // This would be a good time to rethrow if any of the event handlers threw.
     ReactErrorUtils_1.rethrowCaughtError();
   },
@@ -4923,7 +4918,7 @@ function listenerAtPhase(inst, event, propagationPhase) {
  */
 function accumulateDirectionalDispatches(inst, phase, event) {
   {
-    warning_1(inst, 'Dispatching inst must not be null');
+    warning_1$2(inst, 'Dispatching inst must not be null');
   }
   var listener = listenerAtPhase(inst, event, phase);
   if (listener) {
@@ -5053,13 +5048,95 @@ var ExecutionEnvironment$1 = {
 
 var ExecutionEnvironment_1 = ExecutionEnvironment$1;
 
-/**
- * Static poolers. Several custom versions for each potential number of
- * arguments. A completely generic pooler is easy to implement, but would
- * require accessing the `arguments` object. In each of these, `this` refers to
- * the Class itself, not an instance. If any others are needed, simply add them
- * here, or in their own files.
- */
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+var getOwnPropertySymbols$1 = Object.getOwnPropertySymbols;
+var hasOwnProperty$2 = Object.prototype.hasOwnProperty;
+var propIsEnumerable$1 = Object.prototype.propertyIsEnumerable;
+
+function toObject$1(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative$1() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+var index$3 = shouldUseNative$1() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject$1(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty$2.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols$1) {
+			symbols = getOwnPropertySymbols$1(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable$1.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
 var oneArgumentPooler$1 = function (copyFieldsFrom) {
   var Klass = this;
   if (Klass.instancePool.length) {
@@ -5106,7 +5183,7 @@ var fourArgumentPooler$2 = function (a1, a2, a3, a4) {
 
 var standardReleaser$1 = function (instance) {
   var Klass = this;
-  !(instance instanceof Klass) ? invariant_1(false, 'Trying to release an instance into a pool of a different type.') : void 0;
+  !(instance instanceof Klass) ? invariant_1$2(false, 'Trying to release an instance into a pool of a different type.') : void 0;
   instance.destructor();
   if (Klass.instancePool.length < Klass.poolSize) {
     Klass.instancePool.push(instance);
@@ -5167,24 +5244,13 @@ function getTextContentAccessor() {
 
 var getTextContentAccessor_1 = getTextContentAccessor;
 
-/**
- * This helper class stores information about text content of a target node,
- * allowing comparison of content before and after a given event.
- *
- * Identify the node where selection currently begins, then observe
- * both its text content and its current position in the DOM. Since the
- * browser may natively replace the target node during composition, we can
- * use its position to find its replacement.
- *
- * @param {DOMEventTarget} root
- */
 function FallbackCompositionState(root) {
   this._root = root;
   this._startText = this.getText();
   this._fallbackText = null;
 }
 
-index(FallbackCompositionState.prototype, {
+index$3(FallbackCompositionState.prototype, {
   destructor: function () {
     this._root = null;
     this._startText = null;
@@ -5257,7 +5323,7 @@ var EventInterface = {
   type: null,
   target: null,
   // currentTarget is set when dispatching; no use in copying it here
-  currentTarget: emptyFunction_1.thatReturnsNull,
+  currentTarget: emptyFunction_1$2.thatReturnsNull,
   eventPhase: null,
   bubbles: null,
   cancelable: null,
@@ -5320,15 +5386,15 @@ function SyntheticEvent(dispatchConfig, targetInst, nativeEvent, nativeEventTarg
 
   var defaultPrevented = nativeEvent.defaultPrevented != null ? nativeEvent.defaultPrevented : nativeEvent.returnValue === false;
   if (defaultPrevented) {
-    this.isDefaultPrevented = emptyFunction_1.thatReturnsTrue;
+    this.isDefaultPrevented = emptyFunction_1$2.thatReturnsTrue;
   } else {
-    this.isDefaultPrevented = emptyFunction_1.thatReturnsFalse;
+    this.isDefaultPrevented = emptyFunction_1$2.thatReturnsFalse;
   }
-  this.isPropagationStopped = emptyFunction_1.thatReturnsFalse;
+  this.isPropagationStopped = emptyFunction_1$2.thatReturnsFalse;
   return this;
 }
 
-index(SyntheticEvent.prototype, {
+index$3(SyntheticEvent.prototype, {
 
   preventDefault: function () {
     this.defaultPrevented = true;
@@ -5343,7 +5409,7 @@ index(SyntheticEvent.prototype, {
       // eslint-disable-line valid-typeof
       event.returnValue = false;
     }
-    this.isDefaultPrevented = emptyFunction_1.thatReturnsTrue;
+    this.isDefaultPrevented = emptyFunction_1$2.thatReturnsTrue;
   },
 
   stopPropagation: function () {
@@ -5364,7 +5430,7 @@ index(SyntheticEvent.prototype, {
       event.cancelBubble = true;
     }
 
-    this.isPropagationStopped = emptyFunction_1.thatReturnsTrue;
+    this.isPropagationStopped = emptyFunction_1$2.thatReturnsTrue;
   },
 
   /**
@@ -5373,7 +5439,7 @@ index(SyntheticEvent.prototype, {
    * won't be added back into the pool.
    */
   persist: function () {
-    this.isPersistent = emptyFunction_1.thatReturnsTrue;
+    this.isPersistent = emptyFunction_1$2.thatReturnsTrue;
   },
 
   /**
@@ -5381,7 +5447,7 @@ index(SyntheticEvent.prototype, {
    *
    * @return {boolean} True if this should not be released, false otherwise.
    */
-  isPersistent: emptyFunction_1.thatReturnsFalse,
+  isPersistent: emptyFunction_1$2.thatReturnsFalse,
 
   /**
    * `PooledClass` looks for `destructor` on each instance it releases.
@@ -5398,8 +5464,8 @@ index(SyntheticEvent.prototype, {
     }
     {
       Object.defineProperty(this, 'nativeEvent', getPooledWarningPropertyDefinition('nativeEvent', null));
-      Object.defineProperty(this, 'preventDefault', getPooledWarningPropertyDefinition('preventDefault', emptyFunction_1));
-      Object.defineProperty(this, 'stopPropagation', getPooledWarningPropertyDefinition('stopPropagation', emptyFunction_1));
+      Object.defineProperty(this, 'preventDefault', getPooledWarningPropertyDefinition('preventDefault', emptyFunction_1$2));
+      Object.defineProperty(this, 'stopPropagation', getPooledWarningPropertyDefinition('stopPropagation', emptyFunction_1$2));
     }
   }
 
@@ -5418,7 +5484,7 @@ SyntheticEvent.Interface = EventInterface;
         return new Proxy(constructor.apply(that, args), {
           set: function (target, prop, value) {
             if (prop !== 'isPersistent' && !target.constructor.Interface.hasOwnProperty(prop) && shouldBeReleasedProperties.indexOf(prop) === -1) {
-              warning_1(didWarnForAddedNewProperty || target.isPersistent(), 'This synthetic event is reused for performance reasons. If you\'re ' + 'seeing this, you\'re adding a new property in the synthetic event object. ' + 'The property is never released. See ' + 'https://fb.me/react-event-pooling for more information.');
+              warning_1$2(didWarnForAddedNewProperty || target.isPersistent(), 'This synthetic event is reused for performance reasons. If you\'re ' + 'seeing this, you\'re adding a new property in the synthetic event object. ' + 'The property is never released. See ' + 'https://fb.me/react-event-pooling for more information.');
               didWarnForAddedNewProperty = true;
             }
             target[prop] = value;
@@ -5443,11 +5509,11 @@ SyntheticEvent.augmentClass = function (Class, Interface) {
   E.prototype = Super.prototype;
   var prototype = new E();
 
-  index(prototype, Class.prototype);
+  index$3(prototype, Class.prototype);
   Class.prototype = prototype;
   Class.prototype.constructor = Class;
 
-  Class.Interface = index({}, Super.Interface, Interface);
+  Class.Interface = index$3({}, Super.Interface, Interface);
   Class.augmentClass = Super.augmentClass;
 
   PooledClass_1$2.addPoolingTo(Class, PooledClass_1$2.fourArgumentPooler);
@@ -5487,14 +5553,10 @@ function getPooledWarningPropertyDefinition(propName, getVal) {
 
   function warn(action, result) {
     var warningCondition = false;
-    warning_1(warningCondition, 'This synthetic event is reused for performance reasons. If you\'re seeing this, ' + 'you\'re %s `%s` on a released/nullified synthetic event. %s. ' + 'If you must keep the original synthetic event around, use event.persist(). ' + 'See https://fb.me/react-event-pooling for more information.', action, propName, result);
+    warning_1$2(warningCondition, 'This synthetic event is reused for performance reasons. If you\'re seeing this, ' + 'you\'re %s `%s` on a released/nullified synthetic event. %s. ' + 'If you must keep the original synthetic event around, use event.persist(). ' + 'See https://fb.me/react-event-pooling for more information.', action, propName, result);
   }
 }
 
-/**
- * @interface Event
- * @see http://www.w3.org/TR/DOM-Level-3-Events/#events-compositionevents
- */
 var CompositionEventInterface = {
   data: null
 };
@@ -5513,11 +5575,6 @@ SyntheticEvent_1.augmentClass(SyntheticCompositionEvent, CompositionEventInterfa
 
 var SyntheticCompositionEvent_1 = SyntheticCompositionEvent;
 
-/**
- * @interface Event
- * @see http://www.w3.org/TR/2013/WD-DOM-Level-3-Events-20131105
- *      /#events-inputevents
- */
 var InputEventInterface = {
   data: null
 };
@@ -5959,7 +6016,7 @@ var CallbackQueue = function () {
     var contexts = this._contexts;
     var arg = this._arg;
     if (callbacks && contexts) {
-      !(callbacks.length === contexts.length) ? invariant_1(false, 'Mismatched list of contexts in callback queue') : void 0;
+      !(callbacks.length === contexts.length) ? invariant_1$2(false, 'Mismatched list of contexts in callback queue') : void 0;
       this._callbacks = null;
       this._contexts = null;
       for (var i = 0; i < callbacks.length; i++) {
@@ -6027,11 +6084,6 @@ var ReactFeatureFlags = {
 
 var ReactFeatureFlags_1 = ReactFeatureFlags;
 
-/**
- * @param {?object} object
- * @return {boolean} True if `object` is a valid owner.
- * @final
- */
 function isValidOwner(object) {
   return !!(object && typeof object.attachRef === 'function' && typeof object.detachRef === 'function');
 }
@@ -6077,7 +6129,7 @@ var ReactOwner = {
    * @internal
    */
   addComponentAsRefTo: function (component, ref, owner) {
-    !isValidOwner(owner) ? invariant_1(false, 'addComponentAsRefTo(...): Only a ReactOwner can have refs. You might be adding a ref to a component that was not created inside a component\'s `render` method, or you have multiple copies of React loaded (details: https://fb.me/react-refs-must-have-owner).') : void 0;
+    !isValidOwner(owner) ? invariant_1$2(false, 'addComponentAsRefTo(...): Only a ReactOwner can have refs. You might be adding a ref to a component that was not created inside a component\'s `render` method, or you have multiple copies of React loaded (details: https://fb.me/react-refs-must-have-owner).') : void 0;
     owner.attachRef(ref, component);
   },
 
@@ -6091,7 +6143,7 @@ var ReactOwner = {
    * @internal
    */
   removeComponentAsRefFrom: function (component, ref, owner) {
-    !isValidOwner(owner) ? invariant_1(false, 'removeComponentAsRefFrom(...): Only a ReactOwner can have refs. You might be removing a ref to a component that was not created inside a component\'s `render` method, or you have multiple copies of React loaded (details: https://fb.me/react-refs-must-have-owner).') : void 0;
+    !isValidOwner(owner) ? invariant_1$2(false, 'removeComponentAsRefFrom(...): Only a ReactOwner can have refs. You might be removing a ref to a component that was not created inside a component\'s `render` method, or you have multiple copies of React loaded (details: https://fb.me/react-refs-must-have-owner).') : void 0;
     var ownerPublicInstance = owner.getPublicInstance();
     // Check that `component`'s owner is still alive and that `component` is still the current ref
     // because we do not want to detach the ref if another component stole it.
@@ -6182,7 +6234,7 @@ var ReactRef_1 = ReactRef;
   var processingChildContext = false;
 
   var warnInvalidSetState = function () {
-    warning_1(!processingChildContext, 'setState(...): Cannot call setState() inside getChildContext()');
+    warning_1$2(!processingChildContext, 'setState(...): Cannot call setState() inside getChildContext()');
   };
 }
 
@@ -6240,19 +6292,6 @@ if (ExecutionEnvironment_1.canUseDOM) {
 
 var performance_1 = performance$1 || {};
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @typechecks
- */
-
-
-
 var performanceNow;
 
 /**
@@ -6279,7 +6318,7 @@ function callHook(event, fn, context, arg1, arg2, arg3, arg4, arg5) {
   try {
     fn.call(context, arg1, arg2, arg3, arg4, arg5);
   } catch (e) {
-    warning_1(didHookThrowForEvent[event], 'Exception thrown by hook while handling %s: %s', event, e + '\n' + e.stack);
+    warning_1$2(didHookThrowForEvent[event], 'Exception thrown by hook while handling %s: %s', event, e + '\n' + e.stack);
     didHookThrowForEvent[event] = true;
   }
 }
@@ -6363,7 +6402,7 @@ function checkDebugID(debugID) {
     return;
   }
   if (!debugID) {
-    warning_1(false, 'ReactDebugTool: debugID may not be empty.');
+    warning_1$2(false, 'ReactDebugTool: debugID may not be empty.');
   }
 }
 
@@ -6372,7 +6411,7 @@ function beginLifeCycleTimer(debugID, timerType) {
     return;
   }
   if (currentTimerType && !lifeCycleTimerHasWarned) {
-    warning_1(false, 'There is an internal error in the React performance measurement code. ' + 'Did not expect %s timer to start while %s timer is still in ' + 'progress for %s instance.', timerType, currentTimerType || 'no', debugID === currentTimerDebugID ? 'the same' : 'another');
+    warning_1$2(false, 'There is an internal error in the React performance measurement code. ' + 'Did not expect %s timer to start while %s timer is still in ' + 'progress for %s instance.', timerType, currentTimerType || 'no', debugID === currentTimerDebugID ? 'the same' : 'another');
     lifeCycleTimerHasWarned = true;
   }
   currentTimerStartTime = performanceNow_1();
@@ -6386,7 +6425,7 @@ function endLifeCycleTimer(debugID, timerType) {
     return;
   }
   if (currentTimerType !== timerType && !lifeCycleTimerHasWarned) {
-    warning_1(false, 'There is an internal error in the React performance measurement code. ' + 'We did not expect %s timer to stop while %s timer is still in ' + 'progress for %s instance. Please report this as a bug in React.', timerType, currentTimerType || 'no', debugID === currentTimerDebugID ? 'the same' : 'another');
+    warning_1$2(false, 'There is an internal error in the React performance measurement code. ' + 'We did not expect %s timer to stop while %s timer is still in ' + 'progress for %s instance. Please report this as a bug in React.', timerType, currentTimerType || 'no', debugID === currentTimerDebugID ? 'the same' : 'another');
     lifeCycleTimerHasWarned = true;
   }
   if (isProfiling) {
@@ -6610,8 +6649,6 @@ if (/[?&]react_perf\b/.test(url)) {
 
 var ReactDebugTool_1 = ReactDebugTool$1;
 
-// Trust the developer to only use ReactInstrumentation with a __DEV__ check
-
 var debugTool = null;
 
 {
@@ -6621,10 +6658,6 @@ var debugTool = null;
 
 var ReactInstrumentation$1 = { debugTool: debugTool };
 
-/**
- * Helper to call ReactRef.attachRefs with this composite component, split out
- * to avoid allocations in the transaction mount-ready queue.
- */
 function attachRefs() {
   ReactRef_1.attachRefs(this, this._currentElement);
 }
@@ -6752,7 +6785,7 @@ var ReactReconciler = {
     if (internalInstance._updateBatchNumber !== updateBatchNumber) {
       // The component's enqueued batch number should always be the current
       // batch or the following one.
-      warning_1(internalInstance._updateBatchNumber == null || internalInstance._updateBatchNumber === updateBatchNumber + 1, 'performUpdateIfNecessary: Unexpected batch number (current %s, ' + 'pending %s)', updateBatchNumber, internalInstance._updateBatchNumber);
+      warning_1$2(internalInstance._updateBatchNumber == null || internalInstance._updateBatchNumber === updateBatchNumber + 1, 'performUpdateIfNecessary: Unexpected batch number (current %s, ' + 'pending %s)', updateBatchNumber, internalInstance._updateBatchNumber);
       return;
     }
     {
@@ -6883,7 +6916,7 @@ var TransactionImpl = {
    * @return {*} Return value from `method`.
    */
   perform: function (method, scope, a, b, c, d, e, f) {
-    !!this.isInTransaction() ? invariant_1(false, 'Transaction.perform(...): Cannot initialize a transaction when there is already an outstanding transaction.') : void 0;
+    !!this.isInTransaction() ? invariant_1$2(false, 'Transaction.perform(...): Cannot initialize a transaction when there is already an outstanding transaction.') : void 0;
     var errorThrown;
     var ret;
     try {
@@ -6947,7 +6980,7 @@ var TransactionImpl = {
    * invoked).
    */
   closeAll: function (startIndex) {
-    !this.isInTransaction() ? invariant_1(false, 'Transaction.closeAll(): Cannot close transaction when none are open.') : void 0;
+    !this.isInTransaction() ? invariant_1$2(false, 'Transaction.closeAll(): Cannot close transaction when none are open.') : void 0;
     var transactionWrappers = this.transactionWrappers;
     for (var i = startIndex; i < transactionWrappers.length; i++) {
       var wrapper = transactionWrappers[i];
@@ -6988,7 +7021,7 @@ var asapEnqueued = false;
 var batchingStrategy = null;
 
 function ensureInjected() {
-  !(ReactUpdates.ReactReconcileTransaction && batchingStrategy) ? invariant_1(false, 'ReactUpdates: must inject a reconcile transaction class and batching strategy') : void 0;
+  !(ReactUpdates.ReactReconcileTransaction && batchingStrategy) ? invariant_1$2(false, 'ReactUpdates: must inject a reconcile transaction class and batching strategy') : void 0;
 }
 
 var NESTED_UPDATES = {
@@ -7029,7 +7062,7 @@ function ReactUpdatesFlushTransaction() {
   /* useCreateElement */true);
 }
 
-index(ReactUpdatesFlushTransaction.prototype, Transaction, {
+index$3(ReactUpdatesFlushTransaction.prototype, Transaction, {
   getTransactionWrappers: function () {
     return TRANSACTION_WRAPPERS;
   },
@@ -7069,7 +7102,7 @@ function mountOrderComparator(c1, c2) {
 
 function runBatchedUpdates(transaction) {
   var len = transaction.dirtyComponentsLength;
-  !(len === dirtyComponents.length) ? invariant_1(false, 'Expected flush transaction\'s stored dirty-components length (%s) to match dirty-components array length (%s).', len, dirtyComponents.length) : void 0;
+  !(len === dirtyComponents.length) ? invariant_1$2(false, 'Expected flush transaction\'s stored dirty-components length (%s) to match dirty-components array length (%s).', len, dirtyComponents.length) : void 0;
 
   // Since reconciling a component higher in the owner hierarchy usually (not
   // always -- see shouldComponentUpdate()) will reconcile children, reconcile
@@ -7171,21 +7204,21 @@ function enqueueUpdate(component) {
  * if no updates are currently being performed.
  */
 function asap(callback, context) {
-  !batchingStrategy.isBatchingUpdates ? invariant_1(false, 'ReactUpdates.asap: Can\'t enqueue an asap callback in a context whereupdates are not being batched.') : void 0;
+  !batchingStrategy.isBatchingUpdates ? invariant_1$2(false, 'ReactUpdates.asap: Can\'t enqueue an asap callback in a context whereupdates are not being batched.') : void 0;
   asapCallbackQueue.enqueue(callback, context);
   asapEnqueued = true;
 }
 
 var ReactUpdatesInjection = {
   injectReconcileTransaction: function (ReconcileTransaction) {
-    !ReconcileTransaction ? invariant_1(false, 'ReactUpdates: must provide a reconcile transaction class') : void 0;
+    !ReconcileTransaction ? invariant_1$2(false, 'ReactUpdates: must provide a reconcile transaction class') : void 0;
     ReactUpdates.ReactReconcileTransaction = ReconcileTransaction;
   },
 
   injectBatchingStrategy: function (_batchingStrategy) {
-    !_batchingStrategy ? invariant_1(false, 'ReactUpdates: must provide a batching strategy') : void 0;
-    !(typeof _batchingStrategy.batchedUpdates === 'function') ? invariant_1(false, 'ReactUpdates: must provide a batchedUpdates() function') : void 0;
-    !(typeof _batchingStrategy.isBatchingUpdates === 'boolean') ? invariant_1(false, 'ReactUpdates: must provide an isBatchingUpdates boolean attribute') : void 0;
+    !_batchingStrategy ? invariant_1$2(false, 'ReactUpdates: must provide a batching strategy') : void 0;
+    !(typeof _batchingStrategy.batchedUpdates === 'function') ? invariant_1$2(false, 'ReactUpdates: must provide a batchedUpdates() function') : void 0;
+    !(typeof _batchingStrategy.isBatchingUpdates === 'boolean') ? invariant_1$2(false, 'ReactUpdates: must provide an isBatchingUpdates boolean attribute') : void 0;
     batchingStrategy = _batchingStrategy;
   }
 };
@@ -7216,14 +7249,6 @@ var ReactUpdates_1 = ReactUpdates;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- */
-
-/**
- * Gets the target node from a native browser event by accounting for
- * inconsistencies in browser DOM APIs.
- *
- * @param {object} nativeEvent Native browser event.
- * @return {DOMEventTarget} Target node.
  */
 
 function getEventTarget(nativeEvent) {
@@ -7296,10 +7321,6 @@ var isEventSupported_1 = isEventSupported;
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
- */
-
-/**
- * @see http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#input-type-attr-summary
  */
 
 var supportedInputTypes = {
@@ -7669,24 +7690,10 @@ var ChangeEventPlugin_1 = ChangeEventPlugin;
  *
  */
 
-/**
- * Module that is injectable into `EventPluginHub`, that specifies a
- * deterministic ordering of `EventPlugin`s. A convenient way to reason about
- * plugins, without having to package every one of them. This is better than
- * having plugins be ordered in the same order that they are injected because
- * that ordering would be influenced by the packaging order.
- * `ResponderEventPlugin` must occur before `SimpleEventPlugin` so that
- * preventing default on events is convenient in `SimpleEventPlugin` handlers.
- */
-
 var DefaultEventPluginOrder = ['ResponderEventPlugin', 'SimpleEventPlugin', 'TapEventPlugin', 'EnterLeaveEventPlugin', 'ChangeEventPlugin', 'SelectEventPlugin', 'BeforeInputEventPlugin'];
 
 var DefaultEventPluginOrder_1 = DefaultEventPluginOrder;
 
-/**
- * @interface UIEvent
- * @see http://www.w3.org/TR/DOM-Level-3-Events/
- */
 var UIEventInterface = {
   view: function (event) {
     if (event.view) {
@@ -7761,11 +7768,6 @@ var ViewportMetrics_1 = ViewportMetrics;
  *
  */
 
-/**
- * Translation from modifier key to the associated property in the event.
- * @see http://www.w3.org/TR/DOM-Level-3-Events/#keys-Modifiers
- */
-
 var modifierKeyToProp = {
   'Alt': 'altKey',
   'Control': 'ctrlKey',
@@ -7792,10 +7794,6 @@ function getEventModifierState(nativeEvent) {
 
 var getEventModifierState_1 = getEventModifierState;
 
-/**
- * @interface MouseEvent
- * @see http://www.w3.org/TR/DOM-Level-3-Events/
- */
 var MouseEventInterface = {
   screenX: null,
   screenY: null,
@@ -8183,10 +8181,6 @@ var DOMNamespaces_1 = DOMNamespaces;
 
 /* globals MSApp */
 
-/**
- * Create a function which has 'unsafe' privileges (required by windows8 apps)
- */
-
 var createMicrosoftUnsafeLocalFunction = function (func) {
   if (typeof MSApp !== 'undefined' && MSApp.execUnsafeLocalFunction) {
     return function (arg0, arg1, arg2, arg3) {
@@ -8319,12 +8313,6 @@ var setInnerHTML_1 = setInnerHTML;
  *
  */
 
-// code copied and modified from escape-html
-/**
- * Module variables.
- * @private
- */
-
 var matchHtmlRegExp = /["'&<>]/;
 
 /**
@@ -8405,16 +8393,6 @@ function escapeTextContentForBrowser(text) {
 
 var escapeTextContentForBrowser_1 = escapeTextContentForBrowser;
 
-/**
- * Set the textContent property of a node, ensuring that whitespace is preserved
- * even in IE8. innerText is a poor substitute for textContent and, among many
- * issues, inserts <br> instead of the literal newline chars. innerHTML behaves
- * as it should.
- *
- * @param {DOMElement} node
- * @param {string} text
- * @internal
- */
 var setTextContent = function (node, text) {
   if (text) {
     var firstChild = node.firstChild;
@@ -8541,40 +8519,18 @@ DOMLazyTree.queueText = queueText;
 
 var DOMLazyTree_1 = DOMLazyTree;
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @typechecks
- */
-
-
-
-/**
- * Convert array-like objects to arrays.
- *
- * This API assumes the caller knows the contents of the data type. For less
- * well defined inputs use createArrayFromMixed.
- *
- * @param {object|function|filelist} obj
- * @return {array}
- */
 function toArray$1(obj) {
   var length = obj.length;
 
   // Some browsers builtin objects can report typeof 'function' (e.g. NodeList
   // in old versions of Safari).
-  !(!Array.isArray(obj) && (typeof obj === 'object' || typeof obj === 'function')) ? invariant_1(false, 'toArray: Array-like object expected') : void 0;
+  !(!Array.isArray(obj) && (typeof obj === 'object' || typeof obj === 'function')) ? invariant_1$2(false, 'toArray: Array-like object expected') : void 0;
 
-  !(typeof length === 'number') ? invariant_1(false, 'toArray: Object needs a length property') : void 0;
+  !(typeof length === 'number') ? invariant_1$2(false, 'toArray: Object needs a length property') : void 0;
 
-  !(length === 0 || length - 1 in obj) ? invariant_1(false, 'toArray: Object should have keys for indices') : void 0;
+  !(length === 0 || length - 1 in obj) ? invariant_1$2(false, 'toArray: Object should have keys for indices') : void 0;
 
-  !(typeof obj.callee !== 'function') ? invariant_1(false, 'toArray: Object can\'t be `arguments`. Use rest params ' + '(function(...args) {}) or Array.from() instead.') : void 0;
+  !(typeof obj.callee !== 'function') ? invariant_1$2(false, 'toArray: Object can\'t be `arguments`. Use rest params ' + '(function(...args) {}) or Array.from() instead.') : void 0;
 
   // Old IE doesn't give collections access to hasOwnProperty. Assume inputs
   // without method will throw during the slice call and skip straight to the
@@ -8666,25 +8622,6 @@ function createArrayFromMixed(obj) {
 
 var createArrayFromMixed_1 = createArrayFromMixed;
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- */
-
-/*eslint-disable fb-www/unsafe-html */
-
-
-
-
-
-/**
- * Dummy container used to detect which wraps are necessary.
- */
 var dummyNode$1 = ExecutionEnvironment_1.canUseDOM ? document.createElement('div') : null;
 
 /**
@@ -8742,7 +8679,7 @@ svgElements.forEach(function (nodeName) {
  * @return {?array} Markup wrap configuration, if applicable.
  */
 function getMarkupWrap(nodeName) {
-  !!!dummyNode$1 ? invariant_1(false, 'Markup wrapping node not initialized') : void 0;
+  !!!dummyNode$1 ? invariant_1$2(false, 'Markup wrapping node not initialized') : void 0;
   if (!markupWrap.hasOwnProperty(nodeName)) {
     nodeName = '*';
   }
@@ -8759,28 +8696,6 @@ function getMarkupWrap(nodeName) {
 
 var getMarkupWrap_1 = getMarkupWrap;
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @typechecks
- */
-
-/*eslint-disable fb-www/unsafe-html*/
-
-
-
-
-
-
-
-/**
- * Dummy container used to render all markup.
- */
 var dummyNode = ExecutionEnvironment_1.canUseDOM ? document.createElement('div') : null;
 
 /**
@@ -8811,7 +8726,7 @@ function getNodeName(markup) {
  */
 function createNodesFromMarkup(markup, handleScript) {
   var node = dummyNode;
-  !!!dummyNode ? invariant_1(false, 'createNodesFromMarkup dummy not initialized') : void 0;
+  !!!dummyNode ? invariant_1$2(false, 'createNodesFromMarkup dummy not initialized') : void 0;
   var nodeName = getNodeName(markup);
 
   var wrap = nodeName && getMarkupWrap_1(nodeName);
@@ -8828,7 +8743,7 @@ function createNodesFromMarkup(markup, handleScript) {
 
   var scripts = node.getElementsByTagName('script');
   if (scripts.length) {
-    !handleScript ? invariant_1(false, 'createNodesFromMarkup(...): Unexpected <script> element rendered.') : void 0;
+    !handleScript ? invariant_1$2(false, 'createNodesFromMarkup(...): Unexpected <script> element rendered.') : void 0;
     createArrayFromMixed_1(scripts).forEach(handleScript);
   }
 
@@ -8852,12 +8767,12 @@ var Danger = {
    * @internal
    */
   dangerouslyReplaceNodeWithMarkup: function (oldChild, markup) {
-    !ExecutionEnvironment_1.canUseDOM ? invariant_1(false, 'dangerouslyReplaceNodeWithMarkup(...): Cannot render markup in a worker thread. Make sure `window` and `document` are available globally before requiring React when unit testing or use ReactDOMServer.renderToString() for server rendering.') : void 0;
-    !markup ? invariant_1(false, 'dangerouslyReplaceNodeWithMarkup(...): Missing markup.') : void 0;
-    !(oldChild.nodeName !== 'HTML') ? invariant_1(false, 'dangerouslyReplaceNodeWithMarkup(...): Cannot replace markup of the <html> node. This is because browser quirks make this unreliable and/or slow. If you want to render to the root you must use server rendering. See ReactDOMServer.renderToString().') : void 0;
+    !ExecutionEnvironment_1.canUseDOM ? invariant_1$2(false, 'dangerouslyReplaceNodeWithMarkup(...): Cannot render markup in a worker thread. Make sure `window` and `document` are available globally before requiring React when unit testing or use ReactDOMServer.renderToString() for server rendering.') : void 0;
+    !markup ? invariant_1$2(false, 'dangerouslyReplaceNodeWithMarkup(...): Missing markup.') : void 0;
+    !(oldChild.nodeName !== 'HTML') ? invariant_1$2(false, 'dangerouslyReplaceNodeWithMarkup(...): Cannot replace markup of the <html> node. This is because browser quirks make this unreliable and/or slow. If you want to render to the root you must use server rendering. See ReactDOMServer.renderToString().') : void 0;
 
     if (typeof markup === 'string') {
-      var newChild = createNodesFromMarkup_1(markup, emptyFunction_1)[0];
+      var newChild = createNodesFromMarkup_1(markup, emptyFunction_1$2)[0];
       oldChild.parentNode.replaceChild(newChild, oldChild);
     } else {
       DOMLazyTree_1.replaceChildWithTree(oldChild, markup);
@@ -9072,9 +8987,6 @@ var DOMChildrenOperations = {
 
 var DOMChildrenOperations_1 = DOMChildrenOperations;
 
-/**
- * Operations used to process updates to DOM nodes.
- */
 var ReactDOMIDOperations = {
 
   /**
@@ -9091,11 +9003,6 @@ var ReactDOMIDOperations = {
 
 var ReactDOMIDOperations_1 = ReactDOMIDOperations;
 
-/**
- * Abstracts away all functionality of the reconciler that requires knowledge of
- * the browser context. TODO: These callers should be refactored to avoid the
- * need for this injection.
- */
 var ReactComponentBrowserEnvironment = {
 
   processChildrenUpdates: ReactDOMIDOperations_1.dangerouslyProcessChildrenUpdates,
@@ -9114,10 +9021,6 @@ var ReactComponentBrowserEnvironment_1 = ReactComponentBrowserEnvironment;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- */
-
-/**
- * @param {DOMElement} node input/textarea to focus
  */
 
 function focusNode(node) {
@@ -9147,10 +9050,6 @@ var AutoFocusUtils_1 = AutoFocusUtils;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- */
-
-/**
- * CSS properties which accept numbers but are not in units of "px".
  */
 
 var isUnitlessNumber = {
@@ -9285,17 +9184,6 @@ var CSSProperty = {
 
 var CSSProperty_1 = CSSProperty;
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @typechecks
- */
-
 var _hyphenPattern = /-(.)/g;
 
 /**
@@ -9393,7 +9281,7 @@ function dangerousStyleValue(name, value, component) {
           }
         }
         if (!warned) {
-          warning_1(false, 'a `%s` tag (owner: `%s`) was passed a numeric string value ' + 'for CSS property `%s` (value: `%s`) which will be treated ' + 'as a unitless number in a future version of React.', component._currentElement.type, ownerName || 'unknown', name, value);
+          warning_1$2(false, 'a `%s` tag (owner: `%s`) was passed a numeric string value ' + 'for CSS property `%s` (value: `%s`) which will be treated ' + 'as a unitless number in a future version of React.', component._currentElement.type, ownerName || 'unknown', name, value);
         }
       }
     }
@@ -9403,17 +9291,6 @@ function dangerousStyleValue(name, value, component) {
 }
 
 var dangerousStyleValue_1 = dangerousStyleValue;
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @typechecks
- */
 
 var _uppercasePattern = /([A-Z])/g;
 
@@ -9471,10 +9348,6 @@ var hyphenateStyleName_1 = hyphenateStyleName;
  * @typechecks static-only
  */
 
-/**
- * Memoizes the return value of a function that accepts one string argument.
- */
-
 function memoizeStringOnly(callback) {
   var cache = {};
   return function (string) {
@@ -9524,7 +9397,7 @@ if (ExecutionEnvironment_1.canUseDOM) {
     }
 
     warnedStyleNames[name] = true;
-    warning_1(false, 'Unsupported style property %s. Did you mean %s?%s', name, camelizeStyleName_1(name), checkRenderMessage(owner));
+    warning_1$2(false, 'Unsupported style property %s. Did you mean %s?%s', name, camelizeStyleName_1(name), checkRenderMessage(owner));
   };
 
   var warnBadVendoredStyleName = function (name, owner) {
@@ -9533,7 +9406,7 @@ if (ExecutionEnvironment_1.canUseDOM) {
     }
 
     warnedStyleNames[name] = true;
-    warning_1(false, 'Unsupported vendor-prefixed style property %s. Did you mean %s?%s', name, name.charAt(0).toUpperCase() + name.slice(1), checkRenderMessage(owner));
+    warning_1$2(false, 'Unsupported vendor-prefixed style property %s. Did you mean %s?%s', name, name.charAt(0).toUpperCase() + name.slice(1), checkRenderMessage(owner));
   };
 
   var warnStyleValueWithSemicolon = function (name, value, owner) {
@@ -9542,7 +9415,7 @@ if (ExecutionEnvironment_1.canUseDOM) {
     }
 
     warnedStyleValues[value] = true;
-    warning_1(false, 'Style property values shouldn\'t contain a semicolon.%s ' + 'Try "%s: %s" instead.', checkRenderMessage(owner), name, value.replace(badStyleValueWithSemicolonPattern, ''));
+    warning_1$2(false, 'Style property values shouldn\'t contain a semicolon.%s ' + 'Try "%s: %s" instead.', checkRenderMessage(owner), name, value.replace(badStyleValueWithSemicolonPattern, ''));
   };
 
   var warnStyleValueIsNaN = function (name, value, owner) {
@@ -9551,7 +9424,7 @@ if (ExecutionEnvironment_1.canUseDOM) {
     }
 
     warnedForNaNValue = true;
-    warning_1(false, '`NaN` is an invalid value for the `%s` css style property.%s', name, checkRenderMessage(owner));
+    warning_1$2(false, '`NaN` is an invalid value for the `%s` css style property.%s', name, checkRenderMessage(owner));
   };
 
   var checkRenderMessage = function (owner) {
@@ -9674,12 +9547,6 @@ var CSSPropertyOperations = {
 
 var CSSPropertyOperations_1 = CSSPropertyOperations;
 
-/**
- * Escapes attribute value to prevent scripting attacks.
- *
- * @param {*} value Value to escape.
- * @return {string} An escaped string.
- */
 function quoteAttributeValueForBrowser(value) {
   return '"' + escapeTextContentForBrowser_1(value) + '"';
 }
@@ -9702,7 +9569,7 @@ function isAttributeNameSafe(attributeName) {
     return true;
   }
   illegalAttributeNameCache[attributeName] = true;
-  warning_1(false, 'Invalid attribute name: `%s`', attributeName);
+  warning_1$2(false, 'Invalid attribute name: `%s`', attributeName);
   return false;
 }
 
@@ -9923,13 +9790,6 @@ var ReactEventEmitterMixin = {
 
 var ReactEventEmitterMixin_1 = ReactEventEmitterMixin;
 
-/**
- * Generate a mapping of standard vendor prefixes using the defined style property and event name.
- *
- * @param {string} styleProp
- * @param {string} eventName
- * @returns {object}
- */
 function makePrefixMap(styleProp, eventName) {
   var prefixes = {};
 
@@ -10009,61 +9869,6 @@ function getVendorPrefixedEventName(eventName) {
 }
 
 var getVendorPrefixedEventName_1 = getVendorPrefixedEventName;
-
-/**
- * Summary of `ReactBrowserEventEmitter` event handling:
- *
- *  - Top-level delegation is used to trap most native browser events. This
- *    may only occur in the main thread and is the responsibility of
- *    ReactEventListener, which is injected and can therefore support pluggable
- *    event sources. This is the only work that occurs in the main thread.
- *
- *  - We normalize and de-duplicate events to account for browser quirks. This
- *    may be done in the worker thread.
- *
- *  - Forward these native events (with the associated top-level type used to
- *    trap it) to `EventPluginHub`, which in turn will ask plugins if they want
- *    to extract any synthetic events.
- *
- *  - The `EventPluginHub` will then process each event by annotating them with
- *    "dispatches", a sequence of listeners and IDs that care about that event.
- *
- *  - The `EventPluginHub` then dispatches the events.
- *
- * Overview of React and the event system:
- *
- * +------------+    .
- * |    DOM     |    .
- * +------------+    .
- *       |           .
- *       v           .
- * +------------+    .
- * | ReactEvent |    .
- * |  Listener  |    .
- * +------------+    .                         +-----------+
- *       |           .               +--------+|SimpleEvent|
- *       |           .               |         |Plugin     |
- * +-----|------+    .               v         +-----------+
- * |     |      |    .    +--------------+                    +------------+
- * |     +-----------.--->|EventPluginHub|                    |    Event   |
- * |            |    .    |              |     +-----------+  | Propagators|
- * | ReactEvent |    .    |              |     |TapEvent   |  |------------|
- * |  Emitter   |    .    |              |<---+|Plugin     |  |other plugin|
- * |            |    .    |              |     +-----------+  |  utilities |
- * |     +-----------.--->|              |                    +------------+
- * |     |      |    .    +--------------+
- * +-----|------+    .                ^        +-----------+
- *       |           .                |        |Enter/Leave|
- *       +           .                +-------+|Plugin     |
- * +-------------+   .                         +-----------+
- * | application |   .
- * |-------------|   .
- * |             |   .
- * |             |   .
- * +-------------+   .
- *                   .
- *    React Core     .  General Purpose Event Plugin System
- */
 
 var hasEventPageXY;
 var alreadyListeningTo = {};
@@ -10165,7 +9970,7 @@ function getListeningForDocument(mountAt) {
  *
  * @internal
  */
-var ReactBrowserEventEmitter = index({}, ReactEventEmitterMixin_1, {
+var ReactBrowserEventEmitter = index$3({}, ReactEventEmitterMixin_1, {
 
   /**
    * Injectable event backend
@@ -10328,11 +10133,576 @@ var ReactBrowserEventEmitter_1 = ReactBrowserEventEmitter;
  * 
  */
 
+var ReactPropTypesSecret$4 = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+
+var ReactPropTypesSecret_1$4 = ReactPropTypesSecret$4;
+
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
 var ReactPropTypesSecret$5 = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
-var ReactPropTypesSecret_1$4 = ReactPropTypesSecret$5;
+var ReactPropTypesSecret_1$6 = ReactPropTypesSecret$5;
 
-var PropTypes = factory_1(React_1.isValidElement);
+{
+  var invariant$5 = invariant_1$2;
+  var warning$4 = warning_1$2;
+  var ReactPropTypesSecret$6 = ReactPropTypesSecret_1$6;
+  var loggedTypeFailures$3 = {};
+}
+
+/**
+ * Assert that the values match with the type specs.
+ * Error messages are memorized and will only be shown once.
+ *
+ * @param {object} typeSpecs Map of name to a ReactPropType
+ * @param {object} values Runtime values that need to be type-checked
+ * @param {string} location e.g. "prop", "context", "child context"
+ * @param {string} componentName Name of the component for error messages.
+ * @param {?Function} getStack Returns the component stack.
+ * @private
+ */
+function checkPropTypes$2(typeSpecs, values, location, componentName, getStack) {
+  {
+    for (var typeSpecName in typeSpecs) {
+      if (typeSpecs.hasOwnProperty(typeSpecName)) {
+        var error;
+        // Prop type validation may throw. In case they do, we don't want to
+        // fail the render phase where it didn't fail before. So we log it.
+        // After these have been cleaned up, we'll let them throw.
+        try {
+          // This is intentionally an invariant that gets caught. It's the same
+          // behavior as without this statement except with a better message.
+          invariant$5(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
+          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret$6);
+        } catch (ex) {
+          error = ex;
+        }
+        warning$4(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error);
+        if (error instanceof Error && !(error.message in loggedTypeFailures$3)) {
+          // Only monitor this failure once because there tends to be a lot of the
+          // same error.
+          loggedTypeFailures$3[error.message] = true;
+
+          var stack = getStack ? getStack() : '';
+
+          warning$4(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+        }
+      }
+    }
+  }
+}
+
+var checkPropTypes_1$2 = checkPropTypes$2;
+
+var factoryWithTypeCheckers$2 = function(isValidElement, throwOnDirectAccess) {
+  /* global Symbol */
+  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+
+  /**
+   * Returns the iterator method function contained on the iterable object.
+   *
+   * Be sure to invoke the function with the iterable as context:
+   *
+   *     var iteratorFn = getIteratorFn(myIterable);
+   *     if (iteratorFn) {
+   *       var iterator = iteratorFn.call(myIterable);
+   *       ...
+   *     }
+   *
+   * @param {?object} maybeIterable
+   * @return {?function}
+   */
+  function getIteratorFn(maybeIterable) {
+    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+    if (typeof iteratorFn === 'function') {
+      return iteratorFn;
+    }
+  }
+
+  /**
+   * Collection of methods that allow declaration and validation of props that are
+   * supplied to React components. Example usage:
+   *
+   *   var Props = require('ReactPropTypes');
+   *   var MyArticle = React.createClass({
+   *     propTypes: {
+   *       // An optional string prop named "description".
+   *       description: Props.string,
+   *
+   *       // A required enum prop named "category".
+   *       category: Props.oneOf(['News','Photos']).isRequired,
+   *
+   *       // A prop named "dialog" that requires an instance of Dialog.
+   *       dialog: Props.instanceOf(Dialog).isRequired
+   *     },
+   *     render: function() { ... }
+   *   });
+   *
+   * A more formal specification of how these methods are used:
+   *
+   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
+   *   decl := ReactPropTypes.{type}(.isRequired)?
+   *
+   * Each and every declaration produces a function with the same signature. This
+   * allows the creation of custom validation functions. For example:
+   *
+   *  var MyLink = React.createClass({
+   *    propTypes: {
+   *      // An optional string or URI prop named "href".
+   *      href: function(props, propName, componentName) {
+   *        var propValue = props[propName];
+   *        if (propValue != null && typeof propValue !== 'string' &&
+   *            !(propValue instanceof URI)) {
+   *          return new Error(
+   *            'Expected a string or an URI for ' + propName + ' in ' +
+   *            componentName
+   *          );
+   *        }
+   *      }
+   *    },
+   *    render: function() {...}
+   *  });
+   *
+   * @internal
+   */
+
+  var ANONYMOUS = '<<anonymous>>';
+
+  // Important!
+  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+  var ReactPropTypes = {
+    array: createPrimitiveTypeChecker('array'),
+    bool: createPrimitiveTypeChecker('boolean'),
+    func: createPrimitiveTypeChecker('function'),
+    number: createPrimitiveTypeChecker('number'),
+    object: createPrimitiveTypeChecker('object'),
+    string: createPrimitiveTypeChecker('string'),
+    symbol: createPrimitiveTypeChecker('symbol'),
+
+    any: createAnyTypeChecker(),
+    arrayOf: createArrayOfTypeChecker,
+    element: createElementTypeChecker(),
+    instanceOf: createInstanceTypeChecker,
+    node: createNodeChecker(),
+    objectOf: createObjectOfTypeChecker,
+    oneOf: createEnumTypeChecker,
+    oneOfType: createUnionTypeChecker,
+    shape: createShapeTypeChecker
+  };
+
+  /**
+   * inlined Object.is polyfill to avoid requiring consumers ship their own
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+   */
+  /*eslint-disable no-self-compare*/
+  function is(x, y) {
+    // SameValue algorithm
+    if (x === y) {
+      // Steps 1-5, 7-10
+      // Steps 6.b-6.e: +0 != -0
+      return x !== 0 || 1 / x === 1 / y;
+    } else {
+      // Step 6.a: NaN == NaN
+      return x !== x && y !== y;
+    }
+  }
+  /*eslint-enable no-self-compare*/
+
+  /**
+   * We use an Error-like object for backward compatibility as people may call
+   * PropTypes directly and inspect their output. However, we don't use real
+   * Errors anymore. We don't inspect their stack anyway, and creating them
+   * is prohibitively expensive if they are created too often, such as what
+   * happens in oneOfType() for any type before the one that matched.
+   */
+  function PropTypeError(message) {
+    this.message = message;
+    this.stack = '';
+  }
+  // Make `instanceof Error` still work for returned errors.
+  PropTypeError.prototype = Error.prototype;
+
+  function createChainableTypeChecker(validate) {
+    {
+      var manualPropTypeCallCache = {};
+      var manualPropTypeWarningCount = 0;
+    }
+    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
+      componentName = componentName || ANONYMOUS;
+      propFullName = propFullName || propName;
+
+      if (secret !== ReactPropTypesSecret_1$6) {
+        if (throwOnDirectAccess) {
+          // New behavior only for users of `prop-types` package
+          invariant_1$2(
+            false,
+            'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+            'Use `PropTypes.checkPropTypes()` to call them. ' +
+            'Read more at http://fb.me/use-check-prop-types'
+          );
+        } else if ("development" !== 'production' && typeof console !== 'undefined') {
+          // Old behavior for people using React.PropTypes
+          var cacheKey = componentName + ':' + propName;
+          if (
+            !manualPropTypeCallCache[cacheKey] &&
+            // Avoid spamming the console because they are often not actionable except for lib authors
+            manualPropTypeWarningCount < 3
+          ) {
+            warning_1$2(
+              false,
+              'You are manually calling a React.PropTypes validation ' +
+              'function for the `%s` prop on `%s`. This is deprecated ' +
+              'and will throw in the standalone `prop-types` package. ' +
+              'You may be seeing this warning due to a third-party PropTypes ' +
+              'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.',
+              propFullName,
+              componentName
+            );
+            manualPropTypeCallCache[cacheKey] = true;
+            manualPropTypeWarningCount++;
+          }
+        }
+      }
+      if (props[propName] == null) {
+        if (isRequired) {
+          if (props[propName] === null) {
+            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
+          }
+          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
+        }
+        return null;
+      } else {
+        return validate(props, propName, componentName, location, propFullName);
+      }
+    }
+
+    var chainedCheckType = checkType.bind(null, false);
+    chainedCheckType.isRequired = checkType.bind(null, true);
+
+    return chainedCheckType;
+  }
+
+  function createPrimitiveTypeChecker(expectedType) {
+    function validate(props, propName, componentName, location, propFullName, secret) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== expectedType) {
+        // `propValue` being instance of, say, date/regexp, pass the 'object'
+        // check, but we can offer a more precise error message here rather than
+        // 'of type `object`'.
+        var preciseType = getPreciseType(propValue);
+
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createAnyTypeChecker() {
+    return createChainableTypeChecker(emptyFunction_1$2.thatReturnsNull);
+  }
+
+  function createArrayOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
+      }
+      var propValue = props[propName];
+      if (!Array.isArray(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
+      }
+      for (var i = 0; i < propValue.length; i++) {
+        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret_1$6);
+        if (error instanceof Error) {
+          return error;
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      if (!isValidElement(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createInstanceTypeChecker(expectedClass) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!(props[propName] instanceof expectedClass)) {
+        var expectedClassName = expectedClass.name || ANONYMOUS;
+        var actualClassName = getClassName(props[propName]);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createEnumTypeChecker(expectedValues) {
+    if (!Array.isArray(expectedValues)) {
+      warning_1$2(false, 'Invalid argument supplied to oneOf, expected an instance of array.');
+      return emptyFunction_1$2.thatReturnsNull;
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      for (var i = 0; i < expectedValues.length; i++) {
+        if (is(propValue, expectedValues[i])) {
+          return null;
+        }
+      }
+
+      var valuesString = JSON.stringify(expectedValues);
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + propValue + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createObjectOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
+      }
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
+      }
+      for (var key in propValue) {
+        if (propValue.hasOwnProperty(key)) {
+          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1$6);
+          if (error instanceof Error) {
+            return error;
+          }
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createUnionTypeChecker(arrayOfTypeCheckers) {
+    if (!Array.isArray(arrayOfTypeCheckers)) {
+      warning_1$2(false, 'Invalid argument supplied to oneOfType, expected an instance of array.');
+      return emptyFunction_1$2.thatReturnsNull;
+    }
+
+    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+      var checker = arrayOfTypeCheckers[i];
+      if (typeof checker !== 'function') {
+        warning_1$2(
+          false,
+          'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' +
+          'received %s at index %s.',
+          getPostfixForTypeWarning(checker),
+          i
+        );
+        return emptyFunction_1$2.thatReturnsNull;
+      }
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+        var checker = arrayOfTypeCheckers[i];
+        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret_1$6) == null) {
+          return null;
+        }
+      }
+
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createNodeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!isNode(props[propName])) {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      for (var key in shapeTypes) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          continue;
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1$6);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function isNode(propValue) {
+    switch (typeof propValue) {
+      case 'number':
+      case 'string':
+      case 'undefined':
+        return true;
+      case 'boolean':
+        return !propValue;
+      case 'object':
+        if (Array.isArray(propValue)) {
+          return propValue.every(isNode);
+        }
+        if (propValue === null || isValidElement(propValue)) {
+          return true;
+        }
+
+        var iteratorFn = getIteratorFn(propValue);
+        if (iteratorFn) {
+          var iterator = iteratorFn.call(propValue);
+          var step;
+          if (iteratorFn !== propValue.entries) {
+            while (!(step = iterator.next()).done) {
+              if (!isNode(step.value)) {
+                return false;
+              }
+            }
+          } else {
+            // Iterator will provide entry [k,v] tuples rather than values.
+            while (!(step = iterator.next()).done) {
+              var entry = step.value;
+              if (entry) {
+                if (!isNode(entry[1])) {
+                  return false;
+                }
+              }
+            }
+          }
+        } else {
+          return false;
+        }
+
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  function isSymbol(propType, propValue) {
+    // Native Symbol.
+    if (propType === 'symbol') {
+      return true;
+    }
+
+    // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+    if (propValue['@@toStringTag'] === 'Symbol') {
+      return true;
+    }
+
+    // Fallback for non-spec compliant Symbols which are polyfilled.
+    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Equivalent of `typeof` but with special handling for array and regexp.
+  function getPropType(propValue) {
+    var propType = typeof propValue;
+    if (Array.isArray(propValue)) {
+      return 'array';
+    }
+    if (propValue instanceof RegExp) {
+      // Old webkits (at least until Android 4.0) return 'function' rather than
+      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
+      // passes PropTypes.object.
+      return 'object';
+    }
+    if (isSymbol(propType, propValue)) {
+      return 'symbol';
+    }
+    return propType;
+  }
+
+  // This handles more types than `getPropType`. Only used for error messages.
+  // See `createPrimitiveTypeChecker`.
+  function getPreciseType(propValue) {
+    if (typeof propValue === 'undefined' || propValue === null) {
+      return '' + propValue;
+    }
+    var propType = getPropType(propValue);
+    if (propType === 'object') {
+      if (propValue instanceof Date) {
+        return 'date';
+      } else if (propValue instanceof RegExp) {
+        return 'regexp';
+      }
+    }
+    return propType;
+  }
+
+  // Returns a string that is postfixed to a warning about an invalid type.
+  // For example, "undefined" or "of type array"
+  function getPostfixForTypeWarning(value) {
+    var type = getPreciseType(value);
+    switch (type) {
+      case 'array':
+      case 'object':
+        return 'an ' + type;
+      case 'boolean':
+      case 'date':
+      case 'regexp':
+        return 'a ' + type;
+      default:
+        return type;
+    }
+  }
+
+  // Returns class name of the object, if any.
+  function getClassName(propValue) {
+    if (!propValue.constructor || !propValue.constructor.name) {
+      return ANONYMOUS;
+    }
+    return propValue.constructor.name;
+  }
+
+  ReactPropTypes.checkPropTypes = checkPropTypes_1$2;
+  ReactPropTypes.PropTypes = ReactPropTypes;
+
+  return ReactPropTypes;
+};
+
+var factory_1$2 = function(isValidElement) {
+  // It is still allowed in 15.5.
+  var throwOnDirectAccess = false;
+  return factoryWithTypeCheckers$2(isValidElement, throwOnDirectAccess);
+};
+
+var PropTypes = factory_1$2(React_1.isValidElement);
 
 
 
@@ -10348,16 +10718,16 @@ var hasReadOnlyValue = {
 };
 
 function _assertSingleLink(inputProps) {
-  !(inputProps.checkedLink == null || inputProps.valueLink == null) ? invariant_1(false, 'Cannot provide a checkedLink and a valueLink. If you want to use checkedLink, you probably don\'t want to use valueLink and vice versa.') : void 0;
+  !(inputProps.checkedLink == null || inputProps.valueLink == null) ? invariant_1$2(false, 'Cannot provide a checkedLink and a valueLink. If you want to use checkedLink, you probably don\'t want to use valueLink and vice versa.') : void 0;
 }
 function _assertValueLink(inputProps) {
   _assertSingleLink(inputProps);
-  !(inputProps.value == null && inputProps.onChange == null) ? invariant_1(false, 'Cannot provide a valueLink and a value or onChange event. If you want to use value or onChange, you probably don\'t want to use valueLink.') : void 0;
+  !(inputProps.value == null && inputProps.onChange == null) ? invariant_1$2(false, 'Cannot provide a valueLink and a value or onChange event. If you want to use value or onChange, you probably don\'t want to use valueLink.') : void 0;
 }
 
 function _assertCheckedLink(inputProps) {
   _assertSingleLink(inputProps);
-  !(inputProps.checked == null && inputProps.onChange == null) ? invariant_1(false, 'Cannot provide a checkedLink and a checked property or onChange event. If you want to use checked or onChange, you probably don\'t want to use checkedLink') : void 0;
+  !(inputProps.checked == null && inputProps.onChange == null) ? invariant_1$2(false, 'Cannot provide a checkedLink and a checked property or onChange event. If you want to use checked or onChange, you probably don\'t want to use checkedLink') : void 0;
 }
 
 var propTypes = {
@@ -10403,7 +10773,7 @@ var LinkedValueUtils = {
         loggedTypeFailures$2[error.message] = true;
 
         var addendum = getDeclarationErrorAddendum$2(owner);
-        warning_1(false, 'Failed form propType: %s%s', error.message, addendum);
+        warning_1$2(false, 'Failed form propType: %s%s', error.message, addendum);
       }
     }
   },
@@ -10492,7 +10862,7 @@ var ReactDOMInput = {
     var value = LinkedValueUtils_1.getValue(props);
     var checked = LinkedValueUtils_1.getChecked(props);
 
-    var hostProps = index({
+    var hostProps = index$3({
       // Make sure we set .type before any other properties (setting .value
       // before .type means .value is lost in IE11 and below)
       type: undefined,
@@ -10521,19 +10891,19 @@ var ReactDOMInput = {
       var owner = inst._currentElement._owner;
 
       if (props.valueLink !== undefined && !didWarnValueLink) {
-        warning_1(false, '`valueLink` prop on `input` is deprecated; set `value` and `onChange` instead.');
+        warning_1$2(false, '`valueLink` prop on `input` is deprecated; set `value` and `onChange` instead.');
         didWarnValueLink = true;
       }
       if (props.checkedLink !== undefined && !didWarnCheckedLink) {
-        warning_1(false, '`checkedLink` prop on `input` is deprecated; set `value` and `onChange` instead.');
+        warning_1$2(false, '`checkedLink` prop on `input` is deprecated; set `value` and `onChange` instead.');
         didWarnCheckedLink = true;
       }
       if (props.checked !== undefined && props.defaultChecked !== undefined && !didWarnCheckedDefaultChecked) {
-        warning_1(false, '%s contains an input of type %s with both checked and defaultChecked props. ' + 'Input elements must be either controlled or uncontrolled ' + '(specify either the checked prop, or the defaultChecked prop, but not ' + 'both). Decide between using a controlled or uncontrolled input ' + 'element and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components', owner && owner.getName() || 'A component', props.type);
+        warning_1$2(false, '%s contains an input of type %s with both checked and defaultChecked props. ' + 'Input elements must be either controlled or uncontrolled ' + '(specify either the checked prop, or the defaultChecked prop, but not ' + 'both). Decide between using a controlled or uncontrolled input ' + 'element and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components', owner && owner.getName() || 'A component', props.type);
         didWarnCheckedDefaultChecked = true;
       }
       if (props.value !== undefined && props.defaultValue !== undefined && !didWarnValueDefaultValue) {
-        warning_1(false, '%s contains an input of type %s with both value and defaultValue props. ' + 'Input elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled input ' + 'element and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components', owner && owner.getName() || 'A component', props.type);
+        warning_1$2(false, '%s contains an input of type %s with both value and defaultValue props. ' + 'Input elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled input ' + 'element and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components', owner && owner.getName() || 'A component', props.type);
         didWarnValueDefaultValue = true;
       }
     }
@@ -10556,11 +10926,11 @@ var ReactDOMInput = {
       var owner = inst._currentElement._owner;
 
       if (!inst._wrapperState.controlled && controlled && !didWarnUncontrolledToControlled) {
-        warning_1(false, '%s is changing an uncontrolled input of type %s to be controlled. ' + 'Input elements should not switch from uncontrolled to controlled (or vice versa). ' + 'Decide between using a controlled or uncontrolled input ' + 'element for the lifetime of the component. More info: https://fb.me/react-controlled-components', owner && owner.getName() || 'A component', props.type);
+        warning_1$2(false, '%s is changing an uncontrolled input of type %s to be controlled. ' + 'Input elements should not switch from uncontrolled to controlled (or vice versa). ' + 'Decide between using a controlled or uncontrolled input ' + 'element for the lifetime of the component. More info: https://fb.me/react-controlled-components', owner && owner.getName() || 'A component', props.type);
         didWarnUncontrolledToControlled = true;
       }
       if (inst._wrapperState.controlled && !controlled && !didWarnControlledToUncontrolled) {
-        warning_1(false, '%s is changing a controlled input of type %s to be uncontrolled. ' + 'Input elements should not switch from controlled to uncontrolled (or vice versa). ' + 'Decide between using a controlled or uncontrolled input ' + 'element for the lifetime of the component. More info: https://fb.me/react-controlled-components', owner && owner.getName() || 'A component', props.type);
+        warning_1$2(false, '%s is changing a controlled input of type %s to be uncontrolled. ' + 'Input elements should not switch from controlled to uncontrolled (or vice versa). ' + 'Decide between using a controlled or uncontrolled input ' + 'element for the lifetime of the component. More info: https://fb.me/react-controlled-components', owner && owner.getName() || 'A component', props.type);
         didWarnControlledToUncontrolled = true;
       }
     }
@@ -10701,7 +11071,7 @@ function _handleChange(event) {
       // That's probably okay; we don't support it just as we don't support
       // mixing React radio buttons with non-React ones.
       var otherInstance = ReactDOMComponentTree_1.getInstanceFromNode(otherNode);
-      !otherInstance ? invariant_1(false, 'ReactDOMInput: Mixing React and non-React radio inputs with the same `name` is not supported.') : void 0;
+      !otherInstance ? invariant_1$2(false, 'ReactDOMInput: Mixing React and non-React radio inputs with the same `name` is not supported.') : void 0;
       // If this is a controlled radio button group, forcing the input that
       // was previously checked to update will cause it to be come re-checked
       // as appropriate.
@@ -10751,7 +11121,7 @@ function checkSelectPropTypes(inst, props) {
   LinkedValueUtils_1.checkPropTypes('select', props, owner);
 
   if (props.valueLink !== undefined && !didWarnValueLink$1) {
-    warning_1(false, '`valueLink` prop on `select` is deprecated; set `value` and `onChange` instead.');
+    warning_1$2(false, '`valueLink` prop on `select` is deprecated; set `value` and `onChange` instead.');
     didWarnValueLink$1 = true;
   }
 
@@ -10762,9 +11132,9 @@ function checkSelectPropTypes(inst, props) {
     }
     var isArray = Array.isArray(props[propName]);
     if (props.multiple && !isArray) {
-      warning_1(false, 'The `%s` prop supplied to <select> must be an array if ' + '`multiple` is true.%s', propName, getDeclarationErrorAddendum$3(owner));
+      warning_1$2(false, 'The `%s` prop supplied to <select> must be an array if ' + '`multiple` is true.%s', propName, getDeclarationErrorAddendum$3(owner));
     } else if (!props.multiple && isArray) {
-      warning_1(false, 'The `%s` prop supplied to <select> must be a scalar ' + 'value if `multiple` is false.%s', propName, getDeclarationErrorAddendum$3(owner));
+      warning_1$2(false, 'The `%s` prop supplied to <select> must be a scalar ' + 'value if `multiple` is false.%s', propName, getDeclarationErrorAddendum$3(owner));
     }
   }
 }
@@ -10823,7 +11193,7 @@ function updateOptions(inst, multiple, propValue) {
  */
 var ReactDOMSelect = {
   getHostProps: function (inst, props) {
-    return index({}, props, {
+    return index$3({}, props, {
       onChange: inst._wrapperState.onChange,
       value: undefined
     });
@@ -10844,7 +11214,7 @@ var ReactDOMSelect = {
     };
 
     if (props.value !== undefined && props.defaultValue !== undefined && !didWarnValueDefaultValue$1) {
-      warning_1(false, 'Select elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled select ' + 'element and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components');
+      warning_1$2(false, 'Select elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled select ' + 'element and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components');
       didWarnValueDefaultValue$1 = true;
     }
   },
@@ -10909,7 +11279,7 @@ function flattenChildren(children) {
       content += child;
     } else if (!didWarnInvalidOptionChildren) {
       didWarnInvalidOptionChildren = true;
-      warning_1(false, 'Only strings and numbers are supported as <option> children.');
+      warning_1$2(false, 'Only strings and numbers are supported as <option> children.');
     }
   });
 
@@ -10923,7 +11293,7 @@ var ReactDOMOption = {
   mountWrapper: function (inst, props, hostParent) {
     // TODO (yungsters): Remove support for `selected` in <option>.
     {
-      warning_1(props.selected == null, 'Use the `defaultValue` or `value` props on <select> instead of ' + 'setting `selected` on <option>.');
+      warning_1$2(props.selected == null, 'Use the `defaultValue` or `value` props on <select> instead of ' + 'setting `selected` on <option>.');
     }
 
     // Look up whether this option is 'selected'
@@ -10977,7 +11347,7 @@ var ReactDOMOption = {
   },
 
   getHostProps: function (inst, props) {
-    var hostProps = index({ selected: undefined, children: undefined }, props);
+    var hostProps = index$3({ selected: undefined, children: undefined }, props);
 
     // Read state only from initial mount because <select> updates value
     // manually; we need the initial state only for server rendering
@@ -11025,14 +11395,14 @@ function forceUpdateIfMounted$1() {
  */
 var ReactDOMTextarea = {
   getHostProps: function (inst, props) {
-    !(props.dangerouslySetInnerHTML == null) ? invariant_1(false, '`dangerouslySetInnerHTML` does not make sense on <textarea>.') : void 0;
+    !(props.dangerouslySetInnerHTML == null) ? invariant_1$2(false, '`dangerouslySetInnerHTML` does not make sense on <textarea>.') : void 0;
 
     // Always set children to the same thing. In IE9, the selection range will
     // get reset if `textContent` is mutated.  We could add a check in setTextContent
     // to only set the value if/when the value differs from the node value (which would
     // completely solve this IE9 bug), but Sebastian+Ben seemed to like this solution.
     // The value can be a boolean or object so that's why it's forced to be a string.
-    var hostProps = index({}, props, {
+    var hostProps = index$3({}, props, {
       value: undefined,
       defaultValue: undefined,
       children: '' + inst._wrapperState.initialValue,
@@ -11046,11 +11416,11 @@ var ReactDOMTextarea = {
     {
       LinkedValueUtils_1.checkPropTypes('textarea', props, inst._currentElement._owner);
       if (props.valueLink !== undefined && !didWarnValueLink$2) {
-        warning_1(false, '`valueLink` prop on `textarea` is deprecated; set `value` and `onChange` instead.');
+        warning_1$2(false, '`valueLink` prop on `textarea` is deprecated; set `value` and `onChange` instead.');
         didWarnValueLink$2 = true;
       }
       if (props.value !== undefined && props.defaultValue !== undefined && !didWarnValDefaultVal) {
-        warning_1(false, 'Textarea elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled textarea ' + 'and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components');
+        warning_1$2(false, 'Textarea elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled textarea ' + 'and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components');
         didWarnValDefaultVal = true;
       }
     }
@@ -11065,11 +11435,11 @@ var ReactDOMTextarea = {
       var children = props.children;
       if (children != null) {
         {
-          warning_1(false, 'Use the `defaultValue` or `value` props instead of setting ' + 'children on <textarea>.');
+          warning_1$2(false, 'Use the `defaultValue` or `value` props instead of setting ' + 'children on <textarea>.');
         }
-        !(defaultValue == null) ? invariant_1(false, 'If you supply `defaultValue` on a <textarea>, do not pass children.') : void 0;
+        !(defaultValue == null) ? invariant_1$2(false, 'If you supply `defaultValue` on a <textarea>, do not pass children.') : void 0;
         if (Array.isArray(children)) {
-          !(children.length <= 1) ? invariant_1(false, '<textarea> can only have at most one child.') : void 0;
+          !(children.length <= 1) ? invariant_1$2(false, '<textarea> can only have at most one child.') : void 0;
           children = children[0];
         }
 
@@ -11154,7 +11524,7 @@ var ReactComponentEnvironment = {
 
   injection: {
     injectEnvironment: function (environment) {
-      !!injected ? invariant_1(false, 'ReactCompositeComponent: injectEnvironment() can only be called once.') : void 0;
+      !!injected ? invariant_1$2(false, 'ReactCompositeComponent: injectEnvironment() can only be called once.') : void 0;
       ReactComponentEnvironment.replaceNodeWithMarkup = environment.replaceNodeWithMarkup;
       ReactComponentEnvironment.processChildrenUpdates = environment.processChildrenUpdates;
       injected = true;
@@ -11174,15 +11544,6 @@ var ReactComponentEnvironment_1 = ReactComponentEnvironment;
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  */
-
-/**
- * `ReactInstanceMap` maintains a mapping from a public facing stateful
- * instance (key) and the internal representation (value). This allows public
- * methods to accept the user facing instance as an argument and map them back
- * to internal methods.
- */
-
-// TODO: Replace this with ES6: var ReactInstanceMap = new Map();
 
 var ReactInstanceMap = {
 
@@ -11226,7 +11587,7 @@ var ReactNodeTypes = {
         return ReactNodeTypes.HOST;
       }
     }
-    invariant_1(false, 'Unexpected node: %s', node);
+    invariant_1$2(false, 'Unexpected node: %s', node);
   }
 };
 
@@ -11266,7 +11627,7 @@ if (typeof process !== 'undefined' && process.env && "development" === 'test') {
   ReactComponentTreeHook$4 = ReactComponentTreeHook_1;
 }
 
-var loggedTypeFailures$3 = {};
+var loggedTypeFailures$4 = {};
 
 /**
  * Assert that the values match with the type specs.
@@ -11290,16 +11651,16 @@ function checkReactTypeSpec$3(typeSpecs, values, location, componentName, elemen
       try {
         // This is intentionally an invariant that gets caught. It's the same
         // behavior as without this statement except with a better message.
-        !(typeof typeSpecs[typeSpecName] === 'function') ? invariant_1(false, '%s: %s type `%s` is invalid; it must be a function, usually from React.PropTypes.', componentName || 'React class', ReactPropTypeLocationNames_1$2[location], typeSpecName) : void 0;
+        !(typeof typeSpecs[typeSpecName] === 'function') ? invariant_1$2(false, '%s: %s type `%s` is invalid; it must be a function, usually from React.PropTypes.', componentName || 'React class', ReactPropTypeLocationNames_1$2[location], typeSpecName) : void 0;
         error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret_1$4);
       } catch (ex) {
         error = ex;
       }
-      warning_1(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', ReactPropTypeLocationNames_1$2[location], typeSpecName, typeof error);
-      if (error instanceof Error && !(error.message in loggedTypeFailures$3)) {
+      warning_1$2(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', ReactPropTypeLocationNames_1$2[location], typeSpecName, typeof error);
+      if (error instanceof Error && !(error.message in loggedTypeFailures$4)) {
         // Only monitor this failure once because there tends to be a lot of the
         // same error.
-        loggedTypeFailures$3[error.message] = true;
+        loggedTypeFailures$4[error.message] = true;
 
         var componentStackInfo = '';
 
@@ -11314,7 +11675,7 @@ function checkReactTypeSpec$3(typeSpecs, values, location, componentName, elemen
           }
         }
 
-        warning_1(false, 'Failed %s type: %s%s', location, error.message, componentStackInfo);
+        warning_1$2(false, 'Failed %s type: %s%s', location, error.message, componentStackInfo);
       }
     }
   }
@@ -11330,13 +11691,31 @@ var checkReactTypeSpec_1$2 = checkReactTypeSpec$3;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
+ */
+
+var emptyObject$2 = {};
+
+{
+  Object.freeze(emptyObject$2);
+}
+
+var emptyObject_1$2 = emptyObject$2;
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
  * @typechecks
  * 
  */
 
 /*eslint-disable no-self-compare */
 
-var hasOwnProperty$3 = Object.prototype.hasOwnProperty;
+var hasOwnProperty$4 = Object.prototype.hasOwnProperty;
 
 /**
  * inlined Object.is polyfill to avoid requiring consumers ship their own
@@ -11378,7 +11757,7 @@ function shallowEqual(objA, objB) {
 
   // Test for A's keys different from B.
   for (var i = 0; i < keysA.length; i++) {
-    if (!hasOwnProperty$3.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
+    if (!hasOwnProperty$4.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
       return false;
     }
   }
@@ -11396,18 +11775,6 @@ var shallowEqual_1 = shallowEqual;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- */
-
-/**
- * Given a `prevElement` and `nextElement`, determines if the existing
- * instance should be updated as opposed to being destroyed or replaced by a new
- * instance. Both arguments are elements. This ensures that this logic can
- * operate on stateless trees without any backing instance.
- *
- * @param {?object} prevElement
- * @param {?object} nextElement
- * @return {boolean} True if the existing instance should be updated.
- * @protected
  */
 
 function shouldUpdateReactComponent(prevElement, nextElement) {
@@ -11454,8 +11821,8 @@ StatelessComponent.prototype.render = function () {
 
 function warnIfInvalidElement(Component, element) {
   {
-    warning_1(element === null || element === false || React_1.isValidElement(element), '%s(...): A valid React element (or null) must be returned. You may have ' + 'returned undefined, an array or some other invalid object.', Component.displayName || Component.name || 'Component');
-    warning_1(!Component.childContextTypes, '%s(...): childContextTypes cannot be defined on a functional component.', Component.displayName || Component.name || 'Component');
+    warning_1$2(element === null || element === false || React_1.isValidElement(element), '%s(...): A valid React element (or null) must be returned. You may have ' + 'returned undefined, an array or some other invalid object.', Component.displayName || Component.name || 'Component');
+    warning_1$2(!Component.childContextTypes, '%s(...): childContextTypes cannot be defined on a functional component.', Component.displayName || Component.name || 'Component');
   }
 }
 
@@ -11598,7 +11965,7 @@ var ReactCompositeComponent = {
     if (!doConstruct && (inst == null || inst.render == null)) {
       renderedElement = inst;
       warnIfInvalidElement(Component, renderedElement);
-      !(inst === null || inst === false || React_1.isValidElement(inst)) ? invariant_1(false, '%s(...): A valid React element (or null) must be returned. You may have returned undefined, an array or some other invalid object.', Component.displayName || Component.name || 'Component') : void 0;
+      !(inst === null || inst === false || React_1.isValidElement(inst)) ? invariant_1$2(false, '%s(...): A valid React element (or null) must be returned. You may have returned undefined, an array or some other invalid object.', Component.displayName || Component.name || 'Component') : void 0;
       inst = new StatelessComponent(Component);
       this._compositeType = CompositeTypes.StatelessFunctional;
     } else {
@@ -11613,20 +11980,20 @@ var ReactCompositeComponent = {
       // This will throw later in _renderValidatedComponent, but add an early
       // warning now to help debugging
       if (inst.render == null) {
-        warning_1(false, '%s(...): No `render` method found on the returned component ' + 'instance: you may have forgotten to define `render`.', Component.displayName || Component.name || 'Component');
+        warning_1$2(false, '%s(...): No `render` method found on the returned component ' + 'instance: you may have forgotten to define `render`.', Component.displayName || Component.name || 'Component');
       }
 
       var propsMutated = inst.props !== publicProps;
       var componentName = Component.displayName || Component.name || 'Component';
 
-      warning_1(inst.props === undefined || !propsMutated, '%s(...): When calling super() in `%s`, make sure to pass ' + 'up the same props that your component\'s constructor was passed.', componentName, componentName);
+      warning_1$2(inst.props === undefined || !propsMutated, '%s(...): When calling super() in `%s`, make sure to pass ' + 'up the same props that your component\'s constructor was passed.', componentName, componentName);
     }
 
     // These should be set up in the constructor, but as a convenience for
     // simpler class abstractions, we set them up after the fact.
     inst.props = publicProps;
     inst.context = publicContext;
-    inst.refs = emptyObject_1;
+    inst.refs = emptyObject_1$2;
     inst.updater = updateQueue;
 
     this._instance = inst;
@@ -11638,20 +12005,20 @@ var ReactCompositeComponent = {
       // Since plain JS classes are defined without any special initialization
       // logic, we can not catch common errors early. Therefore, we have to
       // catch them here, at initialization time, instead.
-      warning_1(!inst.getInitialState || inst.getInitialState.isReactClassApproved || inst.state, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', this.getName() || 'a component');
-      warning_1(!inst.getDefaultProps || inst.getDefaultProps.isReactClassApproved, 'getDefaultProps was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Use a static property to define defaultProps instead.', this.getName() || 'a component');
-      warning_1(!inst.propTypes, 'propTypes was defined as an instance property on %s. Use a static ' + 'property to define propTypes instead.', this.getName() || 'a component');
-      warning_1(!inst.contextTypes, 'contextTypes was defined as an instance property on %s. Use a ' + 'static property to define contextTypes instead.', this.getName() || 'a component');
-      warning_1(typeof inst.componentShouldUpdate !== 'function', '%s has a method called ' + 'componentShouldUpdate(). Did you mean shouldComponentUpdate()? ' + 'The name is phrased as a question because the function is ' + 'expected to return a value.', this.getName() || 'A component');
-      warning_1(typeof inst.componentDidUnmount !== 'function', '%s has a method called ' + 'componentDidUnmount(). But there is no such lifecycle method. ' + 'Did you mean componentWillUnmount()?', this.getName() || 'A component');
-      warning_1(typeof inst.componentWillRecieveProps !== 'function', '%s has a method called ' + 'componentWillRecieveProps(). Did you mean componentWillReceiveProps()?', this.getName() || 'A component');
+      warning_1$2(!inst.getInitialState || inst.getInitialState.isReactClassApproved || inst.state, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', this.getName() || 'a component');
+      warning_1$2(!inst.getDefaultProps || inst.getDefaultProps.isReactClassApproved, 'getDefaultProps was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Use a static property to define defaultProps instead.', this.getName() || 'a component');
+      warning_1$2(!inst.propTypes, 'propTypes was defined as an instance property on %s. Use a static ' + 'property to define propTypes instead.', this.getName() || 'a component');
+      warning_1$2(!inst.contextTypes, 'contextTypes was defined as an instance property on %s. Use a ' + 'static property to define contextTypes instead.', this.getName() || 'a component');
+      warning_1$2(typeof inst.componentShouldUpdate !== 'function', '%s has a method called ' + 'componentShouldUpdate(). Did you mean shouldComponentUpdate()? ' + 'The name is phrased as a question because the function is ' + 'expected to return a value.', this.getName() || 'A component');
+      warning_1$2(typeof inst.componentDidUnmount !== 'function', '%s has a method called ' + 'componentDidUnmount(). But there is no such lifecycle method. ' + 'Did you mean componentWillUnmount()?', this.getName() || 'A component');
+      warning_1$2(typeof inst.componentWillRecieveProps !== 'function', '%s has a method called ' + 'componentWillRecieveProps(). Did you mean componentWillReceiveProps()?', this.getName() || 'A component');
     }
 
     var initialState = inst.state;
     if (initialState === undefined) {
       inst.state = initialState = null;
     }
-    !(typeof initialState === 'object' && !Array.isArray(initialState)) ? invariant_1(false, '%s.state: must be set to an object or null', this.getName() || 'ReactCompositeComponent') : void 0;
+    !(typeof initialState === 'object' && !Array.isArray(initialState)) ? invariant_1$2(false, '%s.state: must be set to an object or null', this.getName() || 'ReactCompositeComponent') : void 0;
 
     this._pendingStateQueue = null;
     this._pendingReplaceState = false;
@@ -11854,7 +12221,7 @@ var ReactCompositeComponent = {
     var Component = this._currentElement.type;
     var contextTypes = Component.contextTypes;
     if (!contextTypes) {
-      return emptyObject_1;
+      return emptyObject_1$2;
     }
     var maskedContext = {};
     for (var contextName in contextTypes) {
@@ -11904,14 +12271,14 @@ var ReactCompositeComponent = {
     }
 
     if (childContext) {
-      !(typeof Component.childContextTypes === 'object') ? invariant_1(false, '%s.getChildContext(): childContextTypes must be defined in order to use getChildContext().', this.getName() || 'ReactCompositeComponent') : void 0;
+      !(typeof Component.childContextTypes === 'object') ? invariant_1$2(false, '%s.getChildContext(): childContextTypes must be defined in order to use getChildContext().', this.getName() || 'ReactCompositeComponent') : void 0;
       {
         this._checkContextTypes(Component.childContextTypes, childContext, 'child context');
       }
       for (var name in childContext) {
-        !(name in Component.childContextTypes) ? invariant_1(false, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', this.getName() || 'ReactCompositeComponent', name) : void 0;
+        !(name in Component.childContextTypes) ? invariant_1$2(false, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', this.getName() || 'ReactCompositeComponent', name) : void 0;
       }
-      return index({}, currentContext, childContext);
+      return index$3({}, currentContext, childContext);
     }
     return currentContext;
   },
@@ -11973,7 +12340,7 @@ var ReactCompositeComponent = {
    */
   updateComponent: function (transaction, prevParentElement, nextParentElement, prevUnmaskedContext, nextUnmaskedContext) {
     var inst = this._instance;
-    !(inst != null) ? invariant_1(false, 'Attempted to update component `%s` that has already been unmounted (or failed to mount).', this.getName() || 'ReactCompositeComponent') : void 0;
+    !(inst != null) ? invariant_1$2(false, 'Attempted to update component `%s` that has already been unmounted (or failed to mount).', this.getName() || 'ReactCompositeComponent') : void 0;
 
     var willReceive = false;
     var nextContext;
@@ -12023,7 +12390,7 @@ var ReactCompositeComponent = {
     }
 
     {
-      warning_1(shouldUpdate !== undefined, '%s.shouldComponentUpdate(): Returned undefined instead of a ' + 'boolean value. Make sure to return true or false.', this.getName() || 'ReactCompositeComponent');
+      warning_1$2(shouldUpdate !== undefined, '%s.shouldComponentUpdate(): Returned undefined instead of a ' + 'boolean value. Make sure to return true or false.', this.getName() || 'ReactCompositeComponent');
     }
 
     this._updateBatchNumber = null;
@@ -12057,10 +12424,10 @@ var ReactCompositeComponent = {
       return queue[0];
     }
 
-    var nextState = index({}, replace ? queue[0] : inst.state);
+    var nextState = index$3({}, replace ? queue[0] : inst.state);
     for (var i = replace ? 1 : 0; i < queue.length; i++) {
       var partial = queue[i];
-      index(nextState, typeof partial === 'function' ? partial.call(inst, nextState, props, context) : partial);
+      index$3(nextState, typeof partial === 'function' ? partial.call(inst, nextState, props, context) : partial);
     }
 
     return nextState;
@@ -12210,7 +12577,7 @@ var ReactCompositeComponent = {
     }
     !(
     // TODO: An `isValidNode` function would probably be more appropriate
-    renderedElement === null || renderedElement === false || React_1.isValidElement(renderedElement)) ? invariant_1(false, '%s.render(): A valid React element (or null) must be returned. You may have returned undefined, an array or some other invalid object.', this.getName() || 'ReactCompositeComponent') : void 0;
+    renderedElement === null || renderedElement === false || React_1.isValidElement(renderedElement)) ? invariant_1$2(false, '%s.render(): A valid React element (or null) must be returned. You may have returned undefined, an array or some other invalid object.', this.getName() || 'ReactCompositeComponent') : void 0;
 
     return renderedElement;
   },
@@ -12225,13 +12592,13 @@ var ReactCompositeComponent = {
    */
   attachRef: function (ref, component) {
     var inst = this.getPublicInstance();
-    !(inst != null) ? invariant_1(false, 'Stateless function components cannot have refs.') : void 0;
+    !(inst != null) ? invariant_1$2(false, 'Stateless function components cannot have refs.') : void 0;
     var publicComponentInstance = component.getPublicInstance();
     {
       var componentName = component && component.getName ? component.getName() : 'a component';
-      warning_1(publicComponentInstance != null || component._compositeType !== CompositeTypes.StatelessFunctional, 'Stateless function components cannot be given refs ' + '(See ref "%s" in %s created by %s). ' + 'Attempts to access this ref will fail.', ref, componentName, this.getName());
+      warning_1$2(publicComponentInstance != null || component._compositeType !== CompositeTypes.StatelessFunctional, 'Stateless function components cannot be given refs ' + '(See ref "%s" in %s created by %s). ' + 'Attempts to access this ref will fail.', ref, componentName, this.getName());
     }
-    var refs = inst.refs === emptyObject_1 ? inst.refs = {} : inst.refs;
+    var refs = inst.refs === emptyObject_1$2 ? inst.refs = {} : inst.refs;
     refs[ref] = publicComponentInstance;
   },
 
@@ -12333,7 +12700,7 @@ var ReactHostComponentInjection = {
  * @return {function} The internal class constructor function.
  */
 function createInternalComponent(element) {
-  !genericComponentClass ? invariant_1(false, 'There is no registered component for the tag %s', element.type) : void 0;
+  !genericComponentClass ? invariant_1$2(false, 'There is no registered component for the tag %s', element.type) : void 0;
   return new genericComponentClass(element);
 }
 
@@ -12381,7 +12748,6 @@ function getNextDebugID() {
 
 var getNextDebugID_1 = getNextDebugID;
 
-// To avoid a cyclic dependency, we create the final class in this module
 var ReactCompositeComponentWrapper = function (element) {
   this.construct(element);
 };
@@ -12431,7 +12797,7 @@ function instantiateReactComponent(node, shouldHaveDebugID) {
         }
       }
       info += getDeclarationErrorAddendum$4(element._owner);
-      invariant_1(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', type == null ? type : typeof type, info);
+      invariant_1$2(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', type == null ? type : typeof type, info);
     }
 
     // Special case string values
@@ -12453,11 +12819,11 @@ function instantiateReactComponent(node, shouldHaveDebugID) {
   } else if (typeof node === 'string' || typeof node === 'number') {
     instance = ReactHostComponent_1.createInstanceForText(node);
   } else {
-    invariant_1(false, 'Encountered invalid React node of type %s', typeof node);
+    invariant_1$2(false, 'Encountered invalid React node of type %s', typeof node);
   }
 
   {
-    warning_1(typeof instance.mountComponent === 'function' && typeof instance.receiveComponent === 'function' && typeof instance.getHostNode === 'function' && typeof instance.unmountComponent === 'function', 'Only React Components can be mounted.');
+    warning_1$2(typeof instance.mountComponent === 'function' && typeof instance.receiveComponent === 'function' && typeof instance.getHostNode === 'function' && typeof instance.unmountComponent === 'function', 'Only React Components can be mounted.');
   }
 
   // These two fields are used by the DOM and ART diffing algorithms
@@ -12481,7 +12847,7 @@ function instantiateReactComponent(node, shouldHaveDebugID) {
   return instance;
 }
 
-index(ReactCompositeComponentWrapper.prototype, ReactCompositeComponent_1, {
+index$3(ReactCompositeComponentWrapper.prototype, ReactCompositeComponent_1, {
   _instantiateReactComponent: instantiateReactComponent
 });
 
@@ -12496,13 +12862,6 @@ var instantiateReactComponent_1 = instantiateReactComponent;
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * 
- */
-
-/**
- * Escape and wrap key so it is safe to use as a reactid
- *
- * @param {string} key to be escaped.
- * @return {string} the escaped key.
  */
 
 function escape$1(key) {
@@ -12555,9 +12914,6 @@ var KeyEscapeUtils_1$2 = KeyEscapeUtils$2;
  * 
  */
 
-// The Symbol used to tag the ReactElement type. If there is no native Symbol
-// nor polyfill, then a plain number is used for performance.
-
 var REACT_ELEMENT_TYPE$2 = typeof Symbol === 'function' && Symbol['for'] && Symbol['for']('react.element') || 0xeac7;
 
 var ReactElementSymbol$2 = REACT_ELEMENT_TYPE$2;
@@ -12572,8 +12928,6 @@ var ReactElementSymbol$2 = REACT_ELEMENT_TYPE$2;
  *
  * 
  */
-
-/* global Symbol */
 
 var ITERATOR_SYMBOL$1 = typeof Symbol === 'function' && Symbol.iterator;
 var FAUX_ITERATOR_SYMBOL$1 = '@@iterator'; // Before Symbol spec.
@@ -12694,7 +13048,7 @@ function traverseAllChildrenImpl$1(children, nameSoFar, callback, traverseContex
               mapsAsChildrenAddendum = ' Check the render method of `' + mapsAsChildrenOwnerName + '`.';
             }
           }
-          warning_1(didWarnAboutMaps$1, 'Using Maps as children is not yet fully supported. It is an ' + 'experimental feature that might be removed. Convert it to a ' + 'sequence / iterable of keyed ReactElements instead.%s', mapsAsChildrenAddendum);
+          warning_1$2(didWarnAboutMaps$1, 'Using Maps as children is not yet fully supported. It is an ' + 'experimental feature that might be removed. Convert it to a ' + 'sequence / iterable of keyed ReactElements instead.%s', mapsAsChildrenAddendum);
           didWarnAboutMaps$1 = true;
         }
         // Iterator will provide entry [k,v] tuples rather than values.
@@ -12722,7 +13076,7 @@ function traverseAllChildrenImpl$1(children, nameSoFar, callback, traverseContex
         }
       }
       var childrenString = String(children);
-      invariant_1(false, 'Objects are not valid as a React child (found: %s).%s', childrenString === '[object Object]' ? 'object with keys {' + Object.keys(children).join(', ') + '}' : childrenString, addendum);
+      invariant_1$2(false, 'Objects are not valid as a React child (found: %s).%s', childrenString === '[object Object]' ? 'object with keys {' + Object.keys(children).join(', ') + '}' : childrenString, addendum);
     }
   }
 
@@ -12774,7 +13128,7 @@ function instantiateChild(childInstances, child, name, selfDebugID) {
       ReactComponentTreeHook$3 = ReactComponentTreeHook_1;
     }
     if (!keyUnique) {
-      warning_1(false, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils_1$2.unescape(name), ReactComponentTreeHook$3.getStackAddendumByID(selfDebugID));
+      warning_1$2(false, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils_1$2.unescape(name), ReactComponentTreeHook$3.getStackAddendumByID(selfDebugID));
     }
   }
   if (child != null && keyUnique) {
@@ -12914,7 +13268,7 @@ function flattenSingleChildIntoContext(traverseContext, child, name, selfDebugID
         ReactComponentTreeHook$5 = ReactComponentTreeHook_1;
       }
       if (!keyUnique) {
-        warning_1(false, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils_1$2.unescape(name), ReactComponentTreeHook$5.getStackAddendumByID(selfDebugID));
+        warning_1$2(false, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils_1$2.unescape(name), ReactComponentTreeHook$5.getStackAddendumByID(selfDebugID));
       }
     }
     if (keyUnique && child != null) {
@@ -12944,13 +13298,6 @@ function flattenChildren$1(children, selfDebugID) {
 
 var flattenChildren_1 = flattenChildren$1;
 
-/**
- * Make an update for markup to be rendered and inserted at a supplied index.
- *
- * @param {string} markup Markup that renders into an element.
- * @param {number} toIndex Destination index.
- * @private
- */
 function makeInsertMarkup(markup, afterNode, toIndex) {
   // NOTE: Null values reduce hidden classes.
   return {
@@ -13057,7 +13404,7 @@ function processQueue(inst, updateQueue) {
   ReactComponentEnvironment_1.processChildrenUpdates(inst, updateQueue);
 }
 
-var setChildrenForInstrumentation = emptyFunction_1;
+var setChildrenForInstrumentation = emptyFunction_1$2;
 {
   var getDebugID = function (inst) {
     if (!inst._debugID) {
@@ -13180,7 +13527,7 @@ var ReactMultiChild = {
       ReactChildReconciler_1.unmountChildren(prevChildren, false);
       for (var name in prevChildren) {
         if (prevChildren.hasOwnProperty(name)) {
-          invariant_1(false, 'updateTextContent called on non-empty component.');
+          invariant_1$2(false, 'updateTextContent called on non-empty component.');
         }
       }
       // Set new text content.
@@ -13200,7 +13547,7 @@ var ReactMultiChild = {
       ReactChildReconciler_1.unmountChildren(prevChildren, false);
       for (var name in prevChildren) {
         if (prevChildren.hasOwnProperty(name)) {
-          invariant_1(false, 'updateTextContent called on non-empty component.');
+          invariant_1$2(false, 'updateTextContent called on non-empty component.');
         }
       }
       var updates = [makeSetMarkup(nextMarkup)];
@@ -13393,13 +13740,13 @@ function getInternalInstanceReadyForUpdate(publicInstance, callerName) {
       // Only warn when we have a callerName. Otherwise we should be silent.
       // We're probably calling from enqueueCallback. We don't want to warn
       // there because we already warned for the corresponding lifecycle method.
-      warning_1(!callerName, '%s(...): Can only update a mounted or mounting component. ' + 'This usually means you called %s() on an unmounted component. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, ctor && (ctor.displayName || ctor.name) || 'ReactClass');
+      warning_1$2(!callerName, '%s(...): Can only update a mounted or mounting component. ' + 'This usually means you called %s() on an unmounted component. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, ctor && (ctor.displayName || ctor.name) || 'ReactClass');
     }
     return null;
   }
 
   {
-    warning_1(ReactCurrentOwner_1.current == null, '%s(...): Cannot update during an existing state transition (such as ' + 'within `render` or another component\'s constructor). Render methods ' + 'should be a pure function of props and state; constructor ' + 'side-effects are an anti-pattern, but can be moved to ' + '`componentWillMount`.', callerName);
+    warning_1$2(ReactCurrentOwner_1.current == null, '%s(...): Cannot update during an existing state transition (such as ' + 'within `render` or another component\'s constructor). Render methods ' + 'should be a pure function of props and state; constructor ' + 'side-effects are an anti-pattern, but can be moved to ' + '`componentWillMount`.', callerName);
   }
 
   return internalInstance;
@@ -13422,7 +13769,7 @@ var ReactUpdateQueue = {
     {
       var owner = ReactCurrentOwner_1.current;
       if (owner !== null) {
-        warning_1(owner._warnedAboutRefsInRender, '%s is accessing isMounted inside its render() function. ' + 'render() should be a pure function of props and state. It should ' + 'never access something that requires stale data from the previous ' + 'render, such as refs. Move this logic to componentDidMount and ' + 'componentDidUpdate instead.', owner.getName() || 'A component');
+        warning_1$2(owner._warnedAboutRefsInRender, '%s is accessing isMounted inside its render() function. ' + 'render() should be a pure function of props and state. It should ' + 'never access something that requires stale data from the previous ' + 'render, such as refs. Move this logic to componentDidMount and ' + 'componentDidUpdate instead.', owner.getName() || 'A component');
         owner._warnedAboutRefsInRender = true;
       }
     }
@@ -13552,7 +13899,7 @@ var ReactUpdateQueue = {
   enqueueSetState: function (publicInstance, partialState) {
     {
       ReactInstrumentation$1.debugTool.onSetState();
-      warning_1(partialState != null, 'setState(...): You passed an undefined or null state object; ' + 'instead, use forceUpdate().');
+      warning_1$2(partialState != null, 'setState(...): You passed an undefined or null state object; ' + 'instead, use forceUpdate().');
     }
 
     var internalInstance = getInternalInstanceReadyForUpdate(publicInstance, 'setState');
@@ -13575,7 +13922,7 @@ var ReactUpdateQueue = {
   },
 
   validateCallback: function (callback, callerName) {
-    !(!callback || typeof callback === 'function') ? invariant_1(false, '%s(...): Expected the last optional `callback` argument to be a function. Instead received: %s.', callerName, formatUnexpectedArgument(callback)) : void 0;
+    !(!callback || typeof callback === 'function') ? invariant_1$2(false, '%s(...): Expected the last optional `callback` argument to be a function. Instead received: %s.', callerName, formatUnexpectedArgument(callback)) : void 0;
   }
 
 };
@@ -13591,7 +13938,7 @@ function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Co
 function warnNoop$1(publicInstance, callerName) {
   {
     var constructor = publicInstance.constructor;
-    warning_1(false, '%s(...): Can only update a mounting component. ' + 'This usually means you called %s() outside componentWillMount() on the server. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, constructor && (constructor.displayName || constructor.name) || 'ReactClass');
+    warning_1$2(false, '%s(...): Can only update a mounting component. ' + 'This usually means you called %s() outside componentWillMount() on the server. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, constructor && (constructor.displayName || constructor.name) || 'ReactClass');
   }
 }
 
@@ -13708,11 +14055,6 @@ var ReactServerUpdateQueue = function () {
 
 var ReactServerUpdateQueue_1 = ReactServerUpdateQueue;
 
-/**
- * Executed within the scope of the `Transaction` instance. Consider these as
- * being member methods, but with an implied ordering while being isolated from
- * each other.
- */
 var TRANSACTION_WRAPPERS$1 = [];
 
 {
@@ -13773,13 +14115,13 @@ var Mixin = {
   rollback: function () {}
 };
 
-index(ReactServerRenderingTransaction.prototype, Transaction, Mixin);
+index$3(ReactServerRenderingTransaction.prototype, Transaction, Mixin);
 
 PooledClass_1$2.addPoolingTo(ReactServerRenderingTransaction);
 
 var ReactServerRenderingTransaction_1 = ReactServerRenderingTransaction;
 
-var validateDOMNesting = emptyFunction_1;
+var validateDOMNesting = emptyFunction_1$2;
 
 {
   // This validation code was written based on the HTML5 parsing spec:
@@ -13824,7 +14166,7 @@ var validateDOMNesting = emptyFunction_1;
   };
 
   var updatedAncestorInfo = function (oldInfo, tag, instance) {
-    var ancestorInfo = index({}, oldInfo || emptyAncestorInfo);
+    var ancestorInfo = index$3({}, oldInfo || emptyAncestorInfo);
     var info = { tag: tag, instance: instance };
 
     if (inScopeTags.indexOf(tag) !== -1) {
@@ -14051,7 +14393,7 @@ var validateDOMNesting = emptyFunction_1;
     var parentTag = parentInfo && parentInfo.tag;
 
     if (childText != null) {
-      warning_1(childTag == null, 'validateDOMNesting: when childText is passed, childTag should be null');
+      warning_1$2(childTag == null, 'validateDOMNesting: when childText is passed, childTag should be null');
       childTag = '#text';
     }
 
@@ -14119,9 +14461,9 @@ var validateDOMNesting = emptyFunction_1;
         if (ancestorTag === 'table' && childTag === 'tr') {
           info += ' Add a <tbody> to your code to match the DOM tree generated by ' + 'the browser.';
         }
-        warning_1(false, 'validateDOMNesting(...): %s cannot appear as a child of <%s>.%s ' + 'See %s.%s', tagDisplayName, ancestorTag, whitespaceInfo, ownerInfo, info);
+        warning_1$2(false, 'validateDOMNesting(...): %s cannot appear as a child of <%s>.%s ' + 'See %s.%s', tagDisplayName, ancestorTag, whitespaceInfo, ownerInfo, info);
       } else {
-        warning_1(false, 'validateDOMNesting(...): %s cannot appear as a descendant of ' + '<%s>. See %s.', tagDisplayName, ancestorTag, ownerInfo);
+        warning_1$2(false, 'validateDOMNesting(...): %s cannot appear as a descendant of ' + '<%s>. See %s.', tagDisplayName, ancestorTag, ownerInfo);
       }
     }
   };
@@ -14221,7 +14563,7 @@ function checkAndWarnForMutatedStyle(style1, style2, component) {
 
   styleMutationWarning[hash] = true;
 
-  warning_1(false, '`%s` was passed a style object that has previously been mutated. ' + 'Mutating `style` is deprecated. Consider cloning it beforehand. Check ' + 'the `render` %s. Previous style: %s. Mutated style: %s.', componentName, owner ? 'of `' + ownerName + '`' : 'using <' + componentName + '>', friendlyStringify(style1), friendlyStringify(style2));
+  warning_1$2(false, '`%s` was passed a style object that has previously been mutated. ' + 'Mutating `style` is deprecated. Consider cloning it beforehand. Check ' + 'the `render` %s. Previous style: %s. Mutated style: %s.', componentName, owner ? 'of `' + ownerName + '`' : 'using <' + componentName + '>', friendlyStringify(style1), friendlyStringify(style2));
 }
 
 /**
@@ -14234,18 +14576,18 @@ function assertValidProps(component, props) {
   }
   // Note the use of `==` which checks for null or undefined.
   if (voidElementTags[component._tag]) {
-    !(props.children == null && props.dangerouslySetInnerHTML == null) ? invariant_1(false, '%s is a void element tag and must neither have `children` nor use `dangerouslySetInnerHTML`.%s', component._tag, component._currentElement._owner ? ' Check the render method of ' + component._currentElement._owner.getName() + '.' : '') : void 0;
+    !(props.children == null && props.dangerouslySetInnerHTML == null) ? invariant_1$2(false, '%s is a void element tag and must neither have `children` nor use `dangerouslySetInnerHTML`.%s', component._tag, component._currentElement._owner ? ' Check the render method of ' + component._currentElement._owner.getName() + '.' : '') : void 0;
   }
   if (props.dangerouslySetInnerHTML != null) {
-    !(props.children == null) ? invariant_1(false, 'Can only set one of `children` or `props.dangerouslySetInnerHTML`.') : void 0;
-    !(typeof props.dangerouslySetInnerHTML === 'object' && HTML in props.dangerouslySetInnerHTML) ? invariant_1(false, '`props.dangerouslySetInnerHTML` must be in the form `{__html: ...}`. Please visit https://fb.me/react-invariant-dangerously-set-inner-html for more information.') : void 0;
+    !(props.children == null) ? invariant_1$2(false, 'Can only set one of `children` or `props.dangerouslySetInnerHTML`.') : void 0;
+    !(typeof props.dangerouslySetInnerHTML === 'object' && HTML in props.dangerouslySetInnerHTML) ? invariant_1$2(false, '`props.dangerouslySetInnerHTML` must be in the form `{__html: ...}`. Please visit https://fb.me/react-invariant-dangerously-set-inner-html for more information.') : void 0;
   }
   {
-    warning_1(props.innerHTML == null, 'Directly setting property `innerHTML` is not permitted. ' + 'For more information, lookup documentation on `dangerouslySetInnerHTML`.');
-    warning_1(props.suppressContentEditableWarning || !props.contentEditable || props.children == null, 'A component is `contentEditable` and contains `children` managed by ' + 'React. It is now your responsibility to guarantee that none of ' + 'those nodes are unexpectedly modified or duplicated. This is ' + 'probably not intentional.');
-    warning_1(props.onFocusIn == null && props.onFocusOut == null, 'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' + 'All React events are normalized to bubble, so onFocusIn and onFocusOut ' + 'are not needed/supported by React.');
+    warning_1$2(props.innerHTML == null, 'Directly setting property `innerHTML` is not permitted. ' + 'For more information, lookup documentation on `dangerouslySetInnerHTML`.');
+    warning_1$2(props.suppressContentEditableWarning || !props.contentEditable || props.children == null, 'A component is `contentEditable` and contains `children` managed by ' + 'React. It is now your responsibility to guarantee that none of ' + 'those nodes are unexpectedly modified or duplicated. This is ' + 'probably not intentional.');
+    warning_1$2(props.onFocusIn == null && props.onFocusOut == null, 'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' + 'All React events are normalized to bubble, so onFocusIn and onFocusOut ' + 'are not needed/supported by React.');
   }
-  !(props.style == null || typeof props.style === 'object') ? invariant_1(false, 'The `style` prop expects a mapping from style properties to values, not a string. For example, style={{marginRight: spacing + \'em\'}} when using JSX.%s', getDeclarationErrorAddendum$1(component)) : void 0;
+  !(props.style == null || typeof props.style === 'object') ? invariant_1$2(false, 'The `style` prop expects a mapping from style properties to values, not a string. For example, style={{marginRight: spacing + \'em\'}} when using JSX.%s', getDeclarationErrorAddendum$1(component)) : void 0;
 }
 
 function enqueuePutListener(inst, registrationName, listener, transaction) {
@@ -14255,7 +14597,7 @@ function enqueuePutListener(inst, registrationName, listener, transaction) {
   {
     // IE8 has no API for event capturing and the `onScroll` event doesn't
     // bubble.
-    warning_1(registrationName !== 'onScroll' || isEventSupported_1('scroll', true), 'This browser doesn\'t support the `onScroll` event');
+    warning_1$2(registrationName !== 'onScroll' || isEventSupported_1('scroll', true), 'This browser doesn\'t support the `onScroll` event');
   }
   var containerInfo = inst._hostContainerInfo;
   var isDocumentFragment = containerInfo._node && containerInfo._node.nodeType === DOC_FRAGMENT_TYPE;
@@ -14288,7 +14630,7 @@ function optionPostMount() {
   ReactDOMOption_1.postMountWrapper(inst);
 }
 
-var setAndValidateContentChildDev = emptyFunction_1;
+var setAndValidateContentChildDev = emptyFunction_1$2;
 {
   setAndValidateContentChildDev = function (content) {
     var hasExistingContent = this._contentDebugID != null;
@@ -14349,9 +14691,9 @@ function trapBubbledEventsLocal() {
   var inst = this;
   // If a component renders to null or if another component fatals and causes
   // the state of the tree to be corrupted, `node` here can be null.
-  !inst._rootNodeID ? invariant_1(false, 'Must be mounted to trap events') : void 0;
+  !inst._rootNodeID ? invariant_1$2(false, 'Must be mounted to trap events') : void 0;
   var node = getNode(inst);
-  !node ? invariant_1(false, 'trapBubbledEvent(...): Requires node to be rendered.') : void 0;
+  !node ? invariant_1$2(false, 'trapBubbledEvent(...): Requires node to be rendered.') : void 0;
 
   switch (inst._tag) {
     case 'iframe':
@@ -14420,7 +14762,7 @@ var newlineEatingTags = {
 // For HTML, certain tags cannot have children. This has the same purpose as
 // `omittedCloseTags` except that `menuitem` should still have its closing tag.
 
-var voidElementTags = index({
+var voidElementTags = index$3({
   'menuitem': true
 }, omittedCloseTags);
 
@@ -14430,11 +14772,11 @@ var voidElementTags = index({
 
 var VALID_TAG_REGEX = /^[a-zA-Z][a-zA-Z:_\.\-\d]*$/; // Simplified subset
 var validatedTagCache = {};
-var hasOwnProperty$2 = {}.hasOwnProperty;
+var hasOwnProperty$3 = {}.hasOwnProperty;
 
 function validateDangerousTag(tag) {
-  if (!hasOwnProperty$2.call(validatedTagCache, tag)) {
-    !VALID_TAG_REGEX.test(tag) ? invariant_1(false, 'Invalid tag: %s', tag) : void 0;
+  if (!hasOwnProperty$3.call(validatedTagCache, tag)) {
+    !VALID_TAG_REGEX.test(tag) ? invariant_1$2(false, 'Invalid tag: %s', tag) : void 0;
     validatedTagCache[tag] = true;
   }
 }
@@ -14688,7 +15030,7 @@ ReactDOMComponent.Mixin = {
               // See `_updateDOMProperties`. style block
               this._previousStyle = propValue;
             }
-            propValue = this._previousStyleCopy = index({}, props.style);
+            propValue = this._previousStyleCopy = index$3({}, props.style);
           }
           propValue = CSSPropertyOperations_1.createMarkupForStyles(propValue, this);
         }
@@ -14928,7 +15270,7 @@ ReactDOMComponent.Mixin = {
             checkAndWarnForMutatedStyle(this._previousStyleCopy, this._previousStyle, this);
             this._previousStyle = nextProp;
           }
-          nextProp = this._previousStyleCopy = index({}, nextProp);
+          nextProp = this._previousStyleCopy = index$3({}, nextProp);
         } else {
           this._previousStyleCopy = null;
         }
@@ -15070,7 +15412,7 @@ ReactDOMComponent.Mixin = {
          * take advantage of React's reconciliation for styling and <title>
          * management. So we just document it and throw in dangerous cases.
          */
-        invariant_1(false, '<%s> tried to unmount. Because of cross-browser quirks it is impossible to unmount some top-level components (eg <html>, <head>, and <body>) reliably and efficiently. To fix this, have a single top-level component that never unmounts render these elements.', this._tag);
+        invariant_1$2(false, '<%s> tried to unmount. Because of cross-browser quirks it is impossible to unmount some top-level components (eg <html>, <head>, and <body>) reliably and efficiently. To fix this, have a single top-level component that never unmounts render these elements.', this._tag);
         break;
     }
 
@@ -15092,7 +15434,7 @@ ReactDOMComponent.Mixin = {
 
 };
 
-index(ReactDOMComponent.prototype, ReactDOMComponent.Mixin, ReactMultiChild_1.Mixin);
+index$3(ReactDOMComponent.prototype, ReactDOMComponent.Mixin, ReactMultiChild_1.Mixin);
 
 var ReactDOMComponent_1 = ReactDOMComponent;
 
@@ -15105,7 +15447,7 @@ var ReactDOMEmptyComponent = function (instantiate) {
   this._hostContainerInfo = null;
   this._domID = 0;
 };
-index(ReactDOMEmptyComponent.prototype, {
+index$3(ReactDOMEmptyComponent.prototype, {
   mountComponent: function (transaction, hostParent, hostContainerInfo, context) {
     var domID = hostContainerInfo._idCounter++;
     this._domID = domID;
@@ -15139,13 +15481,9 @@ index(ReactDOMEmptyComponent.prototype, {
 
 var ReactDOMEmptyComponent_1 = ReactDOMEmptyComponent;
 
-/**
- * Return the lowest common ancestor of A and B, or null if they are in
- * different trees.
- */
 function getLowestCommonAncestor(instA, instB) {
-  !('_hostNode' in instA) ? invariant_1(false, 'getNodeFromInstance: Invalid argument.') : void 0;
-  !('_hostNode' in instB) ? invariant_1(false, 'getNodeFromInstance: Invalid argument.') : void 0;
+  !('_hostNode' in instA) ? invariant_1$2(false, 'getNodeFromInstance: Invalid argument.') : void 0;
+  !('_hostNode' in instB) ? invariant_1$2(false, 'getNodeFromInstance: Invalid argument.') : void 0;
 
   var depthA = 0;
   for (var tempA = instA; tempA; tempA = tempA._hostParent) {
@@ -15184,8 +15522,8 @@ function getLowestCommonAncestor(instA, instB) {
  * Return if A is an ancestor of B.
  */
 function isAncestor(instA, instB) {
-  !('_hostNode' in instA) ? invariant_1(false, 'isAncestor: Invalid argument.') : void 0;
-  !('_hostNode' in instB) ? invariant_1(false, 'isAncestor: Invalid argument.') : void 0;
+  !('_hostNode' in instA) ? invariant_1$2(false, 'isAncestor: Invalid argument.') : void 0;
+  !('_hostNode' in instB) ? invariant_1$2(false, 'isAncestor: Invalid argument.') : void 0;
 
   while (instB) {
     if (instB === instA) {
@@ -15200,7 +15538,7 @@ function isAncestor(instA, instB) {
  * Return the parent instance of the passed-in instance.
  */
 function getParentInstance(inst) {
-  !('_hostNode' in inst) ? invariant_1(false, 'getParentInstance: Invalid argument.') : void 0;
+  !('_hostNode' in inst) ? invariant_1$2(false, 'getParentInstance: Invalid argument.') : void 0;
 
   return inst._hostParent;
 }
@@ -15259,21 +15597,6 @@ var ReactDOMTreeTraversal = {
   traverseEnterLeave: traverseEnterLeave
 };
 
-/**
- * Text nodes violate a couple assumptions that React makes about components:
- *
- *  - When mounting text into the DOM, adjacent text nodes are merged.
- *  - Text nodes cannot be assigned a React root ID.
- *
- * This component is used to wrap strings between comment nodes so that they
- * can undergo the same reconciliation that is applied to elements.
- *
- * TODO: Investigate representing React components in the DOM with text nodes.
- *
- * @class ReactDOMTextComponent
- * @extends ReactComponent
- * @internal
- */
 var ReactDOMTextComponent = function (text) {
   // TODO: This is really a ReactText (ReactNode), not a ReactElement
   this._currentElement = text;
@@ -15289,7 +15612,7 @@ var ReactDOMTextComponent = function (text) {
   this._commentNodes = null;
 };
 
-index(ReactDOMTextComponent.prototype, {
+index$3(ReactDOMTextComponent.prototype, {
 
   /**
    * Creates the markup for this text node. This node is not intended to have
@@ -15377,7 +15700,7 @@ index(ReactDOMTextComponent.prototype, {
       var openingComment = ReactDOMComponentTree_1.getNodeFromInstance(this);
       var node = openingComment.nextSibling;
       while (true) {
-        !(node != null) ? invariant_1(false, 'Missing closing comment for text component %s', this._domID) : void 0;
+        !(node != null) ? invariant_1$2(false, 'Missing closing comment for text component %s', this._domID) : void 0;
         if (node.nodeType === 8 && node.nodeValue === ' /react-text ') {
           this._closingComment = node;
           break;
@@ -15401,14 +15724,14 @@ index(ReactDOMTextComponent.prototype, {
 var ReactDOMTextComponent_1 = ReactDOMTextComponent;
 
 var RESET_BATCHED_UPDATES = {
-  initialize: emptyFunction_1,
+  initialize: emptyFunction_1$2,
   close: function () {
     ReactDefaultBatchingStrategy.isBatchingUpdates = false;
   }
 };
 
 var FLUSH_BATCHED_UPDATES = {
-  initialize: emptyFunction_1,
+  initialize: emptyFunction_1$2,
   close: ReactUpdates_1.flushBatchedUpdates.bind(ReactUpdates_1)
 };
 
@@ -15418,7 +15741,7 @@ function ReactDefaultBatchingStrategyTransaction() {
   this.reinitializeTransaction();
 }
 
-index(ReactDefaultBatchingStrategyTransaction.prototype, Transaction, {
+index$3(ReactDefaultBatchingStrategyTransaction.prototype, Transaction, {
   getTransactionWrappers: function () {
     return TRANSACTION_WRAPPERS$2;
   }
@@ -15449,30 +15772,6 @@ var ReactDefaultBatchingStrategy = {
 
 var ReactDefaultBatchingStrategy_1 = ReactDefaultBatchingStrategy;
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @typechecks
- */
-
-
-
-/**
- * Upstream version of event listener. Does not take into account specific
- * nature of platform.
- */
 var EventListener = {
   /**
    * Listen to DOM events during the bubble phase.
@@ -15521,7 +15820,7 @@ var EventListener = {
         console.error('Attempted to listen to events during the capture phase on a ' + 'browser that does not support the capture phase. Your application ' + 'will not receive some events.');
       }
       return {
-        remove: emptyFunction_1
+        remove: emptyFunction_1$2
       };
     }
   },
@@ -15542,17 +15841,6 @@ var EventListener_1 = EventListener;
  * @typechecks
  */
 
-/**
- * Gets the scroll position of the supplied element or window.
- *
- * The return values are unbounded, unlike `getScrollPosition`. This means they
- * may be negative or exceed the element boundaries (which is possible using
- * inertial scrolling).
- *
- * @param {DOMWindow|DOMElement} scrollable
- * @return {object} Map with `x` and `y` keys.
- */
-
 function getUnboundedScrollPosition(scrollable) {
   if (scrollable.Window && scrollable instanceof scrollable.Window) {
     return {
@@ -15568,11 +15856,6 @@ function getUnboundedScrollPosition(scrollable) {
 
 var getUnboundedScrollPosition_1 = getUnboundedScrollPosition;
 
-/**
- * Find the deepest React component completely containing the root of the
- * passed-in instance (for use when entire React trees are nested within each
- * other). If React trees are not nested, returns null.
- */
 function findParent(inst) {
   // TODO: It may be a good idea to cache this to prevent unnecessary DOM
   // traversal, but caching is difficult to do correctly without using a
@@ -15591,7 +15874,7 @@ function TopLevelCallbackBookKeeping(topLevelType, nativeEvent) {
   this.nativeEvent = nativeEvent;
   this.ancestors = [];
 }
-index(TopLevelCallbackBookKeeping.prototype, {
+index$3(TopLevelCallbackBookKeeping.prototype, {
   destructor: function () {
     this.topLevelType = null;
     this.nativeEvent = null;
@@ -15723,13 +16006,6 @@ var ReactInjection_1 = ReactInjection;
  *
  */
 
-/**
- * Given any node return the first leaf node without children.
- *
- * @param {DOMElement|DOMTextNode} node
- * @return {DOMElement|DOMTextNode}
- */
-
 function getLeafNode(node) {
   while (node && node.firstChild) {
     node = node.firstChild;
@@ -15785,11 +16061,6 @@ function getNodeForCharacterOffset(root, offset) {
 
 var getNodeForCharacterOffset_1 = getNodeForCharacterOffset;
 
-/**
- * While `isCollapsed` is available on the Selection object and `collapsed`
- * is available on the Range object, IE11 sometimes gets them wrong.
- * If the anchor/focus nodes and offsets are the same, the range is collapsed.
- */
 function isCollapsed(anchorNode, anchorOffset, focusNode, focusOffset) {
   return anchorNode === focusNode && anchorOffset === focusOffset;
 }
@@ -15980,21 +16251,6 @@ var ReactDOMSelection = {
 
 var ReactDOMSelection_1 = ReactDOMSelection;
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @typechecks
- */
-
-/**
- * @param {*} object The object to check.
- * @return {boolean} Whether or not the object is a DOM node.
- */
 function isNode(object) {
   var doc = object ? object.ownerDocument || object : document;
   var defaultView = doc.defaultView || window;
@@ -16003,47 +16259,12 @@ function isNode(object) {
 
 var isNode_1 = isNode;
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @typechecks
- */
-
-
-
-/**
- * @param {*} object The object to check.
- * @return {boolean} Whether or not the object is a DOM text node.
- */
 function isTextNode(object) {
   return isNode_1(object) && object.nodeType == 3;
 }
 
 var isTextNode_1 = isTextNode;
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
-
-
-/*eslint-disable no-bitwise */
-
-/**
- * Checks if a given DOM node contains or is another DOM node.
- */
 function containsNode(outerNode, innerNode) {
   if (!outerNode || !innerNode) {
     return false;
@@ -16064,29 +16285,6 @@ function containsNode(outerNode, innerNode) {
 
 var containsNode_1 = containsNode;
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @typechecks
- */
-
-/* eslint-disable fb-www/typeof-undefined */
-
-/**
- * Same as document.activeElement but wraps in a try-catch block. In IE it is
- * not safe to call document.activeElement if there is nothing focused.
- *
- * The activeElement will be null only if the document or document body is not
- * yet defined.
- *
- * @param {?DOMDocument} doc Defaults to current document.
- * @return {?DOMElement}
- */
 function getActiveElement(doc) /*?DOMElement*/{
   doc = doc || (typeof document !== 'undefined' ? document : undefined);
   if (typeof doc === 'undefined') {
@@ -16207,10 +16405,6 @@ var ReactInputSelection = {
 
 var ReactInputSelection_1 = ReactInputSelection;
 
-/**
- * Ensures that, when possible, the selection range (currently selected text
- * input) is not disturbed by performing the transaction.
- */
 var SELECTION_RESTORATION = {
   /**
    * @return {Selection} Selection information.
@@ -16357,7 +16551,7 @@ var Mixin$1 = {
   }
 };
 
-index(ReactReconcileTransaction.prototype, Transaction, Mixin$1);
+index$3(ReactReconcileTransaction.prototype, Transaction, Mixin$1);
 
 PooledClass_1$2.addPoolingTo(ReactReconcileTransaction);
 
@@ -16832,11 +17026,6 @@ var SelectEventPlugin = {
 
 var SelectEventPlugin_1 = SelectEventPlugin;
 
-/**
- * @interface Event
- * @see http://www.w3.org/TR/css3-animations/#AnimationEvent-interface
- * @see https://developer.mozilla.org/en-US/docs/Web/API/AnimationEvent
- */
 var AnimationEventInterface = {
   animationName: null,
   elapsedTime: null,
@@ -16857,10 +17046,6 @@ SyntheticEvent_1.augmentClass(SyntheticAnimationEvent, AnimationEventInterface);
 
 var SyntheticAnimationEvent_1 = SyntheticAnimationEvent;
 
-/**
- * @interface Event
- * @see http://www.w3.org/TR/clipboard-apis/
- */
 var ClipboardEventInterface = {
   clipboardData: function (event) {
     return 'clipboardData' in event ? event.clipboardData : window.clipboardData;
@@ -16881,10 +17066,6 @@ SyntheticEvent_1.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 var SyntheticClipboardEvent_1 = SyntheticClipboardEvent;
 
-/**
- * @interface FocusEvent
- * @see http://www.w3.org/TR/DOM-Level-3-Events/
- */
 var FocusEventInterface = {
   relatedTarget: null
 };
@@ -16911,17 +17092,6 @@ var SyntheticFocusEvent_1 = SyntheticFocusEvent;
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- */
-
-/**
- * `charCode` represents the actual "character code" and is safe to use with
- * `String.fromCharCode`. As such, only keys that correspond to printable
- * characters produce a valid `charCode`, the only exception to this is Enter.
- * The Tab-key is considered non-printable and does not have a `charCode`,
- * presumably because it does not produce a tab-character in browsers.
- *
- * @param {object} nativeEvent Native browser event.
- * @return {number} Normalized `charCode` property.
  */
 
 function getEventCharCode(nativeEvent) {
@@ -16951,10 +17121,6 @@ function getEventCharCode(nativeEvent) {
 
 var getEventCharCode_1 = getEventCharCode;
 
-/**
- * Normalization of deprecated HTML5 `key` values
- * @see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent#Key_names
- */
 var normalizeKey = {
   'Esc': 'Escape',
   'Spacebar': ' ',
@@ -17039,10 +17205,6 @@ function getEventKey(nativeEvent) {
 
 var getEventKey_1 = getEventKey;
 
-/**
- * @interface KeyboardEvent
- * @see http://www.w3.org/TR/DOM-Level-3-Events/
- */
 var KeyboardEventInterface = {
   key: getEventKey_1,
   location: null,
@@ -17105,10 +17267,6 @@ SyntheticUIEvent_1.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 var SyntheticKeyboardEvent_1 = SyntheticKeyboardEvent;
 
-/**
- * @interface DragEvent
- * @see http://www.w3.org/TR/DOM-Level-3-Events/
- */
 var DragEventInterface = {
   dataTransfer: null
 };
@@ -17127,10 +17285,6 @@ SyntheticMouseEvent_1.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 var SyntheticDragEvent_1 = SyntheticDragEvent;
 
-/**
- * @interface TouchEvent
- * @see http://www.w3.org/TR/touch-events/
- */
 var TouchEventInterface = {
   touches: null,
   targetTouches: null,
@@ -17156,11 +17310,6 @@ SyntheticUIEvent_1.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 var SyntheticTouchEvent_1 = SyntheticTouchEvent;
 
-/**
- * @interface Event
- * @see http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-events-
- * @see https://developer.mozilla.org/en-US/docs/Web/API/TransitionEvent
- */
 var TransitionEventInterface = {
   propertyName: null,
   elapsedTime: null,
@@ -17181,10 +17330,6 @@ SyntheticEvent_1.augmentClass(SyntheticTransitionEvent, TransitionEventInterface
 
 var SyntheticTransitionEvent_1 = SyntheticTransitionEvent;
 
-/**
- * @interface WheelEvent
- * @see http://www.w3.org/TR/DOM-Level-3-Events/
- */
 var WheelEventInterface = {
   deltaX: function (event) {
     return 'deltaX' in event ? event.deltaX :
@@ -17221,24 +17366,6 @@ SyntheticMouseEvent_1.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 var SyntheticWheelEvent_1 = SyntheticWheelEvent;
 
-/**
- * Turns
- * ['abort', ...]
- * into
- * eventTypes = {
- *   'abort': {
- *     phasedRegistrationNames: {
- *       bubbled: 'onAbort',
- *       captured: 'onAbortCapture',
- *     },
- *     dependencies: ['topAbort'],
- *   },
- *   ...
- * };
- * topLevelEventsToDispatchConfig = {
- *   'topAbort': { sameConfig }
- * };
- */
 var eventTypes$4 = {};
 var topLevelEventsToDispatchConfig = {};
 ['abort', 'animationEnd', 'animationIteration', 'animationStart', 'blur', 'canPlay', 'canPlayThrough', 'click', 'contextMenu', 'copy', 'cut', 'doubleClick', 'drag', 'dragEnd', 'dragEnter', 'dragExit', 'dragLeave', 'dragOver', 'dragStart', 'drop', 'durationChange', 'emptied', 'encrypted', 'ended', 'error', 'focus', 'input', 'invalid', 'keyDown', 'keyPress', 'keyUp', 'load', 'loadedData', 'loadedMetadata', 'loadStart', 'mouseDown', 'mouseMove', 'mouseOut', 'mouseOver', 'mouseUp', 'paste', 'pause', 'play', 'playing', 'progress', 'rateChange', 'reset', 'scroll', 'seeked', 'seeking', 'stalled', 'submit', 'suspend', 'timeUpdate', 'touchCancel', 'touchEnd', 'touchMove', 'touchStart', 'transitionEnd', 'volumeChange', 'waiting', 'wheel'].forEach(function (event) {
@@ -17382,7 +17509,7 @@ var SimpleEventPlugin = {
         EventConstructor = SyntheticClipboardEvent_1;
         break;
     }
-    !EventConstructor ? invariant_1(false, 'SimpleEventPlugin: Unhandled event type, `%s`.', topLevelType) : void 0;
+    !EventConstructor ? invariant_1$2(false, 'SimpleEventPlugin: Unhandled event type, `%s`.', topLevelType) : void 0;
     var event = EventConstructor.getPooled(dispatchConfig, targetInst, nativeEvent, nativeEventTarget);
     EventPropagators_1.accumulateTwoPhaseDispatches(event);
     return event;
@@ -17398,7 +17525,7 @@ var SimpleEventPlugin = {
       var key = getDictionaryKey$1(inst);
       var node = ReactDOMComponentTree_1.getNodeFromInstance(inst);
       if (!onClickListeners[key]) {
-        onClickListeners[key] = EventListener_1.listen(node, 'click', emptyFunction_1);
+        onClickListeners[key] = EventListener_1.listen(node, 'click', emptyFunction_1$2);
       }
     }
   },
@@ -17854,9 +17981,9 @@ var ReactMount = {
     // Various parts of our code (such as ReactCompositeComponent's
     // _renderValidatedComponent) assume that calls to render aren't nested;
     // verify that that's the case.
-    warning_1(ReactCurrentOwner_1.current == null, '_renderNewRootComponent(): Render methods should be a pure function ' + 'of props and state; triggering nested component updates from ' + 'render is not allowed. If necessary, trigger nested updates in ' + 'componentDidUpdate. Check the render method of %s.', ReactCurrentOwner_1.current && ReactCurrentOwner_1.current.getName() || 'ReactCompositeComponent');
+    warning_1$2(ReactCurrentOwner_1.current == null, '_renderNewRootComponent(): Render methods should be a pure function ' + 'of props and state; triggering nested component updates from ' + 'render is not allowed. If necessary, trigger nested updates in ' + 'componentDidUpdate. Check the render method of %s.', ReactCurrentOwner_1.current && ReactCurrentOwner_1.current.getName() || 'ReactCompositeComponent');
 
-    !isValidContainer(container) ? invariant_1(false, '_registerComponent(...): Target container is not a DOM element.') : void 0;
+    !isValidContainer(container) ? invariant_1$2(false, '_registerComponent(...): Target container is not a DOM element.') : void 0;
 
     ReactBrowserEventEmitter_1.ensureScrollValueMonitoring();
     var componentInstance = instantiateReactComponent_1(nextElement, false);
@@ -17887,17 +18014,17 @@ var ReactMount = {
    * @return {ReactComponent} Component instance rendered in `container`.
    */
   renderSubtreeIntoContainer: function (parentComponent, nextElement, container, callback) {
-    !(parentComponent != null && ReactInstanceMap_1.has(parentComponent)) ? invariant_1(false, 'parentComponent must be a valid React Component') : void 0;
+    !(parentComponent != null && ReactInstanceMap_1.has(parentComponent)) ? invariant_1$2(false, 'parentComponent must be a valid React Component') : void 0;
     return ReactMount._renderSubtreeIntoContainer(parentComponent, nextElement, container, callback);
   },
 
   _renderSubtreeIntoContainer: function (parentComponent, nextElement, container, callback) {
     ReactUpdateQueue_1.validateCallback(callback, 'ReactDOM.render');
-    !React_1.isValidElement(nextElement) ? invariant_1(false, 'ReactDOM.render(): Invalid component element.%s', typeof nextElement === 'string' ? ' Instead of passing a string like \'div\', pass ' + 'React.createElement(\'div\') or <div />.' : typeof nextElement === 'function' ? ' Instead of passing a class like Foo, pass ' + 'React.createElement(Foo) or <Foo />.' :
+    !React_1.isValidElement(nextElement) ? invariant_1$2(false, 'ReactDOM.render(): Invalid component element.%s', typeof nextElement === 'string' ? ' Instead of passing a string like \'div\', pass ' + 'React.createElement(\'div\') or <div />.' : typeof nextElement === 'function' ? ' Instead of passing a class like Foo, pass ' + 'React.createElement(Foo) or <Foo />.' :
     // Check if it quacks like an element
     nextElement != null && nextElement.props !== undefined ? ' This may be caused by unintentionally loading two independent ' + 'copies of React.' : '') : void 0;
 
-    warning_1(!container || !container.tagName || container.tagName.toUpperCase() !== 'BODY', 'render(): Rendering components directly into document.body is ' + 'discouraged, since its children are often manipulated by third-party ' + 'scripts and browser extensions. This may lead to subtle ' + 'reconciliation issues. Try rendering into a container element created ' + 'for your app.');
+    warning_1$2(!container || !container.tagName || container.tagName.toUpperCase() !== 'BODY', 'render(): Rendering components directly into document.body is ' + 'discouraged, since its children are often manipulated by third-party ' + 'scripts and browser extensions. This may lead to subtle ' + 'reconciliation issues. Try rendering into a container element created ' + 'for your app.');
 
     var nextWrappedElement = React_1.createElement(TopLevelWrapper, { child: nextElement });
 
@@ -17906,7 +18033,7 @@ var ReactMount = {
       var parentInst = ReactInstanceMap_1.get(parentComponent);
       nextContext = parentInst._processChildContext(parentInst._context);
     } else {
-      nextContext = emptyObject_1;
+      nextContext = emptyObject_1$2;
     }
 
     var prevComponent = getTopLevelWrapperInContainer(container);
@@ -17931,13 +18058,13 @@ var ReactMount = {
     var containerHasNonRootReactChild = hasNonRootReactChild(container);
 
     {
-      warning_1(!containerHasNonRootReactChild, 'render(...): Replacing React-rendered children with a new root ' + 'component. If you intended to update the children of this node, ' + 'you should instead have the existing children update their state ' + 'and render the new components instead of calling ReactDOM.render.');
+      warning_1$2(!containerHasNonRootReactChild, 'render(...): Replacing React-rendered children with a new root ' + 'component. If you intended to update the children of this node, ' + 'you should instead have the existing children update their state ' + 'and render the new components instead of calling ReactDOM.render.');
 
       if (!containerHasReactMarkup || reactRootElement.nextSibling) {
         var rootElementSibling = reactRootElement;
         while (rootElementSibling) {
           if (internalGetID(rootElementSibling)) {
-            warning_1(false, 'render(): Target node has markup rendered by React, but there ' + 'are unrelated nodes as well. This is most commonly caused by ' + 'white-space inserted around server-rendered markup.');
+            warning_1$2(false, 'render(): Target node has markup rendered by React, but there ' + 'are unrelated nodes as well. This is most commonly caused by ' + 'white-space inserted around server-rendered markup.');
             break;
           }
           rootElementSibling = rootElementSibling.nextSibling;
@@ -17983,12 +18110,12 @@ var ReactMount = {
     // _renderValidatedComponent) assume that calls to render aren't nested;
     // verify that that's the case. (Strictly speaking, unmounting won't cause a
     // render but we still don't expect to be in a render call here.)
-    warning_1(ReactCurrentOwner_1.current == null, 'unmountComponentAtNode(): Render methods should be a pure function ' + 'of props and state; triggering nested component updates from render ' + 'is not allowed. If necessary, trigger nested updates in ' + 'componentDidUpdate. Check the render method of %s.', ReactCurrentOwner_1.current && ReactCurrentOwner_1.current.getName() || 'ReactCompositeComponent');
+    warning_1$2(ReactCurrentOwner_1.current == null, 'unmountComponentAtNode(): Render methods should be a pure function ' + 'of props and state; triggering nested component updates from render ' + 'is not allowed. If necessary, trigger nested updates in ' + 'componentDidUpdate. Check the render method of %s.', ReactCurrentOwner_1.current && ReactCurrentOwner_1.current.getName() || 'ReactCompositeComponent');
 
-    !isValidContainer(container) ? invariant_1(false, 'unmountComponentAtNode(...): Target container is not a DOM element.') : void 0;
+    !isValidContainer(container) ? invariant_1$2(false, 'unmountComponentAtNode(...): Target container is not a DOM element.') : void 0;
 
     {
-      warning_1(!nodeIsRenderedByOtherInstance(container), 'unmountComponentAtNode(): The node you\'re attempting to unmount ' + 'was rendered by another copy of React.');
+      warning_1$2(!nodeIsRenderedByOtherInstance(container), 'unmountComponentAtNode(): The node you\'re attempting to unmount ' + 'was rendered by another copy of React.');
     }
 
     var prevComponent = getTopLevelWrapperInContainer(container);
@@ -18001,7 +18128,7 @@ var ReactMount = {
       var isContainerReactRoot = container.nodeType === 1 && container.hasAttribute(ROOT_ATTR_NAME);
 
       {
-        warning_1(!containerHasNonRootReactChild, 'unmountComponentAtNode(): The node you\'re attempting to unmount ' + 'was rendered by React and is not a top-level container. %s', isContainerReactRoot ? 'You may have accidentally passed in a React root node instead ' + 'of its container.' : 'Instead, have the parent component update its state and ' + 'rerender in order to remove this component.');
+        warning_1$2(!containerHasNonRootReactChild, 'unmountComponentAtNode(): The node you\'re attempting to unmount ' + 'was rendered by React and is not a top-level container. %s', isContainerReactRoot ? 'You may have accidentally passed in a React root node instead ' + 'of its container.' : 'Instead, have the parent component update its state and ' + 'rerender in order to remove this component.');
       }
 
       return false;
@@ -18012,7 +18139,7 @@ var ReactMount = {
   },
 
   _mountImageIntoNode: function (markup, container, instance, shouldReuseMarkup, transaction) {
-    !isValidContainer(container) ? invariant_1(false, 'mountComponentIntoNode(...): Target container is not valid.') : void 0;
+    !isValidContainer(container) ? invariant_1$2(false, 'mountComponentIntoNode(...): Target container is not valid.') : void 0;
 
     if (shouldReuseMarkup) {
       var rootElement = getReactRootElementInContainer(container);
@@ -18049,15 +18176,15 @@ var ReactMount = {
         var diffIndex = firstDifferenceIndex(normalizedMarkup, rootMarkup);
         var difference = ' (client) ' + normalizedMarkup.substring(diffIndex - 20, diffIndex + 20) + '\n (server) ' + rootMarkup.substring(diffIndex - 20, diffIndex + 20);
 
-        !(container.nodeType !== DOC_NODE_TYPE) ? invariant_1(false, 'You\'re trying to render a component to the document using server rendering but the checksum was invalid. This usually means you rendered a different component type or props on the client from the one on the server, or your render() methods are impure. React cannot handle this case due to cross-browser quirks by rendering at the document root. You should look for environment dependent code in your components and ensure the props are the same client and server side:\n%s', difference) : void 0;
+        !(container.nodeType !== DOC_NODE_TYPE) ? invariant_1$2(false, 'You\'re trying to render a component to the document using server rendering but the checksum was invalid. This usually means you rendered a different component type or props on the client from the one on the server, or your render() methods are impure. React cannot handle this case due to cross-browser quirks by rendering at the document root. You should look for environment dependent code in your components and ensure the props are the same client and server side:\n%s', difference) : void 0;
 
         {
-          warning_1(false, 'React attempted to reuse markup in a container but the ' + 'checksum was invalid. This generally means that you are ' + 'using server rendering and the markup generated on the ' + 'server was not what the client was expecting. React injected ' + 'new markup to compensate which works but you have lost many ' + 'of the benefits of server rendering. Instead, figure out ' + 'why the markup being generated is different on the client ' + 'or server:\n%s', difference);
+          warning_1$2(false, 'React attempted to reuse markup in a container but the ' + 'checksum was invalid. This generally means that you are ' + 'using server rendering and the markup generated on the ' + 'server was not what the client was expecting. React injected ' + 'new markup to compensate which works but you have lost many ' + 'of the benefits of server rendering. Instead, figure out ' + 'why the markup being generated is different on the client ' + 'or server:\n%s', difference);
         }
       }
     }
 
-    !(container.nodeType !== DOC_NODE_TYPE) ? invariant_1(false, 'You\'re trying to render a component to the document but you didn\'t use server rendering. We can\'t do this without using server rendering due to cross-browser quirks. See ReactDOMServer.renderToString() for server rendering.') : void 0;
+    !(container.nodeType !== DOC_NODE_TYPE) ? invariant_1$2(false, 'You\'re trying to render a component to the document but you didn\'t use server rendering. We can\'t do this without using server rendering due to cross-browser quirks. See ReactDOMServer.renderToString() for server rendering.') : void 0;
 
     if (transaction.useCreateElement) {
       while (container.lastChild) {
@@ -18112,19 +18239,11 @@ function getHostComponentFromComposite(inst) {
 
 var getHostComponentFromComposite_1 = getHostComponentFromComposite;
 
-/**
- * Returns the DOM node rendered by this element.
- *
- * See https://facebook.github.io/react/docs/top-level-api.html#reactdom.finddomnode
- *
- * @param {ReactComponent|DOMElement} componentOrElement
- * @return {?DOMElement} The root node of this element.
- */
 function findDOMNode(componentOrElement) {
   {
     var owner = ReactCurrentOwner_1.current;
     if (owner !== null) {
-      warning_1(owner._warnedAboutRefsInRender, '%s is accessing findDOMNode inside its render(). ' + 'render() should be a pure function of props and state. It should ' + 'never access something that requires stale data from the previous ' + 'render, such as refs. Move this logic to componentDidMount and ' + 'componentDidUpdate instead.', owner.getName() || 'A component');
+      warning_1$2(owner._warnedAboutRefsInRender, '%s is accessing findDOMNode inside its render(). ' + 'render() should be a pure function of props and state. It should ' + 'never access something that requires stale data from the previous ' + 'render, such as refs. Move this logic to componentDidMount and ' + 'componentDidUpdate instead.', owner.getName() || 'A component');
       owner._warnedAboutRefsInRender = true;
     }
   }
@@ -18142,9 +18261,9 @@ function findDOMNode(componentOrElement) {
   }
 
   if (typeof componentOrElement.render === 'function') {
-    invariant_1(false, 'findDOMNode was called on an unmounted component.');
+    invariant_1$2(false, 'findDOMNode was called on an unmounted component.');
   } else {
-    invariant_1(false, 'Element appears to be neither ReactComponent nor DOMNode (keys: %s)', Object.keys(componentOrElement));
+    invariant_1$2(false, 'Element appears to be neither ReactComponent nor DOMNode (keys: %s)', Object.keys(componentOrElement));
   }
 }
 
@@ -18190,10 +18309,10 @@ var renderSubtreeIntoContainer = ReactMount_1.renderSubtreeIntoContainer;
     var registrationName = EventPluginRegistry_1.possibleRegistrationNames.hasOwnProperty(lowerCasedName) ? EventPluginRegistry_1.possibleRegistrationNames[lowerCasedName] : null;
 
     if (standardName != null) {
-      warning_1(false, 'Unknown DOM property %s. Did you mean %s?%s', name, standardName, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
+      warning_1$2(false, 'Unknown DOM property %s. Did you mean %s?%s', name, standardName, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
       return true;
     } else if (registrationName != null) {
-      warning_1(false, 'Unknown event handler property %s. Did you mean `%s`?%s', name, registrationName, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
+      warning_1$2(false, 'Unknown event handler property %s. Did you mean `%s`?%s', name, registrationName, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
       return true;
     } else {
       // We were unable to guess which prop the user intended.
@@ -18219,9 +18338,9 @@ var warnUnknownProperties = function (debugID, element) {
   }).join(', ');
 
   if (unknownProps.length === 1) {
-    warning_1(false, 'Unknown prop %s on <%s> tag. Remove this prop from the element. ' + 'For details, see https://fb.me/react-unknown-prop%s', unknownPropString, element.type, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
+    warning_1$2(false, 'Unknown prop %s on <%s> tag. Remove this prop from the element. ' + 'For details, see https://fb.me/react-unknown-prop%s', unknownPropString, element.type, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
   } else if (unknownProps.length > 1) {
-    warning_1(false, 'Unknown props %s on <%s> tag. Remove these props from the element. ' + 'For details, see https://fb.me/react-unknown-prop%s', unknownPropString, element.type, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
+    warning_1$2(false, 'Unknown props %s on <%s> tag. Remove these props from the element. ' + 'For details, see https://fb.me/react-unknown-prop%s', unknownPropString, element.type, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
   }
 };
 
@@ -18256,7 +18375,7 @@ function handleElement$1(debugID, element) {
     return;
   }
   if (element.props != null && element.props.value === null && !didWarnValueNull) {
-    warning_1(false, '`value` prop on `%s` should not be null. ' + 'Consider using the empty string to clear the component or `undefined` ' + 'for uncontrolled components.%s', element.type, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
+    warning_1$2(false, '`value` prop on `%s` should not be null. ' + 'Consider using the empty string to clear the component or `undefined` ' + 'for uncontrolled components.%s', element.type, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
 
     didWarnValueNull = true;
   }
@@ -18293,7 +18412,7 @@ function validateProperty$1(tagName, name, debugID) {
     }
     // aria-* attributes should be lowercase; suggest the lowercase version.
     if (name !== standardName) {
-      warning_1(false, 'Unknown ARIA attribute %s. Did you mean %s?%s', name, standardName, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
+      warning_1$2(false, 'Unknown ARIA attribute %s. Did you mean %s?%s', name, standardName, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
       warnedProperties$1[name] = true;
       return true;
     }
@@ -18317,9 +18436,9 @@ function warnInvalidARIAProps(debugID, element) {
   }).join(', ');
 
   if (invalidProps.length === 1) {
-    warning_1(false, 'Invalid aria prop %s on <%s> tag. ' + 'For details, see https://fb.me/invalid-aria-prop%s', unknownPropString, element.type, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
+    warning_1$2(false, 'Invalid aria prop %s on <%s> tag. ' + 'For details, see https://fb.me/invalid-aria-prop%s', unknownPropString, element.type, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
   } else if (invalidProps.length > 1) {
-    warning_1(false, 'Invalid aria props %s on <%s> tag. ' + 'For details, see https://fb.me/invalid-aria-prop%s', unknownPropString, element.type, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
+    warning_1$2(false, 'Invalid aria props %s on <%s> tag. ' + 'For details, see https://fb.me/invalid-aria-prop%s', unknownPropString, element.type, ReactComponentTreeHook_1.getStackAddendumByID(debugID));
   }
 }
 
@@ -18400,13 +18519,13 @@ if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined' && typeof __REACT_DEVT
     }
 
     var testFunc = function testFn() {};
-    warning_1((testFunc.name || testFunc.toString()).indexOf('testFn') !== -1, 'It looks like you\'re using a minified copy of the development build ' + 'of React. When deploying React apps to production, make sure to use ' + 'the production build which skips development warnings and is faster. ' + 'See https://fb.me/react-minification for more details.');
+    warning_1$2((testFunc.name || testFunc.toString()).indexOf('testFn') !== -1, 'It looks like you\'re using a minified copy of the development build ' + 'of React. When deploying React apps to production, make sure to use ' + 'the production build which skips development warnings and is faster. ' + 'See https://fb.me/react-minification for more details.');
 
     // If we're in IE8, check to see if we are in compatibility mode and provide
     // information on preventing compatibility mode
     var ieCompatibilityMode = document.documentMode && document.documentMode < 8;
 
-    warning_1(!ieCompatibilityMode, 'Internet Explorer is running in compatibility mode; please add the ' + 'following tag to your HTML to prevent this from happening: ' + '<meta http-equiv="X-UA-Compatible" content="IE=edge" />');
+    warning_1$2(!ieCompatibilityMode, 'Internet Explorer is running in compatibility mode; please add the ' + 'following tag to your HTML to prevent this from happening: ' + '<meta http-equiv="X-UA-Compatible" content="IE=edge" />');
 
     var expectedFeatures = [
     // shims
@@ -18414,7 +18533,7 @@ if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined' && typeof __REACT_DEVT
 
     for (var i = 0; i < expectedFeatures.length; i++) {
       if (!expectedFeatures[i]) {
-        warning_1(false, 'One or more ES5 shims expected by React are not available: ' + 'https://fb.me/react-warning-polyfills');
+        warning_1$2(false, 'One or more ES5 shims expected by React are not available: ' + 'https://fb.me/react-warning-polyfills');
         break;
       }
     }
@@ -18605,28 +18724,6 @@ var threshold = function(values, p, valueof) {
       value0 = +valueof(values[i0], i0, values),
       value1 = +valueof(values[i0 + 1], i0 + 1, values);
   return value0 + (value1 - value0) * (i - i0);
-};
-
-var merge = function(arrays) {
-  var n = arrays.length,
-      m,
-      i = -1,
-      j = 0,
-      merged,
-      array;
-
-  while (++i < n) j += arrays[i].length;
-  merged = new Array(j);
-
-  while (--n >= 0) {
-    array = arrays[n];
-    m = array.length;
-    while (--m >= 0) {
-      merged[--j] = array[m];
-    }
-  }
-
-  return merged;
 };
 
 var min = function(values, valueof) {
@@ -19628,9 +19725,6 @@ var interpolateRound = function(a, b) {
   };
 };
 
-// p0 = [ux0, uy0, w0]
-// p1 = [ux1, uy1, w1]
-
 function cubehelix$1(hue$$1) {
   return (function cubehelixGamma(y) {
     y = +y;
@@ -19879,7 +19973,6 @@ var formatTypes = {
   "x": function(x) { return Math.round(x).toString(16); }
 };
 
-// [[fill]align][sign][symbol][0][width][,][.precision][type]
 var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
 
 function formatSpecifier(specifier) {
@@ -21582,6 +21675,116 @@ var d3Scale = Object.freeze({
 	scaleSequential: sequential
 });
 
+var prefix$1 = "$";
+
+function Map$2() {}
+
+Map$2.prototype = map$4.prototype = {
+  constructor: Map$2,
+  has: function(key) {
+    return (prefix$1 + key) in this;
+  },
+  get: function(key) {
+    return this[prefix$1 + key];
+  },
+  set: function(key, value) {
+    this[prefix$1 + key] = value;
+    return this;
+  },
+  remove: function(key) {
+    var property = prefix$1 + key;
+    return property in this && delete this[property];
+  },
+  clear: function() {
+    for (var property in this) if (property[0] === prefix$1) delete this[property];
+  },
+  keys: function() {
+    var keys = [];
+    for (var property in this) if (property[0] === prefix$1) keys.push(property.slice(1));
+    return keys;
+  },
+  values: function() {
+    var values = [];
+    for (var property in this) if (property[0] === prefix$1) values.push(this[property]);
+    return values;
+  },
+  entries: function() {
+    var entries = [];
+    for (var property in this) if (property[0] === prefix$1) entries.push({key: property.slice(1), value: this[property]});
+    return entries;
+  },
+  size: function() {
+    var size = 0;
+    for (var property in this) if (property[0] === prefix$1) ++size;
+    return size;
+  },
+  empty: function() {
+    for (var property in this) if (property[0] === prefix$1) return false;
+    return true;
+  },
+  each: function(f) {
+    for (var property in this) if (property[0] === prefix$1) f(this[property], property.slice(1), this);
+  }
+};
+
+function map$4(object, f) {
+  var map = new Map$2;
+
+  // Copy constructor.
+  if (object instanceof Map$2) object.each(function(value, key) { map.set(key, value); });
+
+  // Index array by numeric index or specified key function.
+  else if (Array.isArray(object)) {
+    var i = -1,
+        n = object.length,
+        o;
+
+    if (f == null) while (++i < n) map.set(i, object[i]);
+    else while (++i < n) map.set(f(o = object[i], i, object), o);
+  }
+
+  // Convert object to map.
+  else if (object) for (var key in object) map.set(key, object[key]);
+
+  return map;
+}
+
+function Set$2() {}
+
+var proto$1 = map$4.prototype;
+
+Set$2.prototype = set$2.prototype = {
+  constructor: Set$2,
+  has: proto$1.has,
+  add: function(value) {
+    value += "";
+    this[prefix$1 + value] = value;
+    return this;
+  },
+  remove: proto$1.remove,
+  clear: proto$1.clear,
+  values: proto$1.keys,
+  size: proto$1.size,
+  empty: proto$1.empty,
+  each: proto$1.each
+};
+
+function set$2(object, f) {
+  var set = new Set$2;
+
+  // Copy constructor.
+  if (object instanceof Set$2) object.each(function(value) { set.add(value); });
+
+  // Otherwise, assume it’s an array.
+  else if (object) {
+    var i = -1, n = object.length;
+    if (f == null) while (++i < n) set.add(object[i]);
+    else while (++i < n) set.add(f(object[i], i, object));
+  }
+
+  return set;
+}
+
 var noop = {value: function() {}};
 
 function dispatch() {
@@ -21624,8 +21827,8 @@ Dispatch.prototype = dispatch.prototype = {
     // Otherwise, if a null callback was specified, remove callbacks of the given name.
     if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
     while (++i < n) {
-      if (t = (typename = T[i]).type) _[t] = set$2(_[t], typename.name, callback);
-      else if (callback == null) for (t in _) _[t] = set$2(_[t], typename.name, null);
+      if (t = (typename = T[i]).type) _[t] = set$4(_[t], typename.name, callback);
+      else if (callback == null) for (t in _) _[t] = set$4(_[t], typename.name, null);
     }
 
     return this;
@@ -21654,7 +21857,7 @@ function get(type, name) {
   }
 }
 
-function set$2(type, name, callback) {
+function set$4(type, name, callback) {
   for (var i = 0, n = type.length; i < n; ++i) {
     if (type[i].name === name) {
       type[i] = noop, type = type.slice(0, i).concat(type.slice(i + 1));
@@ -21669,7 +21872,7 @@ var request = function(url, callback) {
   var request,
       event = dispatch("beforesend", "progress", "load", "error"),
       mimeType,
-      headers = map$1(),
+      headers = map$4(),
       xhr = new XMLHttpRequest,
       user = null,
       password = null,
@@ -22672,7 +22875,6 @@ var rotation = function(rotate) {
   return forward;
 };
 
-// Generates a circle centered at [0°, 0°], with a given radius and precision.
 function circleStream(stream, radius, delta, direction, t0, t1) {
   if (!delta) return;
   var cosRadius = cos(radius),
@@ -22927,6 +23129,210 @@ function link(array) {
   b.p = a;
 }
 
+var ascending$1 = function(a, b) {
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+};
+
+var bisector$1 = function(compare) {
+  if (compare.length === 1) compare = ascendingComparator$1(compare);
+  return {
+    left: function(a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+      while (lo < hi) {
+        var mid = lo + hi >>> 1;
+        if (compare(a[mid], x) < 0) lo = mid + 1;
+        else hi = mid;
+      }
+      return lo;
+    },
+    right: function(a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+      while (lo < hi) {
+        var mid = lo + hi >>> 1;
+        if (compare(a[mid], x) > 0) hi = mid;
+        else lo = mid + 1;
+      }
+      return lo;
+    }
+  };
+};
+
+function ascendingComparator$1(f) {
+  return function(d, x) {
+    return ascending$1(f(d), x);
+  };
+}
+
+var ascendingBisect$1 = bisector$1(ascending$1);
+var bisectRight$1 = ascendingBisect$1.right;
+
+function pair$1(a, b) {
+  return [a, b];
+}
+
+var number$3 = function(x) {
+  return x === null ? NaN : +x;
+};
+
+var extent$2 = function(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      min,
+      max;
+
+  if (valueof == null) {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        min = max = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = values[i]) != null) {
+            if (min > value) min = value;
+            if (max < value) max = value;
+          }
+        }
+      }
+    }
+  }
+
+  else {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        min = max = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null) {
+            if (min > value) min = value;
+            if (max < value) max = value;
+          }
+        }
+      }
+    }
+  }
+
+  return [min, max];
+};
+
+var identity$5 = function(x) {
+  return x;
+};
+
+var range$2 = function(start, stop, step) {
+  start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
+
+  var i = -1,
+      n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
+      range = new Array(n);
+
+  while (++i < n) {
+    range[i] = start + i * step;
+  }
+
+  return range;
+};
+
+var e10$1 = Math.sqrt(50);
+var e5$1 = Math.sqrt(10);
+var e2$1 = Math.sqrt(2);
+
+function tickIncrement$1(start, stop, count) {
+  var step = (stop - start) / Math.max(0, count),
+      power = Math.floor(Math.log(step) / Math.LN10),
+      error = step / Math.pow(10, power);
+  return power >= 0
+      ? (error >= e10$1 ? 10 : error >= e5$1 ? 5 : error >= e2$1 ? 2 : 1) * Math.pow(10, power)
+      : -Math.pow(10, -power) / (error >= e10$1 ? 10 : error >= e5$1 ? 5 : error >= e2$1 ? 2 : 1);
+}
+
+function tickStep$1(start, stop, count) {
+  var step0 = Math.abs(stop - start) / Math.max(0, count),
+      step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
+      error = step0 / step1;
+  if (error >= e10$1) step1 *= 10;
+  else if (error >= e5$1) step1 *= 5;
+  else if (error >= e2$1) step1 *= 2;
+  return stop < start ? -step1 : step1;
+}
+
+var sturges$1 = function(values) {
+  return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
+};
+
+var quantile$1 = function(values, p, valueof) {
+  if (valueof == null) valueof = number$3;
+  if (!(n = values.length)) return;
+  if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
+  if (p >= 1) return +valueof(values[n - 1], n - 1, values);
+  var n,
+      i = (n - 1) * p,
+      i0 = Math.floor(i),
+      value0 = +valueof(values[i0], i0, values),
+      value1 = +valueof(values[i0 + 1], i0 + 1, values);
+  return value0 + (value1 - value0) * (i - i0);
+};
+
+var merge$1 = function(arrays) {
+  var n = arrays.length,
+      m,
+      i = -1,
+      j = 0,
+      merged,
+      array;
+
+  while (++i < n) j += arrays[i].length;
+  merged = new Array(j);
+
+  while (--n >= 0) {
+    array = arrays[n];
+    m = array.length;
+    while (--m >= 0) {
+      merged[--j] = array[m];
+    }
+  }
+
+  return merged;
+};
+
+var min$1 = function(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      min;
+
+  if (valueof == null) {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        min = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = values[i]) != null && min > value) {
+            min = value;
+          }
+        }
+      }
+    }
+  }
+
+  else {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        min = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null && min > value) {
+            min = value;
+          }
+        }
+      }
+    }
+  }
+
+  return min;
+};
+
+function length$1(d) {
+  return d.length;
+}
+
 var clipMax = 1e9;
 var clipMin = -clipMax;
 
@@ -23017,7 +23423,7 @@ function clipExtent(x0, y0, x1, y1) {
     function polygonEnd() {
       var startInside = polygonInside(),
           cleanInside = clean && startInside,
-          visible = (segments = merge(segments)).length;
+          visible = (segments = merge$1(segments)).length;
       if (cleanInside || visible) {
         stream.polygonStart();
         if (cleanInside) {
@@ -23110,7 +23516,7 @@ var extent$1 = function() {
   };
 };
 
-var sum$1 = adder();
+var sum$2 = adder();
 
 var polygonContains = function(polygon, point) {
   var lambda = point[0],
@@ -23119,7 +23525,7 @@ var polygonContains = function(polygon, point) {
       angle = 0,
       winding = 0;
 
-  sum$1.reset();
+  sum$2.reset();
 
   for (var i = 0, n = polygon.length; i < n; ++i) {
     if (!(m = (ring = polygon[i]).length)) continue;
@@ -23143,7 +23549,7 @@ var polygonContains = function(polygon, point) {
           antimeridian = absDelta > pi,
           k = sinPhi0 * sinPhi1;
 
-      sum$1.add(atan2(k * sign$$1 * sin(absDelta), cosPhi0 * cosPhi1 + k * cos(absDelta)));
+      sum$2.add(atan2(k * sign$$1 * sin(absDelta), cosPhi0 * cosPhi1 + k * cos(absDelta)));
       angle += antimeridian ? delta + sign$$1 * tau : delta;
 
       // Are the longitudes either side of the point’s meridian (lambda),
@@ -23172,7 +23578,7 @@ var polygonContains = function(polygon, point) {
   // from the point to the South pole.  If it is zero, then the point is the
   // same side as the South pole.
 
-  return (angle < -epsilon || angle < epsilon && sum$1 < -epsilon) ^ (winding & 1);
+  return (angle < -epsilon || angle < epsilon && sum$2 < -epsilon) ^ (winding & 1);
 };
 
 var lengthSum = adder();
@@ -23218,7 +23624,7 @@ function lengthPoint(lambda, phi) {
   lambda0$2 = lambda, sinPhi0$1 = sinPhi, cosPhi0$1 = cosPhi;
 }
 
-var length$1 = function(object) {
+var length$2 = function(object) {
   lengthSum.reset();
   geoStream(object, lengthStream);
   return +lengthSum;
@@ -23230,7 +23636,7 @@ var object$1 = {type: "LineString", coordinates: coordinates};
 var distance = function(a, b) {
   coordinates[0] = a;
   coordinates[1] = b;
-  return length$1(object$1);
+  return length$2(object$1);
 };
 
 var containsObjectType = {
@@ -23315,12 +23721,12 @@ var contains = function(object, point) {
 };
 
 function graticuleX(y0, y1, dy) {
-  var y = range(y0, y1 - epsilon, dy).concat(y1);
+  var y = range$2(y0, y1 - epsilon, dy).concat(y1);
   return function(x) { return y.map(function(y) { return [x, y]; }); };
 }
 
 function graticuleY(x0, x1, dx) {
-  var x = range(x0, x1 - epsilon, dx).concat(x1);
+  var x = range$2(x0, x1 - epsilon, dx).concat(x1);
   return function(y) { return x.map(function(x) { return [x, y]; }); };
 }
 
@@ -23336,10 +23742,10 @@ function graticule() {
   }
 
   function lines() {
-    return range(ceil(X0 / DX) * DX, X1, DX).map(X)
-        .concat(range(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
-        .concat(range(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs(x % DX) > epsilon; }).map(x))
-        .concat(range(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs(y % DY) > epsilon; }).map(y));
+    return range$2(ceil(X0 / DX) * DX, X1, DX).map(X)
+        .concat(range$2(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
+        .concat(range$2(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs(x % DX) > epsilon; }).map(x))
+        .concat(range$2(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs(y % DY) > epsilon; }).map(y));
   }
 
   graticule.lines = function() {
@@ -23452,7 +23858,7 @@ var interpolate = function(a, b) {
   return interpolate;
 };
 
-var identity$5 = function(x) {
+var identity$6 = function(x) {
   return x;
 };
 
@@ -23525,8 +23931,6 @@ function boundsPoint$1(x, y) {
   if (y < y0$2) y0$2 = y;
   if (y > y1) y1 = y;
 }
-
-// TODO Enforce positive area for exterior, negative area for interior?
 
 var X0$1 = 0;
 var Y0$1 = 0;
@@ -23800,7 +24204,7 @@ var geoPath = function(projection, context) {
   };
 
   path.projection = function(_) {
-    return arguments.length ? (projectionStream = _ == null ? (projection = null, identity$5) : (projection = _).stream, path) : projection;
+    return arguments.length ? (projectionStream = _ == null ? (projection = null, identity$6) : (projection = _).stream, path) : projection;
   };
 
   path.context = function(_) {
@@ -23845,7 +24249,7 @@ var clip = function(pointVisible, clipLine, interpolate, start) {
         clip.point = point;
         clip.lineStart = lineStart;
         clip.lineEnd = lineEnd;
-        segments = merge(segments);
+        segments = merge$1(segments);
         var startInside = polygonContains(polygon, rotatedStart);
         if (segments.length) {
           if (!polygonStarted) sink.polygonStart(), polygonStarted = true;
@@ -24387,7 +24791,7 @@ function projectionMutator(projectAt) {
       dx, dy, lambda = 0, phi = 0, // center
       deltaLambda = 0, deltaPhi = 0, deltaGamma = 0, rotate, projectRotate, // rotate
       theta = null, preclip = clipAntimeridian, // clip angle
-      x0 = null, y0, x1, y1, postclip = identity$5, // clip extent
+      x0 = null, y0, x1, y1, postclip = identity$6, // clip extent
       delta2 = 0.5, projectResample = resample(projectTransform, delta2), // precision
       cache,
       cacheStream;
@@ -24415,7 +24819,7 @@ function projectionMutator(projectAt) {
   };
 
   projection.clipExtent = function(_) {
-    return arguments.length ? (postclip = _ == null ? (x0 = y0 = x1 = y1 = null, identity$5) : clipExtent(x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1]), reset()) : x0 == null ? null : [[x0, y0], [x1, y1]];
+    return arguments.length ? (postclip = _ == null ? (x0 = y0 = x1 = y1 = null, identity$6) : clipExtent(x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1]), reset()) : x0 == null ? null : [[x0, y0], [x1, y1]];
   };
 
   projection.scale = function(_) {
@@ -24529,8 +24933,6 @@ var albers = function() {
       .center([-0.6, 38.7]);
 };
 
-// The projections must have mutually exclusive clip regions on the sphere,
-// as this will avoid emitting interleaving lines and polygons.
 function multiplex(streams) {
   var n = streams.length;
   return {
@@ -24813,16 +25215,16 @@ var gnomonic = function() {
 };
 
 function scaleTranslate(kx, ky, tx, ty) {
-  return kx === 1 && ky === 1 && tx === 0 && ty === 0 ? identity$5 : transformer({
+  return kx === 1 && ky === 1 && tx === 0 && ty === 0 ? identity$6 : transformer({
     point: function(x, y) {
       this.stream.point(x * kx + tx, y * ky + ty);
     }
   });
 }
 
-var identity$6 = function() {
-  var k = 1, tx = 0, ty = 0, sx = 1, sy = 1, transform$$1 = identity$5, // scale, translate and reflect
-      x0 = null, y0, x1, y1, clip = identity$5, // clip extent
+var identity$7 = function() {
+  var k = 1, tx = 0, ty = 0, sx = 1, sy = 1, transform$$1 = identity$6, // scale, translate and reflect
+      x0 = null, y0, x1, y1, clip = identity$6, // clip extent
       cache,
       cacheStream,
       projection;
@@ -24837,7 +25239,7 @@ var identity$6 = function() {
       return cache && cacheStream === stream ? cache : cache = transform$$1(clip(cacheStream = stream));
     },
     clipExtent: function(_) {
-      return arguments.length ? (clip = _ == null ? (x0 = y0 = x1 = y1 = null, identity$5) : clipExtent(x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1]), reset()) : x0 == null ? null : [[x0, y0], [x1, y1]];
+      return arguments.length ? (clip = _ == null ? (x0 = y0 = x1 = y1 = null, identity$6) : clipExtent(x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1]), reset()) : x0 == null ? null : [[x0, y0], [x1, y1]];
     },
     scale: function(_) {
       return arguments.length ? (transform$$1 = scaleTranslate((k = +_) * sx, k * sy, tx, ty), reset()) : k;
@@ -24925,7 +25327,7 @@ var d3Geo = Object.freeze({
 	geoGraticule: graticule,
 	geoGraticule10: graticule10,
 	geoInterpolate: interpolate,
-	geoLength: length$1,
+	geoLength: length$2,
 	geoPath: geoPath,
 	geoAlbers: albers,
 	geoAlbersUsa: albersUsa,
@@ -24943,7 +25345,7 @@ var d3Geo = Object.freeze({
 	geoEquirectangularRaw: equirectangularRaw,
 	geoGnomonic: gnomonic,
 	geoGnomonicRaw: gnomonicRaw,
-	geoIdentity: identity$6,
+	geoIdentity: identity$7,
 	geoProjection: projection$1,
 	geoProjectionMutator: projectionMutator,
 	geoMercator: geoMercator,
@@ -24971,7 +25373,681 @@ function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
 
-var index$3 = createCommonjsModule(function (module) {
+function makeEmptyFunction$2(arg) {
+  return function () {
+    return arg;
+  };
+}
+
+/**
+ * This function accepts and discards inputs; it has no side effects. This is
+ * primarily useful idiomatically for overridable function endpoints which
+ * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+ */
+var emptyFunction$4 = function emptyFunction() {};
+
+emptyFunction$4.thatReturns = makeEmptyFunction$2;
+emptyFunction$4.thatReturnsFalse = makeEmptyFunction$2(false);
+emptyFunction$4.thatReturnsTrue = makeEmptyFunction$2(true);
+emptyFunction$4.thatReturnsNull = makeEmptyFunction$2(null);
+emptyFunction$4.thatReturnsThis = function () {
+  return this;
+};
+emptyFunction$4.thatReturnsArgument = function (arg) {
+  return arg;
+};
+
+var emptyFunction_1$4 = emptyFunction$4;
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+var validateFormat$2 = function validateFormat(format) {};
+
+{
+  validateFormat$2 = function validateFormat(format) {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  };
+}
+
+function invariant$6(condition, format, a, b, c, d, e, f) {
+  validateFormat$2(format);
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+}
+
+var invariant_1$4 = invariant$6;
+
+var warning$5 = emptyFunction_1$4;
+
+{
+  (function () {
+    var printWarning = function printWarning(format) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      var argIndex = 0;
+      var message = 'Warning: ' + format.replace(/%s/g, function () {
+        return args[argIndex++];
+      });
+      if (typeof console !== 'undefined') {
+        console.error(message);
+      }
+      try {
+        // --- Welcome to debugging React ---
+        // This error was thrown as a convenience so that you can use this stack
+        // to find the callsite that caused this warning to fire.
+        throw new Error(message);
+      } catch (x) {}
+    };
+
+    warning$5 = function warning(condition, format) {
+      if (format === undefined) {
+        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+      }
+
+      if (format.indexOf('Failed Composite propType: ') === 0) {
+        return; // Ignore CompositeComponent proptype check.
+      }
+
+      if (!condition) {
+        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+          args[_key2 - 2] = arguments[_key2];
+        }
+
+        printWarning.apply(undefined, [format].concat(args));
+      }
+    };
+  })();
+}
+
+var warning_1$4 = warning$5;
+
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+var ReactPropTypesSecret$8 = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+
+var ReactPropTypesSecret_1$8 = ReactPropTypesSecret$8;
+
+{
+  var invariant$7 = invariant_1$4;
+  var warning$6 = warning_1$4;
+  var ReactPropTypesSecret$9 = ReactPropTypesSecret_1$8;
+  var loggedTypeFailures$5 = {};
+}
+
+/**
+ * Assert that the values match with the type specs.
+ * Error messages are memorized and will only be shown once.
+ *
+ * @param {object} typeSpecs Map of name to a ReactPropType
+ * @param {object} values Runtime values that need to be type-checked
+ * @param {string} location e.g. "prop", "context", "child context"
+ * @param {string} componentName Name of the component for error messages.
+ * @param {?Function} getStack Returns the component stack.
+ * @private
+ */
+function checkPropTypes$4(typeSpecs, values, location, componentName, getStack) {
+  {
+    for (var typeSpecName in typeSpecs) {
+      if (typeSpecs.hasOwnProperty(typeSpecName)) {
+        var error;
+        // Prop type validation may throw. In case they do, we don't want to
+        // fail the render phase where it didn't fail before. So we log it.
+        // After these have been cleaned up, we'll let them throw.
+        try {
+          // This is intentionally an invariant that gets caught. It's the same
+          // behavior as without this statement except with a better message.
+          invariant$7(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
+          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret$9);
+        } catch (ex) {
+          error = ex;
+        }
+        warning$6(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error);
+        if (error instanceof Error && !(error.message in loggedTypeFailures$5)) {
+          // Only monitor this failure once because there tends to be a lot of the
+          // same error.
+          loggedTypeFailures$5[error.message] = true;
+
+          var stack = getStack ? getStack() : '';
+
+          warning$6(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+        }
+      }
+    }
+  }
+}
+
+var checkPropTypes_1$4 = checkPropTypes$4;
+
+var factoryWithTypeCheckers$4 = function(isValidElement, throwOnDirectAccess) {
+  /* global Symbol */
+  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+
+  /**
+   * Returns the iterator method function contained on the iterable object.
+   *
+   * Be sure to invoke the function with the iterable as context:
+   *
+   *     var iteratorFn = getIteratorFn(myIterable);
+   *     if (iteratorFn) {
+   *       var iterator = iteratorFn.call(myIterable);
+   *       ...
+   *     }
+   *
+   * @param {?object} maybeIterable
+   * @return {?function}
+   */
+  function getIteratorFn(maybeIterable) {
+    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+    if (typeof iteratorFn === 'function') {
+      return iteratorFn;
+    }
+  }
+
+  /**
+   * Collection of methods that allow declaration and validation of props that are
+   * supplied to React components. Example usage:
+   *
+   *   var Props = require('ReactPropTypes');
+   *   var MyArticle = React.createClass({
+   *     propTypes: {
+   *       // An optional string prop named "description".
+   *       description: Props.string,
+   *
+   *       // A required enum prop named "category".
+   *       category: Props.oneOf(['News','Photos']).isRequired,
+   *
+   *       // A prop named "dialog" that requires an instance of Dialog.
+   *       dialog: Props.instanceOf(Dialog).isRequired
+   *     },
+   *     render: function() { ... }
+   *   });
+   *
+   * A more formal specification of how these methods are used:
+   *
+   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
+   *   decl := ReactPropTypes.{type}(.isRequired)?
+   *
+   * Each and every declaration produces a function with the same signature. This
+   * allows the creation of custom validation functions. For example:
+   *
+   *  var MyLink = React.createClass({
+   *    propTypes: {
+   *      // An optional string or URI prop named "href".
+   *      href: function(props, propName, componentName) {
+   *        var propValue = props[propName];
+   *        if (propValue != null && typeof propValue !== 'string' &&
+   *            !(propValue instanceof URI)) {
+   *          return new Error(
+   *            'Expected a string or an URI for ' + propName + ' in ' +
+   *            componentName
+   *          );
+   *        }
+   *      }
+   *    },
+   *    render: function() {...}
+   *  });
+   *
+   * @internal
+   */
+
+  var ANONYMOUS = '<<anonymous>>';
+
+  // Important!
+  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+  var ReactPropTypes = {
+    array: createPrimitiveTypeChecker('array'),
+    bool: createPrimitiveTypeChecker('boolean'),
+    func: createPrimitiveTypeChecker('function'),
+    number: createPrimitiveTypeChecker('number'),
+    object: createPrimitiveTypeChecker('object'),
+    string: createPrimitiveTypeChecker('string'),
+    symbol: createPrimitiveTypeChecker('symbol'),
+
+    any: createAnyTypeChecker(),
+    arrayOf: createArrayOfTypeChecker,
+    element: createElementTypeChecker(),
+    instanceOf: createInstanceTypeChecker,
+    node: createNodeChecker(),
+    objectOf: createObjectOfTypeChecker,
+    oneOf: createEnumTypeChecker,
+    oneOfType: createUnionTypeChecker,
+    shape: createShapeTypeChecker
+  };
+
+  /**
+   * inlined Object.is polyfill to avoid requiring consumers ship their own
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+   */
+  /*eslint-disable no-self-compare*/
+  function is(x, y) {
+    // SameValue algorithm
+    if (x === y) {
+      // Steps 1-5, 7-10
+      // Steps 6.b-6.e: +0 != -0
+      return x !== 0 || 1 / x === 1 / y;
+    } else {
+      // Step 6.a: NaN == NaN
+      return x !== x && y !== y;
+    }
+  }
+  /*eslint-enable no-self-compare*/
+
+  /**
+   * We use an Error-like object for backward compatibility as people may call
+   * PropTypes directly and inspect their output. However, we don't use real
+   * Errors anymore. We don't inspect their stack anyway, and creating them
+   * is prohibitively expensive if they are created too often, such as what
+   * happens in oneOfType() for any type before the one that matched.
+   */
+  function PropTypeError(message) {
+    this.message = message;
+    this.stack = '';
+  }
+  // Make `instanceof Error` still work for returned errors.
+  PropTypeError.prototype = Error.prototype;
+
+  function createChainableTypeChecker(validate) {
+    {
+      var manualPropTypeCallCache = {};
+      var manualPropTypeWarningCount = 0;
+    }
+    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
+      componentName = componentName || ANONYMOUS;
+      propFullName = propFullName || propName;
+
+      if (secret !== ReactPropTypesSecret_1$8) {
+        if (throwOnDirectAccess) {
+          // New behavior only for users of `prop-types` package
+          invariant_1$4(
+            false,
+            'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+            'Use `PropTypes.checkPropTypes()` to call them. ' +
+            'Read more at http://fb.me/use-check-prop-types'
+          );
+        } else if ("development" !== 'production' && typeof console !== 'undefined') {
+          // Old behavior for people using React.PropTypes
+          var cacheKey = componentName + ':' + propName;
+          if (
+            !manualPropTypeCallCache[cacheKey] &&
+            // Avoid spamming the console because they are often not actionable except for lib authors
+            manualPropTypeWarningCount < 3
+          ) {
+            warning_1$4(
+              false,
+              'You are manually calling a React.PropTypes validation ' +
+              'function for the `%s` prop on `%s`. This is deprecated ' +
+              'and will throw in the standalone `prop-types` package. ' +
+              'You may be seeing this warning due to a third-party PropTypes ' +
+              'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.',
+              propFullName,
+              componentName
+            );
+            manualPropTypeCallCache[cacheKey] = true;
+            manualPropTypeWarningCount++;
+          }
+        }
+      }
+      if (props[propName] == null) {
+        if (isRequired) {
+          if (props[propName] === null) {
+            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
+          }
+          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
+        }
+        return null;
+      } else {
+        return validate(props, propName, componentName, location, propFullName);
+      }
+    }
+
+    var chainedCheckType = checkType.bind(null, false);
+    chainedCheckType.isRequired = checkType.bind(null, true);
+
+    return chainedCheckType;
+  }
+
+  function createPrimitiveTypeChecker(expectedType) {
+    function validate(props, propName, componentName, location, propFullName, secret) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== expectedType) {
+        // `propValue` being instance of, say, date/regexp, pass the 'object'
+        // check, but we can offer a more precise error message here rather than
+        // 'of type `object`'.
+        var preciseType = getPreciseType(propValue);
+
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createAnyTypeChecker() {
+    return createChainableTypeChecker(emptyFunction_1$4.thatReturnsNull);
+  }
+
+  function createArrayOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
+      }
+      var propValue = props[propName];
+      if (!Array.isArray(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
+      }
+      for (var i = 0; i < propValue.length; i++) {
+        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret_1$8);
+        if (error instanceof Error) {
+          return error;
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      if (!isValidElement(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createInstanceTypeChecker(expectedClass) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!(props[propName] instanceof expectedClass)) {
+        var expectedClassName = expectedClass.name || ANONYMOUS;
+        var actualClassName = getClassName(props[propName]);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createEnumTypeChecker(expectedValues) {
+    if (!Array.isArray(expectedValues)) {
+      warning_1$4(false, 'Invalid argument supplied to oneOf, expected an instance of array.');
+      return emptyFunction_1$4.thatReturnsNull;
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      for (var i = 0; i < expectedValues.length; i++) {
+        if (is(propValue, expectedValues[i])) {
+          return null;
+        }
+      }
+
+      var valuesString = JSON.stringify(expectedValues);
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + propValue + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createObjectOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
+      }
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
+      }
+      for (var key in propValue) {
+        if (propValue.hasOwnProperty(key)) {
+          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1$8);
+          if (error instanceof Error) {
+            return error;
+          }
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createUnionTypeChecker(arrayOfTypeCheckers) {
+    if (!Array.isArray(arrayOfTypeCheckers)) {
+      warning_1$4(false, 'Invalid argument supplied to oneOfType, expected an instance of array.');
+      return emptyFunction_1$4.thatReturnsNull;
+    }
+
+    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+      var checker = arrayOfTypeCheckers[i];
+      if (typeof checker !== 'function') {
+        warning_1$4(
+          false,
+          'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' +
+          'received %s at index %s.',
+          getPostfixForTypeWarning(checker),
+          i
+        );
+        return emptyFunction_1$4.thatReturnsNull;
+      }
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+        var checker = arrayOfTypeCheckers[i];
+        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret_1$8) == null) {
+          return null;
+        }
+      }
+
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createNodeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!isNode(props[propName])) {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      for (var key in shapeTypes) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          continue;
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1$8);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function isNode(propValue) {
+    switch (typeof propValue) {
+      case 'number':
+      case 'string':
+      case 'undefined':
+        return true;
+      case 'boolean':
+        return !propValue;
+      case 'object':
+        if (Array.isArray(propValue)) {
+          return propValue.every(isNode);
+        }
+        if (propValue === null || isValidElement(propValue)) {
+          return true;
+        }
+
+        var iteratorFn = getIteratorFn(propValue);
+        if (iteratorFn) {
+          var iterator = iteratorFn.call(propValue);
+          var step;
+          if (iteratorFn !== propValue.entries) {
+            while (!(step = iterator.next()).done) {
+              if (!isNode(step.value)) {
+                return false;
+              }
+            }
+          } else {
+            // Iterator will provide entry [k,v] tuples rather than values.
+            while (!(step = iterator.next()).done) {
+              var entry = step.value;
+              if (entry) {
+                if (!isNode(entry[1])) {
+                  return false;
+                }
+              }
+            }
+          }
+        } else {
+          return false;
+        }
+
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  function isSymbol(propType, propValue) {
+    // Native Symbol.
+    if (propType === 'symbol') {
+      return true;
+    }
+
+    // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+    if (propValue['@@toStringTag'] === 'Symbol') {
+      return true;
+    }
+
+    // Fallback for non-spec compliant Symbols which are polyfilled.
+    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Equivalent of `typeof` but with special handling for array and regexp.
+  function getPropType(propValue) {
+    var propType = typeof propValue;
+    if (Array.isArray(propValue)) {
+      return 'array';
+    }
+    if (propValue instanceof RegExp) {
+      // Old webkits (at least until Android 4.0) return 'function' rather than
+      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
+      // passes PropTypes.object.
+      return 'object';
+    }
+    if (isSymbol(propType, propValue)) {
+      return 'symbol';
+    }
+    return propType;
+  }
+
+  // This handles more types than `getPropType`. Only used for error messages.
+  // See `createPrimitiveTypeChecker`.
+  function getPreciseType(propValue) {
+    if (typeof propValue === 'undefined' || propValue === null) {
+      return '' + propValue;
+    }
+    var propType = getPropType(propValue);
+    if (propType === 'object') {
+      if (propValue instanceof Date) {
+        return 'date';
+      } else if (propValue instanceof RegExp) {
+        return 'regexp';
+      }
+    }
+    return propType;
+  }
+
+  // Returns a string that is postfixed to a warning about an invalid type.
+  // For example, "undefined" or "of type array"
+  function getPostfixForTypeWarning(value) {
+    var type = getPreciseType(value);
+    switch (type) {
+      case 'array':
+      case 'object':
+        return 'an ' + type;
+      case 'boolean':
+      case 'date':
+      case 'regexp':
+        return 'a ' + type;
+      default:
+        return type;
+    }
+  }
+
+  // Returns class name of the object, if any.
+  function getClassName(propValue) {
+    if (!propValue.constructor || !propValue.constructor.name) {
+      return ANONYMOUS;
+    }
+    return propValue.constructor.name;
+  }
+
+  ReactPropTypes.checkPropTypes = checkPropTypes_1$4;
+  ReactPropTypes.PropTypes = ReactPropTypes;
+
+  return ReactPropTypes;
+};
+
+var index$5 = createCommonjsModule(function (module) {
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -24996,24 +26072,10 @@ var index$3 = createCommonjsModule(function (module) {
   // By explicitly using `prop-types` you are opting into new development behavior.
   // http://fb.me/prop-types-in-prod
   var throwOnDirectAccess = true;
-  module.exports = factoryWithTypeCheckers(isValidElement, throwOnDirectAccess);
+  module.exports = factoryWithTypeCheckers$4(isValidElement, throwOnDirectAccess);
 }
 });
 
-/* @flow */
-
-/**
- * [Simple linear regression](http://en.wikipedia.org/wiki/Simple_linear_regression)
- * is a simple way to find a fitted line
- * between a set of coordinates. This algorithm finds the slope and y-intercept of a regression line
- * using the least sum of squares.
- *
- * @param {Array<Array<number>>} data an array of two-element of arrays,
- * like `[[0, 1], [2, 3]]`
- * @returns {Object} object containing slope and intersect of regression line
- * @example
- * linearRegression([[0, 0], [1, 1]]); // => { m: 1, b: 0 }
- */
 function linearRegression(data/*: Array<Array<number>> */)/*: { m: number, b: number } */ {
 
     var m, b;
@@ -25072,25 +26134,6 @@ function linearRegression(data/*: Array<Array<number>> */)/*: { m: number, b: nu
 
 var linear_regression = linearRegression;
 
-/* @flow */
-
-/**
- * Given the output of `linearRegression`: an object
- * with `m` and `b` values indicating slope and intercept,
- * respectively, generate a line function that translates
- * x values into y values.
- *
- * @param {Object} mb object with `m` and `b` members, representing
- * slope and intersect of desired line
- * @returns {Function} method that computes y-value at any given
- * x-value on the line.
- * @example
- * var l = linearRegressionLine(linearRegression([[0, 0], [1, 1]]));
- * l(0) // = 0
- * l(2) // = 2
- * linearRegressionLine({ b: 0, m: 1 })(1); // => 1
- * linearRegressionLine({ b: 1, m: 1 })(1); // => 2
- */
 function linearRegressionLine(mb/*: { b: number, m: number }*/)/*: Function */ {
     // Return a function that computes a `y` value for each
     // x value it is given, based on the values of `b` and `a`
@@ -25102,27 +26145,7 @@ function linearRegressionLine(mb/*: { b: number, m: number }*/)/*: Function */ {
 
 var linear_regression_line = linearRegressionLine;
 
-/* @flow */
-
-/**
- * Our default sum is the [Kahan-Babuska algorithm](https://pdfs.semanticscholar.org/1760/7d467cda1d0277ad272deb2113533131dc09.pdf).
- * This method is an improvement over the classical
- * [Kahan summation algorithm](https://en.wikipedia.org/wiki/Kahan_summation_algorithm).
- * It aims at computing the sum of a list of numbers while correcting for
- * floating-point errors. Traditionally, sums are calculated as many
- * successive additions, each one with its own floating-point roundoff. These
- * losses in precision add up as the number of numbers increases. This alternative
- * algorithm is more accurate than the simple way of calculating sums by simple
- * addition.
- *
- * This runs on `O(n)`, linear time in respect to the array.
- *
- * @param {Array<number>} x input
- * @return {number} sum of all input numbers
- * @example
- * sum([1, 2, 3]); // => 6
- */
-function sum$2(x/*: Array<number> */)/*: number */ {
+function sum$3(x/*: Array<number> */)/*: number */ {
 
     // If the array is empty, we needn't bother computing its sum
     if (x.length === 0) {
@@ -25156,27 +26179,9 @@ function sum$2(x/*: Array<number> */)/*: number */ {
     return sum + correction;
 }
 
-var sum_1 = sum$2;
+var sum_1 = sum$3;
 
-/* @flow */
-
-
-
-/**
- * The mean, _also known as average_,
- * is the sum of all values over the number of values.
- * This is a [measure of central tendency](https://en.wikipedia.org/wiki/Central_tendency):
- * a method of finding a typical or central value of a set of numbers.
- *
- * This runs on `O(n)`, linear time in respect to the array
- *
- * @param {Array<number>} x sample of one or more data points
- * @throws {Error} if the the length of x is less than one
- * @returns {number} mean
- * @example
- * mean([0, 10]); // => 5
- */
-function mean$1(x /*: Array<number> */)/*:number*/ {
+function mean$2(x /*: Array<number> */)/*:number*/ {
     // The mean of no numbers is null
     if (x.length === 0) {
         throw new Error('mean requires at least one data point');
@@ -25185,26 +26190,8 @@ function mean$1(x /*: Array<number> */)/*:number*/ {
     return sum_1(x) / x.length;
 }
 
-var mean_1 = mean$1;
+var mean_1 = mean$2;
 
-/* @flow */
-
-
-
-/**
- * The sum of deviations to the Nth power.
- * When n=2 it's the sum of squared deviations.
- * When n=3 it's the sum of cubed deviations.
- *
- * @param {Array<number>} x
- * @param {number} n power
- * @returns {number} sum of nth power deviations
- * @example
- * var input = [1, 2, 3];
- * // since the variance of a set is the mean squared
- * // deviations, we can calculate that with sumNthPowerDeviations:
- * var variance = sumNthPowerDeviations(input) / input.length;
- */
 function sumNthPowerDeviations(x/*: Array<number> */, n/*: number */)/*:number*/ {
     var meanValue = mean_1(x),
         sum = 0,
@@ -25230,25 +26217,7 @@ function sumNthPowerDeviations(x/*: Array<number> */, n/*: number */)/*:number*/
 
 var sum_nth_power_deviations = sumNthPowerDeviations;
 
-/* @flow */
-
-
-
-/**
- * The [variance](http://en.wikipedia.org/wiki/Variance)
- * is the sum of squared deviations from the mean.
- *
- * This is an implementation of variance, not sample variance:
- * see the `sampleVariance` method if you want a sample measure.
- *
- * @param {Array<number>} x a population of one or more data points
- * @returns {number} variance: a value greater than or equal to zero.
- * zero indicates that all values are identical.
- * @throws {Error} if x's length is 0
- * @example
- * variance([1, 2, 3, 4, 5, 6]); // => 2.9166666666666665
- */
-function variance$1(x/*: Array<number> */)/*:number*/ {
+function variance$2(x/*: Array<number> */)/*:number*/ {
     // The variance of no numbers is null
     if (x.length === 0) {
         throw new Error('variance requires at least one data point');
@@ -25259,28 +26228,8 @@ function variance$1(x/*: Array<number> */)/*:number*/ {
     return sum_nth_power_deviations(x, 2) / x.length;
 }
 
-var variance_1 = variance$1;
+var variance_1 = variance$2;
 
-/* @flow */
-
-
-
-/**
- * The [standard deviation](http://en.wikipedia.org/wiki/Standard_deviation)
- * is the square root of the variance. This is also known as the population
- * standard deviation. It's useful for measuring the amount
- * of variation or dispersion in a set of values.
- *
- * Standard deviation is only appropriate for full-population knowledge: for
- * samples of a population, {@link sampleStandardDeviation} is
- * more appropriate.
- *
- * @param {Array<number>} x input
- * @returns {number} standard deviation
- * @example
- * variance([2, 4, 4, 4, 5, 5, 7, 9]); // => 4
- * standardDeviation([2, 4, 4, 4, 5, 5, 7, 9]); // => 2
- */
 function standardDeviation(x /*: Array<number> */)/*:number*/ {
     if (x.length === 1) {
         return 0;
@@ -25291,22 +26240,6 @@ function standardDeviation(x /*: Array<number> */)/*:number*/ {
 
 var standard_deviation = standardDeviation;
 
-/* @flow */
-
-/**
- * The [R Squared](http://en.wikipedia.org/wiki/Coefficient_of_determination)
- * value of data compared with a function `f`
- * is the sum of the squared differences between the prediction
- * and the actual value.
- *
- * @param {Array<Array<number>>} x input data: this should be doubly-nested
- * @param {Function} func function called on `[i][0]` values within the dataset
- * @returns {number} r-squared value
- * @example
- * var samples = [[0, 0], [1, 1]];
- * var regressionLine = linearRegressionLine(linearRegression(samples));
- * rSquared(samples, regressionLine); // = 1 this line is a perfect fit
- */
 function rSquared(x /*: Array<Array<number>> */, func /*: Function */) /*: number */ {
     if (x.length < 2) { return 1; }
 
@@ -25343,25 +26276,6 @@ function rSquared(x /*: Array<Array<number>> */, func /*: Function */) /*: numbe
 
 var r_squared = rSquared;
 
-/* @flow */
-
-/**
- * Sort an array of numbers by their numeric value, ensuring that the
- * array is not changed in place.
- *
- * This is necessary because the default behavior of .sort
- * in JavaScript is to sort arrays as string values
- *
- *     [1, 10, 12, 102, 20].sort()
- *     // output
- *     [1, 10, 102, 12, 20]
- *
- * @param {Array<number>} x input array
- * @return {Array<number>} sorted array
- * @private
- * @example
- * numericSort([3, 2, 1]) // => [1, 2, 3]
- */
 function numericSort(x /*: Array<number> */) /*: Array<number> */ {
     return x
         // ensure the array is not changed in-place
@@ -25374,24 +26288,6 @@ function numericSort(x /*: Array<number> */) /*: Array<number> */ {
 
 var numeric_sort = numericSort;
 
-/* @flow */
-
-/**
- * The [mode](http://bit.ly/W5K4Yt) is the number that appears in a list the highest number of times.
- * There can be multiple modes in a list: in the event of a tie, this
- * algorithm will return the most recently seen mode.
- *
- * This is a [measure of central tendency](https://en.wikipedia.org/wiki/Central_tendency):
- * a method of finding a typical or central value of a set of numbers.
- *
- * This runs in `O(n)` because the input is sorted.
- *
- * @param {Array<number>} sorted a sample of one or more data points
- * @returns {number} mode
- * @throws {Error} if sorted is empty
- * @example
- * modeSorted([0, 0, 1]); // => 0
- */
 function modeSorted(sorted /*: Array<number> */)/*:number*/ {
 
     // Handle edge cases:
@@ -25438,26 +26334,6 @@ function modeSorted(sorted /*: Array<number> */)/*:number*/ {
 
 var mode_sorted = modeSorted;
 
-/* @flow */
-
-
-
-/**
- * The [mode](http://bit.ly/W5K4Yt) is the number that appears in a list the highest number of times.
- * There can be multiple modes in a list: in the event of a tie, this
- * algorithm will return the most recently seen mode.
- *
- * This is a [measure of central tendency](https://en.wikipedia.org/wiki/Central_tendency):
- * a method of finding a typical or central value of a set of numbers.
- *
- * This runs on `O(nlog(n))` because it needs to sort the array internally
- * before running an `O(n)` search to find the mode.
- *
- * @param {Array<number>} x input
- * @returns {number} mode
- * @example
- * mode([0, 0, 1]); // => 0
- */
 function mode(x /*: Array<number> */)/*:number*/ {
     // Sorting the array lets us iterate through it below and be sure
     // that every time we see a new number it's new and we'll never
@@ -25467,31 +26343,6 @@ function mode(x /*: Array<number> */)/*:number*/ {
 
 var mode_1 = mode;
 
-/* @flow */
-/* globals Map: false */
-
-/**
- * The [mode](http://bit.ly/W5K4Yt) is the number that appears in a list the highest number of times.
- * There can be multiple modes in a list: in the event of a tie, this
- * algorithm will return the most recently seen mode.
- *
- * modeFast uses a Map object to keep track of the mode, instead of the approach
- * used with `mode`, a sorted array. As a result, it is faster
- * than `mode` and supports any data type that can be compared with `==`.
- * It also requires a
- * [JavaScript environment with support for Map](https://kangax.github.io/compat-table/es6/#test-Map),
- * and will throw an error if Map is not available.
- *
- * This is a [measure of central tendency](https://en.wikipedia.org/wiki/Central_tendency):
- * a method of finding a typical or central value of a set of numbers.
- *
- * @param {Array<*>} x a sample of one or more data points
- * @returns {?*} mode
- * @throws {ReferenceError} if the JavaScript environment doesn't support Map
- * @throws {Error} if x is empty
- * @example
- * modeFast(['rabbits', 'rabbits', 'squirrels']); // => 'rabbits'
- */
 function modeFast/*::<T>*/(x /*: Array<T> */)/*: ?T */ {
 
     // This index will reflect the incidence of different values, indexing
@@ -25526,18 +26377,7 @@ function modeFast/*::<T>*/(x /*: Array<T> */)/*: ?T */ {
 
 var mode_fast = modeFast;
 
-/* @flow */
-
-/**
- * The min is the lowest number in the array. This runs on `O(n)`, linear time in respect to the array
- *
- * @param {Array<number>} x sample of one or more data points
- * @throws {Error} if the the length of x is less than one
- * @returns {number} minimum value
- * @example
- * min([1, 5, -10, 100, 2]); // => -10
- */
-function min$1(x /*: Array<number> */)/*:number*/ {
+function min$2(x /*: Array<number> */)/*:number*/ {
 
     if (x.length === 0) {
         throw new Error('min requires at least one data point');
@@ -25554,23 +26394,9 @@ function min$1(x /*: Array<number> */)/*:number*/ {
     return value;
 }
 
-var min_1 = min$1;
+var min_1 = min$2;
 
-/* @flow */
-
-/**
- * This computes the maximum number in an array.
- *
- * This runs on `O(n)`, linear time in respect to the array
- *
- * @param {Array<number>} x sample of one or more data points
- * @returns {number} maximum value
- * @throws {Error} if the the length of x is less than one
- * @example
- * max([1, 2, 3, 4]);
- * // => 4
- */
-function max$1(x /*: Array<number> */) /*:number*/ {
+function max$2(x /*: Array<number> */) /*:number*/ {
 
     if (x.length === 0) {
         throw new Error('max requires at least one data point');
@@ -25587,57 +26413,20 @@ function max$1(x /*: Array<number> */) /*:number*/ {
     return value;
 }
 
-var max_1 = max$1;
+var max_1 = max$2;
 
-/* @flow */
-
-/**
- * The minimum is the lowest number in the array. With a sorted array,
- * the first element in the array is always the smallest, so this calculation
- * can be done in one step, or constant time.
- *
- * @param {Array<number>} x input
- * @returns {number} minimum value
- * @example
- * minSorted([-100, -10, 1, 2, 5]); // => -100
- */
 function minSorted(x /*: Array<number> */)/*:number*/ {
     return x[0];
 }
 
 var min_sorted = minSorted;
 
-/* @flow */
-
-/**
- * The maximum is the highest number in the array. With a sorted array,
- * the last element in the array is always the largest, so this calculation
- * can be done in one step, or constant time.
- *
- * @param {Array<number>} x input
- * @returns {number} maximum value
- * @example
- * maxSorted([-100, -10, 1, 2, 5]); // => 5
- */
 function maxSorted(x /*: Array<number> */)/*:number*/ {
     return x[x.length - 1];
 }
 
 var max_sorted = maxSorted;
 
-/* @flow */
-
-/**
- * The simple [sum](https://en.wikipedia.org/wiki/Summation) of an array
- * is the result of adding all numbers together, starting from zero.
- *
- * This runs on `O(n)`, linear time in respect to the array
- *
- * @param {Array<number>} x input
- * @return {number} sum of all input numbers
- * @example
- * sumSimple([1, 2, 3]); // => 6
- */
 function sumSimple(x/*: Array<number> */)/*: number */ {
     var value = 0;
     for (var i = 0; i < x.length; i++) {
@@ -25648,19 +26437,6 @@ function sumSimple(x/*: Array<number> */)/*: number */ {
 
 var sum_simple = sumSimple;
 
-/* @flow */
-
-/**
- * The [product](https://en.wikipedia.org/wiki/Product_(mathematics)) of an array
- * is the result of multiplying all numbers together, starting using one as the multiplicative identity.
- *
- * This runs on `O(n)`, linear time in respect to the array
- *
- * @param {Array<number>} x input
- * @return {number} product of all input numbers
- * @example
- * product([1, 2, 3, 4]); // => 24
- */
 function product(x/*: Array<number> */)/*: number */ {
     var value = 1;
     for (var i = 0; i < x.length; i++) {
@@ -25671,21 +26447,6 @@ function product(x/*: Array<number> */)/*: number */ {
 
 var product_1 = product;
 
-/* @flow */
-
-/**
- * This is the internal implementation of quantiles: when you know
- * that the order is sorted, you don't need to re-sort it, and the computations
- * are faster.
- *
- * @param {Array<number>} x sample of one or more data points
- * @param {number} p desired quantile: a number between 0 to 1, inclusive
- * @returns {number} quantile value
- * @throws {Error} if p ix outside of the range from 0 to 1
- * @throws {Error} if x is empty
- * @example
- * quantileSorted([3, 6, 7, 8, 8, 9, 10, 13, 15, 16, 20], 0.5); // => 9
- */
 function quantileSorted(x /*: Array<number> */, p /*: number */)/*:number*/ {
     var idx = x.length * p;
     if (x.length === 0) {
@@ -25713,8 +26474,6 @@ function quantileSorted(x /*: Array<number> */, p /*: number */)/*:number*/ {
 }
 
 var quantile_sorted = quantileSorted;
-
-/* @flow */
 
 var quickselect_1 = quickselect;
 
@@ -25785,33 +26544,7 @@ function swap(arr, i, j) {
     arr[j] = tmp;
 }
 
-/* @flow */
-
-
-
-
-/**
- * The [quantile](https://en.wikipedia.org/wiki/Quantile):
- * this is a population quantile, since we assume to know the entire
- * dataset in this library. This is an implementation of the
- * [Quantiles of a Population](http://en.wikipedia.org/wiki/Quantile#Quantiles_of_a_population)
- * algorithm from wikipedia.
- *
- * Sample is a one-dimensional array of numbers,
- * and p is either a decimal number from 0 to 1 or an array of decimal
- * numbers from 0 to 1.
- * In terms of a k/q quantile, p = k/q - it's just dealing with fractions or dealing
- * with decimal values.
- * When p is an array, the result of the function is also an array containing the appropriate
- * quantiles in input order
- *
- * @param {Array<number>} x sample of one or more numbers
- * @param {number} p the desired quantile, as a number between 0 and 1
- * @returns {number} quantile
- * @example
- * quantile([3, 6, 7, 8, 8, 9, 10, 13, 15, 16, 20], 0.5); // => 9
- */
-function quantile$1(x /*: Array<number> */, p /*: Array<number> | number */) {
+function quantile$2(x /*: Array<number> */, p /*: Array<number> | number */) {
     var copy = x.slice();
 
     if (Array.isArray(p)) {
@@ -25890,24 +26623,8 @@ function quantileIndex(len /*: number */, p /*: number */)/*:number*/ {
     }
 }
 
-var quantile_1 = quantile$1;
+var quantile_1 = quantile$2;
 
-/* @flow */
-
-
-
-/**
- * The [Interquartile range](http://en.wikipedia.org/wiki/Interquartile_range) is
- * a measure of statistical dispersion, or how scattered, spread, or
- * concentrated a distribution is. It's computed as the difference between
- * the third quartile and first quartile.
- *
- * @param {Array<number>} x sample of one or more numbers
- * @returns {number} interquartile range: the span between lower and upper quartile,
- * 0.25 and 0.75
- * @example
- * interquartileRange([0, 1, 2, 3]); // => 2
- */
 function interquartileRange(x/*: Array<number> */) {
     // Interquartile range is the span between the upper quartile,
     // at `0.75`, and lower quartile, `0.25`
@@ -25921,46 +26638,12 @@ function interquartileRange(x/*: Array<number> */) {
 
 var interquartile_range = interquartileRange;
 
-/* @flow */
-
-
-
-/**
- * The [median](http://en.wikipedia.org/wiki/Median) is
- * the middle number of a list. This is often a good indicator of 'the middle'
- * when there are outliers that skew the `mean()` value.
- * This is a [measure of central tendency](https://en.wikipedia.org/wiki/Central_tendency):
- * a method of finding a typical or central value of a set of numbers.
- *
- * The median isn't necessarily one of the elements in the list: the value
- * can be the average of two elements if the list has an even length
- * and the two central values are different.
- *
- * @param {Array<number>} x input
- * @returns {number} median value
- * @example
- * median([10, 2, 5, 100, 2, 1]); // => 3.5
- */
-function median$1(x /*: Array<number> */)/*:number*/ {
+function median$2(x /*: Array<number> */)/*:number*/ {
     return +quantile_1(x, 0.5);
 }
 
-var median_1 = median$1;
+var median_1 = median$2;
 
-/* @flow */
-
-
-
-/**
- * The [Median Absolute Deviation](http://en.wikipedia.org/wiki/Median_absolute_deviation) is
- * a robust measure of statistical
- * dispersion. It is more resilient to outliers than the standard deviation.
- *
- * @param {Array<number>} x input array
- * @returns {number} median absolute deviation
- * @example
- * medianAbsoluteDeviation([1, 1, 2, 2, 4, 6, 9]); // => 1
- */
 function medianAbsoluteDeviation(x /*: Array<number> */) {
     // The mad of nothing is null
     var medianValue = median_1(x),
@@ -25977,25 +26660,6 @@ function medianAbsoluteDeviation(x /*: Array<number> */) {
 
 var median_absolute_deviation = medianAbsoluteDeviation;
 
-/* @flow */
-
-/**
- * Split an array into chunks of a specified size. This function
- * has the same behavior as [PHP's array_chunk](http://php.net/manual/en/function.array-chunk.php)
- * function, and thus will insert smaller-sized chunks at the end if
- * the input size is not divisible by the chunk size.
- *
- * `x` is expected to be an array, and `chunkSize` a number.
- * The `x` array can contain any kind of data.
- *
- * @param {Array} x a sample
- * @param {number} chunkSize size of each output array. must be a positive integer
- * @returns {Array<Array>} a chunked array
- * @throws {Error} if chunk size is less than 1 or not an integer
- * @example
- * chunk([1, 2, 3, 4, 5, 6], 2);
- * // => [[1, 2], [3, 4], [5, 6]]
- */
 function chunk(x/*:Array<any>*/, chunkSize/*:number*/)/*:?Array<Array<any>>*/ {
 
     // a list of result chunks, as arrays in an array
@@ -26027,21 +26691,6 @@ function chunk(x/*:Array<any>*/, chunkSize/*:number*/)/*:?Array<Array<any>>*/ {
 
 var chunk_1 = chunk;
 
-/* @flow */
-
-/**
- * Sampling with replacement is a type of sampling that allows the same
- * item to be picked out of a population more than once.
- *
- * @param {Array<*>} x an array of any kind of value
- * @param {number} n count of how many elements to take
- * @param {Function} [randomSource=Math.random] an optional entropy source that
- * returns numbers between 0 inclusive and 1 exclusive: the range [0, 1)
- * @return {Array} n sampled items from the population
- * @example
- * var sample = sampleWithReplacement([1, 2, 3, 4], 2);
- * sampleWithReplacement; // = [2, 4] or any other random sample of 2 items
- */
 function sampleWithReplacement/*::<T>*/(x/*:Array<T>*/,
     n /*: number */,
     randomSource/*:Function*/) {
@@ -26069,25 +26718,6 @@ function sampleWithReplacement/*::<T>*/(x/*:Array<T>*/,
 
 var sample_with_replacement = sampleWithReplacement;
 
-/* @flow */
-
-/**
- * A [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle)
- * in-place - which means that it **will change the order of the original
- * array by reference**.
- *
- * This is an algorithm that generates a random [permutation](https://en.wikipedia.org/wiki/Permutation)
- * of a set.
- *
- * @param {Array} x sample of one or more numbers
- * @param {Function} [randomSource=Math.random] an optional entropy source that
- * returns numbers between 0 inclusive and 1 exclusive: the range [0, 1)
- * @returns {Array} x
- * @example
- * var x = [1, 2, 3, 4];
- * shuffleInPlace(x);
- * // x is shuffled to a value like [2, 1, 4, 3]
- */
 function shuffleInPlace(x/*:Array<any>*/, randomSource/*:Function*/)/*:Array<any>*/ {
 
     // a custom random number source can be provided if you want to use
@@ -26125,25 +26755,7 @@ function shuffleInPlace(x/*:Array<any>*/, randomSource/*:Function*/)/*:Array<any
 
 var shuffle_in_place = shuffleInPlace;
 
-/* @flow */
-
-
-
-/**
- * A [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle)
- * is a fast way to create a random permutation of a finite set. This is
- * a function around `shuffle_in_place` that adds the guarantee that
- * it will not modify its input.
- *
- * @param {Array} x sample of 0 or more numbers
- * @param {Function} [randomSource=Math.random] an optional entropy source that
- * returns numbers between 0 inclusive and 1 exclusive: the range [0, 1)
- * @return {Array} shuffled version of input
- * @example
- * var shuffled = shuffle([1, 2, 3, 4]);
- * shuffled; // = [2, 3, 1, 4] or any other random permutation
- */
-function shuffle$1/*::<T>*/(x/*:Array<T>*/, randomSource/*:Function*/) {
+function shuffle$2/*::<T>*/(x/*:Array<T>*/, randomSource/*:Function*/) {
     // slice the original array so that it is not modified
     var sample = x.slice();
 
@@ -26151,28 +26763,8 @@ function shuffle$1/*::<T>*/(x/*:Array<T>*/, randomSource/*:Function*/) {
     return shuffle_in_place(sample.slice(), randomSource);
 }
 
-var shuffle_1 = shuffle$1;
+var shuffle_1 = shuffle$2;
 
-/* @flow */
-
-
-
-/**
- * Create a [simple random sample](http://en.wikipedia.org/wiki/Simple_random_sample)
- * from a given array of `n` elements.
- *
- * The sampled values will be in any order, not necessarily the order
- * they appear in the input.
- *
- * @param {Array<any>} x input array. can contain any type
- * @param {number} n count of how many elements to take
- * @param {Function} [randomSource=Math.random] an optional entropy source that
- * returns numbers between 0 inclusive and 1 exclusive: the range [0, 1)
- * @return {Array} subset of n elements in original array
- * @example
- * var values = [1, 2, 4, 5, 6, 7, 8, 9];
- * sample(values, 3); // returns 3 random values, like [2, 5, 8];
- */
 function sample/*:: <T> */(
     x /*: Array<T> */,
     n /*: number */,
@@ -26186,22 +26778,6 @@ function sample/*:: <T> */(
 
 var sample_1 = sample;
 
-/* @flow */
-
-/**
- * For a sorted input, counting the number of unique values
- * is possible in constant time and constant memory. This is
- * a simple implementation of the algorithm.
- *
- * Values are compared with `===`, so objects and non-primitive objects
- * are not handled in any special way.
- *
- * @param {Array<*>} x an array of any kind of value
- * @returns {number} count of unique values
- * @example
- * uniqueCountSorted([1, 2, 3]); // => 3
- * uniqueCountSorted([1, 1, 1]); // => 1
- */
 function uniqueCountSorted(x/*: Array<any>*/)/*: number */ {
     var uniqueValueCount = 0,
         lastSeenValue;
@@ -26216,20 +26792,6 @@ function uniqueCountSorted(x/*: Array<any>*/)/*: number */ {
 
 var unique_count_sorted = uniqueCountSorted;
 
-/* @flow */
-
-
-
-/**
- * Create a new column x row matrix.
- *
- * @private
- * @param {number} columns
- * @param {number} rows
- * @return {Array<Array<number>>} matrix
- * @example
- * makeMatrix(10, 10);
- */
 function makeMatrix(columns, rows) {
     var matrix = [];
     for (var i = 0; i < columns; i++) {
@@ -26486,23 +27048,6 @@ function ckmeans(x/*: Array<number> */, nClusters/*: number */)/*: Array<Array<n
 
 var ckmeans_1 = ckmeans;
 
-/* @flow */
-
-
-
-/**
- * Given an array of x, this will find the extent of the
- * x and return an array of breaks that can be used
- * to categorize the x into a number of classes. The
- * returned array will always be 1 longer than the number of
- * classes because it includes the minimum value.
- *
- * @param {Array<number>} x an array of number values
- * @param {number} nClasses number of desired classes
- * @returns {Array<number>} array of class break positions
- * @example
- * equalIntervalBreaks([1, 2, 3, 4, 5, 6], 4); //= [1, 2.25, 3.5, 4.75, 6]
- */
 function equalIntervalBreaks(x/*: Array<number> */, nClasses/*:number*/)/*: Array<number> */ {
 
     if (x.length < 2) {
@@ -26535,23 +27080,6 @@ function equalIntervalBreaks(x/*: Array<number> */, nClasses/*:number*/)/*: Arra
 
 var equal_interval_breaks = equalIntervalBreaks;
 
-/* @flow */
-
-
-
-/**
- * [Sample covariance](https://en.wikipedia.org/wiki/Sample_mean_and_sampleCovariance) of two datasets:
- * how much do the two datasets move together?
- * x and y are two datasets, represented as arrays of numbers.
- *
- * @param {Array<number>} x a sample of two or more data points
- * @param {Array<number>} y a sample of two or more data points
- * @throws {Error} if x and y do not have equal lengths
- * @throws {Error} if x or y have length of one or less
- * @returns {number} sample covariance
- * @example
- * sampleCovariance([1, 2, 3, 4, 5, 6], [6, 5, 4, 3, 2, 1]); // => -3.5
- */
 function sampleCovariance(x /*:Array<number>*/, y /*:Array<number>*/)/*:number*/ {
 
     // The two datasets must have the same length which must be more than 1
@@ -26590,27 +27118,6 @@ function sampleCovariance(x /*:Array<number>*/, y /*:Array<number>*/)/*:number*/
 
 var sample_covariance = sampleCovariance;
 
-/* @flow */
-
-
-
-/**
- * The [sample variance](https://en.wikipedia.org/wiki/Variance#Sample_variance)
- * is the sum of squared deviations from the mean. The sample variance
- * is distinguished from the variance by the usage of [Bessel's Correction](https://en.wikipedia.org/wiki/Bessel's_correction):
- * instead of dividing the sum of squared deviations by the length of the input,
- * it is divided by the length minus one. This corrects the bias in estimating
- * a value from a set that you don't know if full.
- *
- * References:
- * * [Wolfram MathWorld on Sample Variance](http://mathworld.wolfram.com/SampleVariance.html)
- *
- * @param {Array<number>} x a sample of two or more data points
- * @throws {Error} if the length of x is less than 2
- * @return {number} sample variance
- * @example
- * sampleVariance([1, 2, 3, 4, 5]); // => 2.5
- */
 function sampleVariance(x /*: Array<number> */)/*:number*/ {
     // The variance of no numbers is null
     if (x.length < 2) {
@@ -26630,20 +27137,6 @@ function sampleVariance(x /*: Array<number> */)/*:number*/ {
 
 var sample_variance = sampleVariance;
 
-/* @flow */
-
-
-
-/**
- * The [standard deviation](http://en.wikipedia.org/wiki/Standard_deviation)
- * is the square root of the variance.
- *
- * @param {Array<number>} x input array
- * @returns {number} sample standard deviation
- * @example
- * sampleStandardDeviation([2, 4, 4, 4, 5, 5, 7, 9]).toFixed(2);
- * // => '2.14'
- */
 function sampleStandardDeviation(x/*:Array<number>*/)/*:number*/ {
     // The standard deviation of no numbers is null
     var sampleVarianceX = sample_variance(x);
@@ -26652,22 +27145,6 @@ function sampleStandardDeviation(x/*:Array<number>*/)/*:number*/ {
 
 var sample_standard_deviation = sampleStandardDeviation;
 
-/* @flow */
-
-
-
-
-/**
- * The [correlation](http://en.wikipedia.org/wiki/Correlation_and_dependence) is
- * a measure of how correlated two datasets are, between -1 and 1
- *
- * @param {Array<number>} x first input
- * @param {Array<number>} y second input
- * @returns {number} sample correlation
- * @example
- * sampleCorrelation([1, 2, 3, 4, 5, 6], [2, 2, 3, 4, 5, 60]).toFixed(2);
- * // => '0.69'
- */
 function sampleCorrelation(x/*: Array<number> */, y/*: Array<number> */)/*:number*/ {
     var cov = sample_covariance(x, y),
         xstd = sample_standard_deviation(x),
@@ -26678,27 +27155,6 @@ function sampleCorrelation(x/*: Array<number> */, y/*: Array<number> */)/*:numbe
 
 var sample_correlation = sampleCorrelation;
 
-/* @flow */
-
-
-
-/**
- * [Skewness](http://en.wikipedia.org/wiki/Skewness) is
- * a measure of the extent to which a probability distribution of a
- * real-valued random variable "leans" to one side of the mean.
- * The skewness value can be positive or negative, or even undefined.
- *
- * Implementation is based on the adjusted Fisher-Pearson standardized
- * moment coefficient, which is the version found in Excel and several
- * statistical packages including Minitab, SAS and SPSS.
- *
- * @since 4.1.0
- * @param {Array<number>} x a sample of 3 or more data points
- * @returns {number} sample skewness
- * @throws {Error} if x has length less than 3
- * @example
- * sampleSkewness([2, 4, 6, 3, 1]); // => 0.590128656384365
- */
 function sampleSkewness(x /*: Array<number> */)/*:number*/ {
 
     if (x.length < 3) {
@@ -26732,25 +27188,6 @@ function sampleSkewness(x /*: Array<number> */)/*:number*/ {
 
 var sample_skewness = sampleSkewness;
 
-/* @flow */
-
-
-
-/**
- * [Kurtosis](http://en.wikipedia.org/wiki/Kurtosis) is
- * a measure of the heaviness of a distribution's tails relative to its
- * variance. The kurtosis value can be positive or negative, or even undefined.
- *
- * Implementation is based on Fisher's excess kurtosis definition and uses 
- * unbiased moment estimators. This is the version found in Excel and available 
- * in several statistical packages, including SAS and SciPy.
- *
- * @param {Array<number>} x a sample of 4 or more data points
- * @returns {number} sample kurtosis
- * @throws {Error} if x has length less than 4
- * @example
- * sampleKurtosis([1, 2, 2, 3, 5]); // => 1.4555765595463122
- */
 function sampleKurtosis(x /*: Array<number> */)/*:number*/ {
 
     var n = x.length;
@@ -26778,13 +27215,6 @@ var sample_kurtosis = sampleKurtosis;
 
 /* @flow */
 
-/**
- * Implementation of [Heap's Algorithm](https://en.wikipedia.org/wiki/Heap%27s_algorithm)
- * for generating permutations.
- *
- * @param {Array} elements any type of data
- * @returns {Array<Array>} array of permutations
- */
 function permutationsHeap/*:: <T> */(elements /*: Array<T> */)/*: Array<Array<T>> */ {
     var indexes = new Array(elements.length);
     var permutations = [elements.slice()];
@@ -26825,17 +27255,6 @@ function permutationsHeap/*:: <T> */(elements /*: Array<T> */)/*: Array<Array<T>
 var permutations_heap = permutationsHeap;
 
 /* @flow */
-/**
- * Implementation of Combinations
- * Combinations are unique subsets of a collection - in this case, k x from a collection at a time.
- * https://en.wikipedia.org/wiki/Combination
- * @param {Array} x any type of data
- * @param {int} k the number of objects in each group (without replacement)
- * @returns {Array<Array>} array of permutations
- * @example
- * combinations([1, 2, 3], 2); // => [[1,2], [1,3], [2,3]]
- */
-
 function combinations(x /*: Array<any> */, k/*: number */) {
     var i;
     var subI;
@@ -26861,18 +27280,6 @@ function combinations(x /*: Array<any> */, k/*: number */) {
 var combinations_1 = combinations;
 
 /* @flow */
-/**
- * Implementation of [Combinations](https://en.wikipedia.org/wiki/Combination) with replacement
- * Combinations are unique subsets of a collection - in this case, k x from a collection at a time.
- * 'With replacement' means that a given element can be chosen multiple times.
- * Unlike permutation, order doesn't matter for combinations.
- * 
- * @param {Array} x any type of data
- * @param {int} k the number of objects in each group (without replacement)
- * @returns {Array<Array>} array of permutations
- * @example
- * combinationsReplacement([1, 2], 2); // => [[1, 1], [1, 2], [2, 2]]
- */
 function combinationsReplacement(
     x /*: Array<any> */,
     k /*: number */) {
@@ -26908,78 +27315,18 @@ function combinationsReplacement(
 
 var combinations_replacement = combinationsReplacement;
 
-/* @flow */
-
-/**
- * When adding a new value to a list, one does not have to necessary
- * recompute the mean of the list in linear time. They can instead use
- * this function to compute the new mean by providing the current mean,
- * the number of elements in the list that produced it and the new
- * value to add.
- *
- * @since 2.5.0
- * @param {number} mean current mean
- * @param {number} n number of items in the list
- * @param {number} newValue the added value
- * @returns {number} the new mean
- *
- * @example
- * addToMean(14, 5, 53); // => 20.5
- */
 function addToMean(mean /*: number*/, n/*: number */, newValue/*: number */)/*: number */ {
     return mean + ((newValue - mean) / (n + 1));
 }
 
 var add_to_mean = addToMean;
 
-/* @flow */
-
-/**
- * When combining two lists of values for which one already knows the means,
- * one does not have to necessary recompute the mean of the combined lists in
- * linear time. They can instead use this function to compute the combined
- * mean by providing the mean & number of values of the first list and the mean
- * & number of values of the second list.
- *
- * @since 3.0.0
- * @param {number} mean1 mean of the first list
- * @param {number} n1 number of items in the first list
- * @param {number} mean2 mean of the second list
- * @param {number} n2 number of items in the second list
- * @returns {number} the combined mean
- *
- * @example
- * combineMeans(5, 3, 4, 3); // => 4.5
- */
 function combineMeans(mean1 /*: number*/, n1/*: number */, mean2 /*: number*/, n2/*: number */)/*: number */ {
     return (mean1 * n1 + mean2 * n2) / (n1 + n2);
 }
 
 var combine_means = combineMeans;
 
-/* @flow */
-
-
-
-/**
- * When combining two lists of values for which one already knows the variances,
- * one does not have to necessary recompute the variance of the combined lists
- * in linear time. They can instead use this function to compute the combined
- * variance by providing the variance, mean & number of values of the first list
- * and the variance, mean & number of values of the second list.
- *
- * @since 3.0.0
- * @param {number} variance1 variance of the first list
- * @param {number} mean1 mean of the first list
- * @param {number} n1 number of items in the first list
- * @param {number} variance2 variance of the second list
- * @param {number} mean2 mean of the second list
- * @param {number} n2 number of items in the second list
- * @returns {number} the combined mean
- *
- * @example
- * combineVariances(14 / 3, 5, 3, 8 / 3, 4, 3); // => 47 / 12
- */
 function combineVariances(
     variance1 /*: number*/,
     mean1 /*: number*/,
@@ -26998,42 +27345,6 @@ function combineVariances(
 
 var combine_variances = combineVariances;
 
-/* @flow */
-
-/**
- * The [Geometric Mean](https://en.wikipedia.org/wiki/Geometric_mean) is
- * a mean function that is more useful for numbers in different
- * ranges.
- *
- * This is the nth root of the input numbers multiplied by each other.
- *
- * The geometric mean is often useful for
- * **[proportional growth](https://en.wikipedia.org/wiki/Geometric_mean#Proportional_growth)**: given
- * growth rates for multiple years, like _80%, 16.66% and 42.85%_, a simple
- * mean will incorrectly estimate an average growth rate, whereas a geometric
- * mean will correctly estimate a growth rate that, over those years,
- * will yield the same end value.
- *
- * This runs on `O(n)`, linear time in respect to the array
- *
- * @param {Array<number>} x sample of one or more data points
- * @returns {number} geometric mean
- * @throws {Error} if x is empty
- * @throws {Error} if x contains a negative number
- * @example
- * var growthRates = [1.80, 1.166666, 1.428571];
- * var averageGrowth = geometricMean(growthRates);
- * var averageGrowthRates = [averageGrowth, averageGrowth, averageGrowth];
- * var startingValue = 10;
- * var startingValueMean = 10;
- * growthRates.forEach(function(rate) {
- *   startingValue *= rate;
- * });
- * averageGrowthRates.forEach(function(rate) {
- *   startingValueMean *= rate;
- * });
- * startingValueMean === startingValue;
- */
 function geometricMean(x /*: Array<number> */) {
     // The mean of no numbers is null
     if (x.length === 0) {
@@ -27058,26 +27369,6 @@ function geometricMean(x /*: Array<number> */) {
 
 var geometric_mean = geometricMean;
 
-/* @flow */
-
-/**
- * The [Harmonic Mean](https://en.wikipedia.org/wiki/Harmonic_mean) is
- * a mean function typically used to find the average of rates.
- * This mean is calculated by taking the reciprocal of the arithmetic mean
- * of the reciprocals of the input numbers.
- *
- * This is a [measure of central tendency](https://en.wikipedia.org/wiki/Central_tendency):
- * a method of finding a typical or central value of a set of numbers.
- *
- * This runs on `O(n)`, linear time in respect to the array.
- *
- * @param {Array<number>} x sample of one or more data points
- * @returns {number} harmonic mean
- * @throws {Error} if x is empty
- * @throws {Error} if x contains a negative number
- * @example
- * harmonicMean([2, 3]).toFixed(2) // => '2.40'
- */
 function harmonicMean(x /*: Array<number> */) {
     // The mean of no numbers is null
     if (x.length === 0) {
@@ -27101,71 +27392,18 @@ function harmonicMean(x /*: Array<number> */) {
 
 var harmonic_mean = harmonicMean;
 
-/* @flow */
-
-
-
-/**
- * The [median](http://en.wikipedia.org/wiki/Median) is
- * the middle number of a list. This is often a good indicator of 'the middle'
- * when there are outliers that skew the `mean()` value.
- * This is a [measure of central tendency](https://en.wikipedia.org/wiki/Central_tendency):
- * a method of finding a typical or central value of a set of numbers.
- *
- * The median isn't necessarily one of the elements in the list: the value
- * can be the average of two elements if the list has an even length
- * and the two central values are different.
- *
- * @param {Array<number>} sorted input
- * @returns {number} median value
- * @example
- * medianSorted([10, 2, 5, 100, 2, 1]); // => 52.5
- */
 function medianSorted(sorted /*: Array<number> */)/*:number*/ {
     return quantile_sorted(sorted, 0.5);
 }
 
 var median_sorted = medianSorted;
 
-/* @flow */
-
-/**
- * When removing a value from a list, one does not have to necessary
- * recompute the mean of the list in linear time. They can instead use
- * this function to compute the new mean by providing the current mean,
- * the number of elements in the list that produced it and the value to remove.
- *
- * @since 3.0.0
- * @param {number} mean current mean
- * @param {number} n number of items in the list
- * @param {number} value the value to remove
- * @returns {number} the new mean
- *
- * @example
- * subtractFromMean(20.5, 6, 53); // => 14
- */
 function subtractFromMean(mean /*: number*/, n/*: number */, value/*: number */)/*: number */ {
     return ((mean * n) - value) / (n - 1);
 }
 
 var subtract_from_mean = subtractFromMean;
 
-/* @flow */
-
-/**
- * The Root Mean Square (RMS) is
- * a mean function used as a measure of the magnitude of a set
- * of numbers, regardless of their sign.
- * This is the square root of the mean of the squares of the
- * input numbers.
- * This runs on `O(n)`, linear time in respect to the array
- *
- * @param {Array<number>} x a sample of one or more data points
- * @returns {number} root mean square
- * @throws {Error} if x is empty
- * @example
- * rootMeanSquare([-1, 1, -1, 1]); // => 1
- */
 function rootMeanSquare(x /*: Array<number> */)/*:number*/ {
     if (x.length === 0) {
         throw new Error('rootMeanSquare requires at least one data point');
@@ -27181,28 +27419,6 @@ function rootMeanSquare(x /*: Array<number> */)/*:number*/ {
 
 var root_mean_square = rootMeanSquare;
 
-/* @flow */
-
-
-
-
-/**
- * This is to compute [a one-sample t-test](https://en.wikipedia.org/wiki/Student%27s_t-test#One-sample_t-test), comparing the mean
- * of a sample to a known value, x.
- *
- * in this case, we're trying to determine whether the
- * population mean is equal to the value that we know, which is `x`
- * here. usually the results here are used to look up a
- * [p-value](http://en.wikipedia.org/wiki/P-value), which, for
- * a certain level of significance, will let you determine that the
- * null hypothesis can or cannot be rejected.
- *
- * @param {Array<number>} x sample of one or more numbers
- * @param {number} expectedValue expected value of the population mean
- * @returns {number} value
- * @example
- * tTest([1, 2, 3, 4, 5, 6], 3.385).toFixed(2); // => '0.16'
- */
 function tTest(x/*: Array<number> */, expectedValue/*: number */)/*:number*/ {
     // The mean of the sample
     var sampleMean = mean_1(x);
@@ -27219,37 +27435,6 @@ function tTest(x/*: Array<number> */, expectedValue/*: number */)/*:number*/ {
 
 var t_test = tTest;
 
-/* @flow */
-
-
-
-
-/**
- * This is to compute [two sample t-test](http://en.wikipedia.org/wiki/Student's_t-test).
- * Tests whether "mean(X)-mean(Y) = difference", (
- * in the most common case, we often have `difference == 0` to test if two samples
- * are likely to be taken from populations with the same mean value) with
- * no prior knowledge on standard deviations of both samples
- * other than the fact that they have the same standard deviation.
- *
- * Usually the results here are used to look up a
- * [p-value](http://en.wikipedia.org/wiki/P-value), which, for
- * a certain level of significance, will let you determine that the
- * null hypothesis can or cannot be rejected.
- *
- * `diff` can be omitted if it equals 0.
- *
- * [This is used to confirm or deny](http://www.monarchlab.org/Lab/Research/Stats/2SampleT.aspx)
- * a null hypothesis that the two populations that have been sampled into
- * `sampleX` and `sampleY` are equal to each other.
- *
- * @param {Array<number>} sampleX a sample as an array of numbers
- * @param {Array<number>} sampleY a sample as an array of numbers
- * @param {number} [difference=0]
- * @returns {number} test result
- * @example
- * ss.tTestTwoSample([1, 2, 3, 4], [3, 4, 5, 6], 0); //= -2.1908902300206643
- */
 function tTestTwoSample(
     sampleX/*: Array<number> */,
     sampleY/*: Array<number> */,
@@ -27285,28 +27470,6 @@ function tTestTwoSample(
 
 var t_test_two_sample = tTestTwoSample;
 
-/* @flow */
-
-/**
- * [Bayesian Classifier](http://en.wikipedia.org/wiki/Naive_Bayes_classifier)
- *
- * This is a naïve bayesian classifier that takes
- * singly-nested objects.
- *
- * @class
- * @example
- * var bayes = new BayesianClassifier();
- * bayes.train({
- *   species: 'Cat'
- * }, 'animal');
- * var result = bayes.score({
- *   species: 'Cat'
- * })
- * // result
- * // {
- * //   animal: 1
- * // }
- */
 function BayesianClassifier() {
     // The number of items that are currently
     // classified in the model
@@ -27401,28 +27564,6 @@ BayesianClassifier.prototype.score = function(item) {
 
 var bayesian_classifier = BayesianClassifier;
 
-/* @flow */
-
-/**
- * This is a single-layer [Perceptron Classifier](http://en.wikipedia.org/wiki/Perceptron) that takes
- * arrays of numbers and predicts whether they should be classified
- * as either 0 or 1 (negative or positive examples).
- * @class
- * @example
- * // Create the model
- * var p = new PerceptronModel();
- * // Train the model with input with a diagonal boundary.
- * for (var i = 0; i < 5; i++) {
- *     p.train([1, 1], 1);
- *     p.train([0, 1], 0);
- *     p.train([1, 0], 0);
- *     p.train([0, 0], 0);
- * }
- * p.predict([0, 0]); // 0
- * p.predict([0, 1]); // 0
- * p.predict([1, 0]); // 0
- * p.predict([1, 1]); // 1
- */
 function PerceptronModel() {
     // The weights, or coefficients of the model;
     // weights are only populated when training with data.
@@ -27497,60 +27638,10 @@ PerceptronModel.prototype.train = function(features, label) {
 
 var perceptron = PerceptronModel;
 
-/* @flow */
-
-/**
- * We use `ε`, epsilon, as a stopping criterion when we want to iterate
- * until we're "close enough". Epsilon is a very small number: for
- * simple statistics, that number is **0.0001**
- *
- * This is used in calculations like the binomialDistribution, in which
- * the process of finding a value is [iterative](https://en.wikipedia.org/wiki/Iterative_method):
- * it progresses until it is close enough.
- *
- * Below is an example of using epsilon in [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent),
- * where we're trying to find a local minimum of a function's derivative,
- * given by the `fDerivative` method.
- *
- * @example
- * // From calculation, we expect that the local minimum occurs at x=9/4
- * var x_old = 0;
- * // The algorithm starts at x=6
- * var x_new = 6;
- * var stepSize = 0.01;
- *
- * function fDerivative(x) {
- *   return 4 * Math.pow(x, 3) - 9 * Math.pow(x, 2);
- * }
- *
- * // The loop runs until the difference between the previous
- * // value and the current value is smaller than epsilon - a rough
- * // meaure of 'close enough'
- * while (Math.abs(x_new - x_old) > ss.epsilon) {
- *   x_old = x_new;
- *   x_new = x_old - stepSize * fDerivative(x_old);
- * }
- *
- * console.log('Local minimum occurs at', x_new);
- */
 var epsilon$1 = 0.0001;
 
 var epsilon_1 = epsilon$1;
 
-/* @flow */
-
-/**
- * A [Factorial](https://en.wikipedia.org/wiki/Factorial), usually written n!, is the product of all positive
- * integers less than or equal to n. Often factorial is implemented
- * recursively, but this iterative approach is significantly faster
- * and simpler.
- *
- * @param {number} n input, must be an integer number 1 or greater
- * @returns {number} factorial: n!
- * @throws {Error} if n is less than 0 or not an integer
- * @example
- * factorial(5); // => 120
- */
 function factorial(n /*: number */)/*: number */ {
 
     // factorial is mathematically undefined for negative numbers
@@ -27577,25 +27668,6 @@ function factorial(n /*: number */)/*: number */ {
 
 var factorial_1 = factorial;
 
-/* @flow */
-
-/**
- * The [Bernoulli distribution](http://en.wikipedia.org/wiki/Bernoulli_distribution)
- * is the probability discrete
- * distribution of a random variable which takes value 1 with success
- * probability `p` and value 0 with failure
- * probability `q` = 1 - `p`. It can be used, for example, to represent the
- * toss of a coin, where "1" is defined to mean "heads" and "0" is defined
- * to mean "tails" (or vice versa). It is
- * a special case of a Binomial Distribution
- * where `n` = 1.
- *
- * @param {number} p input value, between 0 and 1 inclusive
- * @returns {number[]} values of bernoulli distribution at this point
- * @throws {Error} if p is outside 0 and 1
- * @example
- * bernoulliDistribution(0.3); // => [0.7, 0.3]
- */
 function bernoulliDistribution(p/*: number */) /*: number[] */ {
     // Check that `p` is a valid probability (0 ≤ p ≤ 1)
     if (p < 0 || p > 1 ) {
@@ -27607,20 +27679,6 @@ function bernoulliDistribution(p/*: number */) /*: number[] */ {
 
 var bernoulli_distribution = bernoulliDistribution;
 
-/* @flow */
-
-
-
-/**
- * The [Binomial Distribution](http://en.wikipedia.org/wiki/Binomial_distribution) is the discrete probability
- * distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields
- * success with probability `probability`. Such a success/failure experiment is also called a Bernoulli experiment or
- * Bernoulli trial; when trials = 1, the Binomial Distribution is a Bernoulli Distribution.
- *
- * @param {number} trials number of trials to simulate
- * @param {number} probability
- * @returns {number[]} output
- */
 function binomialDistribution(
     trials/*: number */,
     probability/*: number */)/*: ?number[] */ {
@@ -27661,23 +27719,6 @@ function binomialDistribution(
 
 var binomial_distribution = binomialDistribution;
 
-/* @flow */
-
-
-
-/**
- * The [Poisson Distribution](http://en.wikipedia.org/wiki/Poisson_distribution)
- * is a discrete probability distribution that expresses the probability
- * of a given number of events occurring in a fixed interval of time
- * and/or space if these events occur with a known average rate and
- * independently of the time since the last event.
- *
- * The Poisson Distribution is characterized by the strictly positive
- * mean arrival or occurrence rate, `λ`.
- *
- * @param {number} lambda location poisson distribution
- * @returns {number[]} values of poisson distribution at that point
- */
 function poissonDistribution(lambda/*: number */) /*: ?number[] */ {
     // Check that lambda is strictly positive
     if (lambda <= 0) { return undefined; }
@@ -27709,19 +27750,6 @@ function poissonDistribution(lambda/*: number */) /*: ?number[] */ {
 
 var poisson_distribution = poissonDistribution;
 
-/* @flow */
-
-/**
- * **Percentage Points of the χ2 (Chi-Squared) Distribution**
- *
- * The [χ2 (Chi-Squared) Distribution](http://en.wikipedia.org/wiki/Chi-squared_distribution) is used in the common
- * chi-squared tests for goodness of fit of an observed distribution to a theoretical one, the independence of two
- * criteria of classification of qualitative data, and in confidence interval estimation for a population standard
- * deviation of a normal distribution from a sample standard deviation.
- *
- * Values from Appendix 1, Table III of William W. Hines & Douglas C. Montgomery, "Probability and Statistics in
- * Engineering and Management Science", Wiley (1980).
- */
 var chiSquaredDistributionTable = {
     '1': {
         '0.995': 0,
@@ -28208,38 +28236,6 @@ var chiSquaredDistributionTable = {
 
 var chi_squared_distribution_table = chiSquaredDistributionTable;
 
-/* @flow */
-
-
-
-
-/**
- * The [χ2 (Chi-Squared) Goodness-of-Fit Test](http://en.wikipedia.org/wiki/Goodness_of_fit#Pearson.27s_chi-squared_test)
- * uses a measure of goodness of fit which is the sum of differences between observed and expected outcome frequencies
- * (that is, counts of observations), each squared and divided by the number of observations expected given the
- * hypothesized distribution. The resulting χ2 statistic, `chiSquared`, can be compared to the chi-squared distribution
- * to determine the goodness of fit. In order to determine the degrees of freedom of the chi-squared distribution, one
- * takes the total number of observed frequencies and subtracts the number of estimated parameters. The test statistic
- * follows, approximately, a chi-square distribution with (k − c) degrees of freedom where `k` is the number of non-empty
- * cells and `c` is the number of estimated parameters for the distribution.
- *
- * @param {Array<number>} data
- * @param {Function} distributionType a function that returns a point in a distribution:
- * for instance, binomial, bernoulli, or poisson
- * @param {number} significance
- * @returns {number} chi squared goodness of fit
- * @example
- * // Data from Poisson goodness-of-fit example 10-19 in William W. Hines & Douglas C. Montgomery,
- * // "Probability and Statistics in Engineering and Management Science", Wiley (1980).
- * var data1019 = [
- *     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- *     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- *     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
- *     2, 2, 2, 2, 2, 2, 2, 2, 2,
- *     3, 3, 3, 3
- * ];
- * ss.chiSquaredGoodnessOfFit(data1019, ss.poissonDistribution, 0.05)); //= false
- */
 function chiSquaredGoodnessOfFit(
     data/*: Array<number> */,
     distributionType/*: Function */,
@@ -28317,38 +28313,11 @@ function chiSquaredGoodnessOfFit(
 
 var chi_squared_goodness_of_fit = chiSquaredGoodnessOfFit;
 
-/* @flow */
-
-/**
- * The [Z-Score, or Standard Score](http://en.wikipedia.org/wiki/Standard_score).
- *
- * The standard score is the number of standard deviations an observation
- * or datum is above or below the mean. Thus, a positive standard score
- * represents a datum above the mean, while a negative standard score
- * represents a datum below the mean. It is a dimensionless quantity
- * obtained by subtracting the population mean from an individual raw
- * score and then dividing the difference by the population standard
- * deviation.
- *
- * The z-score is only defined if one knows the population parameters;
- * if one only has a sample set, then the analogous computation with
- * sample mean and sample standard deviation yields the
- * Student's t-statistic.
- *
- * @param {number} x
- * @param {number} mean
- * @param {number} standardDeviation
- * @return {number} z score
- * @example
- * zScore(78, 80, 5); // => -0.4
- */
 function zScore(x/*:number*/, mean/*:number*/, standardDeviation/*:number*/)/*:number*/ {
     return (x - mean) / standardDeviation;
 }
 
 var z_score = zScore;
-
-/* @flow */
 
 var SQRT_2PI = Math.sqrt(2 * Math.PI);
 
@@ -28385,24 +28354,6 @@ for (var z = 0; z <= 3.09; z += 0.01) {
 
 var standard_normal_table = standardNormalTable;
 
-/* @flow */
-
-
-
-/**
- * **[Cumulative Standard Normal Probability](http://en.wikipedia.org/wiki/Standard_normal_table)**
- *
- * Since probability tables cannot be
- * printed for every normal distribution, as there are an infinite variety
- * of normal distributions, it is common practice to convert a normal to a
- * standard normal and then use the standard normal table to find probabilities.
- *
- * You can use `.5 + .5 * errorFunction(x / Math.sqrt(2))` to calculate the probability
- * instead of looking it up in a table.
- *
- * @param {number} z
- * @returns {number} cumulative standard normal probability
- */
 function cumulativeStdNormalProbability(z /*:number */)/*:number */ {
 
     // Calculate the position of this value.
@@ -28428,21 +28379,6 @@ function cumulativeStdNormalProbability(z /*:number */)/*:number */ {
 
 var cumulative_std_normal_probability = cumulativeStdNormalProbability;
 
-/* @flow */
-
-/**
- * **[Gaussian error function](http://en.wikipedia.org/wiki/Error_function)**
- *
- * The `errorFunction(x/(sd * Math.sqrt(2)))` is the probability that a value in a
- * normal distribution with standard deviation sd is within x of the mean.
- *
- * This function returns a numerical approximation to the exact value.
- *
- * @param {number} x input
- * @return {number} error estimation
- * @example
- * errorFunction(1).toFixed(2); // => '0.84'
- */
 function errorFunction(x/*: number */)/*: number */ {
     var t = 1 / (1 + 0.5 * Math.abs(x));
     var tau = t * Math.exp(-Math.pow(x, 2) -
@@ -28465,16 +28401,6 @@ function errorFunction(x/*: number */)/*: number */ {
 
 var error_function = errorFunction;
 
-/* @flow */
-
-/**
- * The Inverse [Gaussian error function](http://en.wikipedia.org/wiki/Error_function)
- * returns a numerical approximation to the value that would have caused
- * `errorFunction()` to return x.
- *
- * @param {number} x value of error function
- * @returns {number} estimated inverted value
- */
 function inverseErrorFunction(x/*: number */)/*: number */ {
     var a = (8 * (Math.PI - 3)) / (3 * Math.PI * (4 - Math.PI));
 
@@ -28492,24 +28418,6 @@ function inverseErrorFunction(x/*: number */)/*: number */ {
 
 var inverse_error_function = inverseErrorFunction;
 
-/* @flow */
-
-
-
-
-/**
- * The [Probit](http://en.wikipedia.org/wiki/Probit)
- * is the inverse of cumulativeStdNormalProbability(),
- * and is also known as the normal quantile function.
- *
- * It returns the number of standard deviations from the mean
- * where the p'th quantile of values can be found in a normal distribution.
- * So, for example, probit(0.5 + 0.6827/2) ≈ 1 because 68.27% of values are
- * normally found within 1 standard deviation above or below the mean.
- *
- * @param {number} p
- * @returns {number} probit
- */
 function probit(p /*: number */)/*: number */ {
     if (p === 0) {
         p = epsilon_1;
@@ -28521,20 +28429,6 @@ function probit(p /*: number */)/*: number */ {
 
 var probit_1 = probit;
 
-/* @flow */
-
-/**
- * [Sign](https://en.wikipedia.org/wiki/Sign_function) is a function 
- * that extracts the sign of a real number
- * 
- * @param {Number} x input value
- * @returns {Number} sign value either 1, 0 or -1
- * @throws {TypeError} if the input argument x is not a number
- * @private
- * 
- * @example
- * sign(2); // => 1
- */
 function sign$1(x/*: number */)/*: number */ {
     if (typeof x === 'number') {
         if (x < 0) {
@@ -28551,27 +28445,7 @@ function sign$1(x/*: number */)/*: number */ {
 
 var sign_1 = sign$1;
 
-/* @flow */
-
-
-/**
- * [Bisection method](https://en.wikipedia.org/wiki/Bisection_method) is a root-finding 
- * method that repeatedly bisects an interval to find the root.
- * 
- * This function returns a numerical approximation to the exact value.
- * 
- * @param {Function} func input function
- * @param {Number} start - start of interval
- * @param {Number} end - end of interval
- * @param {Number} maxIterations - the maximum number of iterations
- * @param {Number} errorTolerance - the error tolerance
- * @returns {Number} estimated root value
- * @throws {TypeError} Argument func must be a function
- * 
- * @example
- * bisect(Math.cos,0,4,100,0.003); // => 1.572265625
- */
-function bisect$1(
+function bisect$2(
     func/*: (x: any) => number */,
     start/*: number */,
     end/*: number */,
@@ -28597,9 +28471,9 @@ function bisect$1(
     throw new Error('maximum number of iterations exceeded');
 }
 
-var bisect_1 = bisect$1;
+var bisect_1 = bisect$2;
 
-var index$4 = createCommonjsModule(function (module) {
+var index$6 = createCommonjsModule(function (module) {
 /* @flow */
 'use strict';
 
@@ -33674,7 +33548,7 @@ var immutable = createCommonjsModule(function (module, exports) {
 
 var immutable_1 = immutable.fromJS;
 
-var index$6 = createCommonjsModule(function (module) {
+var index$8 = createCommonjsModule(function (module) {
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -33725,7 +33599,7 @@ var index$6 = createCommonjsModule(function (module) {
 }());
 });
 
-var constant$4 = createCommonjsModule(function (module, exports) {
+var constant$5 = createCommonjsModule(function (module, exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33799,7 +33673,7 @@ exports.default = function (target) {
 
 
 
-var _constant2 = _interopRequireDefault(constant$4);
+var _constant2 = _interopRequireDefault(constant$5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33868,7 +33742,7 @@ exports.default = function (target) {
 
 
 
-var _constant2 = _interopRequireDefault(constant$4);
+var _constant2 = _interopRequireDefault(constant$5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 });
@@ -34487,7 +34361,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = '.__react_component_tooltip{border-radius:3px;display:inline-block;font-size:13px;left:-999em;opacity:0;padding:8px 21px;position:fixed;pointer-events:none;transition:opacity 0.3s ease-out;top:-999em;visibility:hidden;z-index:999}.__react_component_tooltip:before,.__react_component_tooltip:after{content:"";width:0;height:0;position:absolute}.__react_component_tooltip.show{opacity:0.9;margin-top:0px;margin-left:0px;visibility:visible}.__react_component_tooltip.type-dark{color:#fff;background-color:#222}.__react_component_tooltip.type-dark.place-top:after{border-top-color:#222;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-dark.place-bottom:after{border-bottom-color:#222;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-dark.place-left:after{border-left-color:#222;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-dark.place-right:after{border-right-color:#222;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-dark.border{border:1px solid #fff}.__react_component_tooltip.type-dark.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-dark.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-dark.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-dark.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-success{color:#fff;background-color:#8DC572}.__react_component_tooltip.type-success.place-top:after{border-top-color:#8DC572;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-success.place-bottom:after{border-bottom-color:#8DC572;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-success.place-left:after{border-left-color:#8DC572;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-success.place-right:after{border-right-color:#8DC572;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-success.border{border:1px solid #fff}.__react_component_tooltip.type-success.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-success.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-success.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-success.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-warning{color:#fff;background-color:#F0AD4E}.__react_component_tooltip.type-warning.place-top:after{border-top-color:#F0AD4E;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-warning.place-bottom:after{border-bottom-color:#F0AD4E;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-warning.place-left:after{border-left-color:#F0AD4E;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-warning.place-right:after{border-right-color:#F0AD4E;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-warning.border{border:1px solid #fff}.__react_component_tooltip.type-warning.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-warning.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-warning.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-warning.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-error{color:#fff;background-color:#BE6464}.__react_component_tooltip.type-error.place-top:after{border-top-color:#BE6464;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-error.place-bottom:after{border-bottom-color:#BE6464;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-error.place-left:after{border-left-color:#BE6464;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-error.place-right:after{border-right-color:#BE6464;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-error.border{border:1px solid #fff}.__react_component_tooltip.type-error.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-error.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-error.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-error.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-info{color:#fff;background-color:#337AB7}.__react_component_tooltip.type-info.place-top:after{border-top-color:#337AB7;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-info.place-bottom:after{border-bottom-color:#337AB7;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-info.place-left:after{border-left-color:#337AB7;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-info.place-right:after{border-right-color:#337AB7;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-info.border{border:1px solid #fff}.__react_component_tooltip.type-info.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-info.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-info.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-info.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-light{color:#222;background-color:#fff}.__react_component_tooltip.type-light.place-top:after{border-top-color:#fff;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-light.place-bottom:after{border-bottom-color:#fff;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-light.place-left:after{border-left-color:#fff;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-light.place-right:after{border-right-color:#fff;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-light.border{border:1px solid #222}.__react_component_tooltip.type-light.border.place-top:before{border-top:8px solid #222}.__react_component_tooltip.type-light.border.place-bottom:before{border-bottom:8px solid #222}.__react_component_tooltip.type-light.border.place-left:before{border-left:8px solid #222}.__react_component_tooltip.type-light.border.place-right:before{border-right:8px solid #222}.__react_component_tooltip.place-top{margin-top:-10px}.__react_component_tooltip.place-top:before{border-left:10px solid transparent;border-right:10px solid transparent;bottom:-8px;left:50%;margin-left:-10px}.__react_component_tooltip.place-top:after{border-left:8px solid transparent;border-right:8px solid transparent;bottom:-6px;left:50%;margin-left:-8px}.__react_component_tooltip.place-bottom{margin-top:10px}.__react_component_tooltip.place-bottom:before{border-left:10px solid transparent;border-right:10px solid transparent;top:-8px;left:50%;margin-left:-10px}.__react_component_tooltip.place-bottom:after{border-left:8px solid transparent;border-right:8px solid transparent;top:-6px;left:50%;margin-left:-8px}.__react_component_tooltip.place-left{margin-left:-10px}.__react_component_tooltip.place-left:before{border-top:6px solid transparent;border-bottom:6px solid transparent;right:-8px;top:50%;margin-top:-5px}.__react_component_tooltip.place-left:after{border-top:5px solid transparent;border-bottom:5px solid transparent;right:-6px;top:50%;margin-top:-4px}.__react_component_tooltip.place-right{margin-left:10px}.__react_component_tooltip.place-right:before{border-top:6px solid transparent;border-bottom:6px solid transparent;left:-8px;top:50%;margin-top:-5px}.__react_component_tooltip.place-right:after{border-top:5px solid transparent;border-bottom:5px solid transparent;left:-6px;top:50%;margin-top:-4px}.__react_component_tooltip .multi-line{display:block;padding:2px 0px;text-align:center}';
 });
 
-var index$5 = createCommonjsModule(function (module) {
+var index$7 = createCommonjsModule(function (module) {
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -34511,7 +34385,7 @@ var _react2 = _interopRequireDefault(react);
 
 
 
-var _propTypes2 = _interopRequireDefault(index$3);
+var _propTypes2 = _interopRequireDefault(index$5);
 
 
 
@@ -34519,7 +34393,7 @@ var _reactDom2 = _interopRequireDefault(index$2);
 
 
 
-var _classnames2 = _interopRequireDefault(index$6);
+var _classnames2 = _interopRequireDefault(index$8);
 
 
 
@@ -35086,7 +34960,7 @@ var ReactTooltip = (0, _staticMethods2.default)(_class = (0, _windowListener2.de
 module.exports = ReactTooltip;
 });
 
-var ReactTooltip = unwrapExports(index$5);
+var ReactTooltip = unwrapExports(index$7);
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -35270,7 +35144,7 @@ var WithTooltips = function WithTooltips(WrappedComponent) {
   }(react_1);
 };
 
-__$styleInject("svg.react-choropleth g path {\n      \n      stroke: grey;\n    }", undefined);
+__$styleInject("svg.react-choropleth g path {\r\n      \r\n      stroke: grey;\r\n    }", undefined);
 
 var datumAccessor = function datumAccessor(featureId, data) {
   return data.find(function (d) {
@@ -35304,7 +35178,7 @@ var colorScaleGenerator = function colorScaleGenerator(colors, noDataColor, colo
   if (colorScaleType === 'scaleQuantize') {
     scale.domain([Math.min.apply(Math, toConsumableArray(values)), Math.max.apply(Math, toConsumableArray(values))]);
   } else if (colorScaleType === 'scaleThreshold') {
-    scale.domain(index$4.ckmeans(values, colors.length - 1).map(function (cluster) {
+    scale.domain(index$6.ckmeans(values, colors.length - 1).map(function (cluster) {
       return cluster[0];
     }));
   }
@@ -35363,45 +35237,37 @@ var ChoroplethSVG = function ChoroplethSVG(_ref) {
 };
 
 ChoroplethSVG.propTypes = {
-  width: index$3.number,
-  height: index$3.number,
-  data: index$3.arrayOf(index$3.shape({
-    featureId: index$3.string,
-    value: index$3.number
+  width: index$5.number,
+  height: index$5.number,
+  data: index$5.arrayOf(index$5.shape({
+    featureId: index$5.string,
+    value: index$5.number
   })),
-  geoJson: index$3.shape({
-    features: index$3.arrayOf(index$3.shape({
-      id: index$3.string
+  geoJson: index$5.shape({
+    features: index$5.arrayOf(index$5.shape({
+      id: index$5.string
     }))
   }),
-  dataValueAccessor: index$3.func,
-  projectionName: index$3.string,
+  dataValueAccessor: index$5.func,
+  projectionName: index$5.string,
   // Only supporting the scales that are good for intensity maps(scaleQuantize for a basic distribution and scaleThreshold for a clustered distribution)
-  colorScaleType: index$3.oneOf(['scaleQuantize', 'scaleThreshold'])
+  colorScaleType: index$5.oneOf(['scaleQuantize', 'scaleThreshold'])
 };
 
 ChoroplethSVG.defaultProps = {
   dataValueAccessor: dataValueAccessor,
   projectionName: 'geoMercator', // Can be any d3Geo projections
   colorScaleType: 'scaleQuantize'
-
-  // Note that the HOC is declared outside of the render method to prevent the HOC being remounted every time state changes in ChoroplethWithTooltip
-};var ChoroplethWithTooltips = WithTooltips(ChoroplethSVG);
-var Choropleth = function Choropleth(props) {
-  return react.createElement(ChoroplethWithTooltips, props);
 };
 
-Choropleth.propTypes = {
-  tooltipContent: index$3.func
-};
-Object.assign(Choropleth.propTypes, ChoroplethSVG.propTypes);
+var ChoroplethWithTooltips = WithTooltips(ChoroplethSVG);
 
-var identity$7 = function(x) {
+var identity$8 = function(x) {
   return x;
 };
 
 var transform$2 = function(transform) {
-  if (transform == null) return identity$7;
+  if (transform == null) return identity$8;
   var x0,
       y0,
       kx = transform.scale[0],
@@ -35490,7 +35356,7 @@ function object$2(topology, o) {
   return geometry(o);
 }
 
-var bisect$2 = function(a, x) {
+var bisect$3 = function(a, x) {
   var lo = 0, hi = a.length;
   while (lo < hi) {
     var mid = lo + hi >>> 1;
@@ -35645,20 +35511,6 @@ var hashPoint = function(point) {
   return hash & 0x7fffffff;
 };
 
-// Given an extracted (pre-)topology, identifies all of the junctions. These are
-// the points at which arcs (lines or rings) will need to be cut so that each
-// arc is represented uniquely.
-//
-// A junction is a point where at least one arc deviates from another arc going
-// through the same point. For example, consider the point B. If there is a arc
-// through ABC and another arc through CBA, then B is not a junction because in
-// both cases the adjacent point pairs are {A,C}. However, if there is an
-// additional arc ABD, then {A,D} != {A,C}, and thus B becomes a junction.
-//
-// For a closed ring ABCA, the first point A’s adjacent points are the second
-// and last point {B,C}. For a line, the first and last point are always
-// considered junctions, even if the line is closed; this ensures that a closed
-// line is never rotated.
 var join = function(topology) {
   var coordinates = topology.coordinates,
       lines = topology.lines,
@@ -35757,9 +35609,6 @@ var join = function(topology) {
   return junctionByPoint;
 };
 
-// Given an extracted (pre-)topology, cuts (or rotates) arcs so that all shared
-// point sequences are identified. The topology can then be subsequently deduped
-// to remove exact duplicate arcs.
 function rotateArray(array, start, end, offset) {
   reverse$1(array, start, end);
   reverse$1(array, start, start + offset);
@@ -35771,8 +35620,6 @@ function reverse$1(array, start, end) {
     t = array[start], array[start] = array[end], array[end] = t;
   }
 }
-
-// Given a cut topology, combines duplicate arcs.
 
 // Given an array of arcs in absolute (but already quantized!) coordinates,
 // converts to fixed-point delta encoding.
@@ -35801,10 +35648,6 @@ function reverse$1(array, start, end) {
 // Any feature.{id,properties,bbox} are transferred to the output geometry object.
 // Each output geometry object is a shallow copy of the input (e.g., properties, coordinates)!
 
-// Constructs the TopoJSON Topology for the specified hash of features.
-// Each object in the specified hash must be a GeoJSON object,
-// meaning FeatureCollection, a Feature or a geometry object.
-
 var projection$$1 = geoMercator();
 var pathGenerator = geoPath(projection$$1);
 var countryValues = [{ featureId: 'AFG', value: 20 }, { featureId: 'PAK', value: 40 }, { featureId: 'IRQ', value: 80 }, { featureId: 'ALB', value: 200 }, { featureId: 'MNG', value: 100 }, { featureId: 'COL', value: 60 }, { featureId: 'ARG', value: 150 }];
@@ -35812,7 +35655,7 @@ var countryValues = [{ featureId: 'AFG', value: 20 }, { featureId: 'PAK', value:
 var colors = ["#a9c8f4", "#7fa1d2", "#5479b0", "#2a518e", "#002A6C"];
 json('./countries.topo.json', function (error, CountriesJson) {
   var geoJson = feature(CountriesJson, CountriesJson.objects.countries);
-  index$2.render(react.createElement(Choropleth, {
+  index$2.render(react.createElement(ChoroplethWithTooltips, {
     width: 500,
     height: 500,
     geoJson: geoJson,
