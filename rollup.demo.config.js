@@ -15,7 +15,7 @@ import cssnext from 'postcss-cssnext'
 // Bundle using an entry point as if it was a real app using the choropleth
 export default {
   entry: 'demo/entry.js',
-  dest: 'demo/demo.js',
+  dest: 'demo/demo-bundle.js',
   format: 'umd',
   plugins: [
     serve('demo'),
