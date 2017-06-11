@@ -11,7 +11,7 @@ import cssnext from 'postcss-cssnext'
 
 export default {
   entry: 'src/choropleth.js',
-  dest: 'build/choropleth-dist.js',
+  dest: 'dist/choropleth.js',
   format: 'umd',
   moduleName: 'ReactChoropleth',
   plugins: [
@@ -39,7 +39,6 @@ export default {
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
   ],
-  sourceMap: true,
-  // Don't bloat our bundle with React, the parent will provide it
+  // Don't bloat our bundle with React, the parent application will provide it
   external: ['react']
 }

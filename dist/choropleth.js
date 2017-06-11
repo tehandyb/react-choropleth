@@ -33349,4 +33349,4 @@ var ChoroplethWithTooltips = WithTooltips(ChoroplethSVG);
 return ChoroplethWithTooltips;
 
 })));
-//# sourceMappingURL=choropleth-dist.js.map
+//# sourceMappingURL=choropleth.js.map
