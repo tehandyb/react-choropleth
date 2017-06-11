@@ -40,5 +40,5 @@ export default {
     }),
   ],
   // Don't bloat our bundle with React, the parent application will provide it
-  external: ['react']
+  external: ['react', 'react-dom']
 }
