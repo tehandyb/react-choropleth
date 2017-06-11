@@ -1,13 +1,9 @@
 import React from 'react' // Needed for JSX to compile properly
 import ReactDOM from 'react-dom'
-import { scaleLinear } from 'd3-scale'
 import { json } from 'd3-request'
-import { geoMercator, geoPath } from 'd3-geo'
-import Choropleth from '../src/choropleth.js'
+import Choropleth from '../src/choropleth'
 import * as TopoJson from 'topojson'
 
-const projection = geoMercator()
-const pathGenerator = geoPath(projection)
 const countryValues = [
   { featureId: 'AFG', value: 20 },
   { featureId: 'PAK', value: 40 },

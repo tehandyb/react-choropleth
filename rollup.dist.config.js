@@ -1,7 +1,6 @@
 import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
 import nodeResolve from 'rollup-plugin-node-resolve'
-import uglify from 'rollup-plugin-uglify'
 import replace from 'rollup-plugin-replace'
 import postcss from 'rollup-plugin-postcss'
 
@@ -42,5 +41,5 @@ export default {
   ],
   sourceMap: true,
   // Don't bloat our bundle with React, the parent will provide it
-  external: ['react', 'prop-types', 'd3-geo', 'd3-scale']
+  external: ['react']
 }
